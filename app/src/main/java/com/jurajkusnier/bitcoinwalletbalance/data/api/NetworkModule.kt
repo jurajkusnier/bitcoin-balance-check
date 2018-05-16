@@ -1,12 +1,15 @@
 package com.jurajkusnier.bitcoinwalletbalance.data.api
 
+import android.util.Log
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.jurajkusnier.bitcoinwalletbalance.BuildConfig
 import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -36,9 +39,22 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    @Named("baseUrl")
-    fun provideBaseUrl(): String{
-        return "https://jobs.github.com/"
+    fun provideDelayInterceptor():Interceptor{
+        return Interceptor { chain ->
+                try {
+                    Thread.sleep(BuildConfig.NETWORK_DELAY)
+                } catch (e: Exception) {
+                    Log.e(TAG, Log.getStackTraceString(e))
+                }
+            chain.proceed(chain.request())
+        }
+    }
+
+    @Provides
+    @Singleton
+    @Named("BlockchainUrl")
+    fun provideBlockchainUrl(): String{
+        return "https://blockchain.info/"
     }
 
     @Provides
@@ -47,7 +63,11 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(@Named("baseUrl") baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
+    fun provideBlockchainApiService(retrofit: Retrofit): BlockchainApiService = retrofit.create(BlockchainApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(@Named("BlockchainUrl") baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -58,11 +78,13 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(loginInterceptor: HttpLoggingInterceptor):OkHttpClient {
+    fun provideHttpClient(loggingInterceptor: HttpLoggingInterceptor, delayInterceptor: Interceptor):OkHttpClient {
 
-        return OkHttpClient.Builder()
-                .addInterceptor(loginInterceptor)
-                .build()
+        val okHttpClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor)
+        if (BuildConfig.DEBUG) {
+            okHttpClient.addInterceptor(delayInterceptor)
+        }
+        return okHttpClient.build()
     }
 
     @Provides

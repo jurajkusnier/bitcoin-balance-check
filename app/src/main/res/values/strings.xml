@@ -1,5 +1,27 @@
 <resources>
-    <string name="app_name">App Template</string>
+    <string name="app_name">Wealth Check</string>
     <string name="no_search_results">No search results found</string>
     <string name="network_connection_error">Network Connection Error</string>
+    <string name="default_zero_BTC">0.000000000 BTC</string>
+    <string name="default_zero_EUR">0 EUR</string>
+    <string name="address">Address</string>
+    <string name="total_received">Total Received</string>
+    <string name="total_sent">Total Sent</string>
+    <string name="offline_data">Offline Data</string>
+    <string name="last_transactions">Last Transactions</string>
+    <string name="no_transactions_found">No transactions found</string>
+    <string name="placeholder_address">14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m</string>
+    <string name="transaction_id">Transaction ID</string>
+    <string name="transaction_plus">+ %s</string>
+    <string name="transaction_minus">- %s</string>
+    <string name="date_format">EEE, d MMM yyyy HH:mm:ss</string>
+    <string name="a_few_seconds_ago">a few seconds ago</string>
+    <plurals name="x_min_ago">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="x_h_ago">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
 </resources>
