@@ -16,6 +16,8 @@
     <string name="transaction_minus">- %s</string>
     <string name="date_format">EEE, d MMM yyyy HH:mm:ss</string>
     <string name="a_few_seconds_ago">a few seconds ago</string>
+    <string name="scan_qr_code">Scan a QR Code</string>
+    <string name="bitcoin_addr_prefix">bitcoin:</string>
     <plurals name="x_min_ago">
         <item quantity="one">%d minute ago</item>
         <item quantity="other">%d minutes ago</item>

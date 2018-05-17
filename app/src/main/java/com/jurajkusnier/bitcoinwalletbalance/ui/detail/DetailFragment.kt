@@ -13,6 +13,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.jurajkusnier.bitcoinwalletbalance.R
@@ -27,13 +28,26 @@ import javax.inject.Inject
 
 class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
 
-    val TAG = DetailFragment::class.java.simpleName
-
     private lateinit var viewModel:DetailViewModel
     @Inject lateinit var viewModelFactory: ViewModelFactory
 
     companion object {
-        fun newInstance() = DetailFragment()
+        val TAG = DetailFragment::class.java.simpleName
+        val WALLET_ID = "WALLET_ID"
+
+        fun newInstance(walletID:String):DetailFragment {
+            val detailFragment =DetailFragment()
+            val bundle = Bundle()
+            bundle.putString(WALLET_ID, walletID)
+            detailFragment.arguments = bundle
+
+            return detailFragment
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        errorSnackbar?.dismiss()
     }
 
     override fun onAttach(context: Context?) {
@@ -53,10 +67,16 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
         //ViewModel
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
 
+        val walletID = arguments?.getString(WALLET_ID)
+        if (walletID != null) {
+            viewModel.initViewModel(walletID)
+        }
+
 //        viewModel.initViewModel("14FWSLwNWHCQjsA2teKSKeiaxA3F5kH1tZ") // Empty wallet
-        viewModel.initViewModel("14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m") // Not empty wallet
+//        viewModel.initViewModel("14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m") // Not empty wallet
 
 
+        textWalletID.text = walletID
         //UI initialization
         val thisContext = activity
         if (thisContext != null) {
@@ -79,7 +99,6 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             textFinalBalanceCrypto.text = sathoshiToBTCstring(balanceInSatoshi)
             textTotalReceived.text = sathoshiToBTCstring(rawData.total_received)
             textTotalSent.text = sathoshiToBTCstring(rawData.total_sent)
-            textWalletID.text = rawData.address
 
             if (thisContext != null) {
                 recyclerViewTransactions.adapter = TransactionListAdapter(rawData.address, rawData.txs, thisContext)
@@ -96,8 +115,6 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
                 hideErrorShackbar()
             }
         })
-
-
     }
 
     private var errorSnackbar: Snackbar? = null

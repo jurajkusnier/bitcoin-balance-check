@@ -35,6 +35,6 @@ data class OneOut(
         val addr_tag_link:String?,
         val addr_tag:String?,
         val spent:Boolean,
-        val addr:String,
+        val addr:String?,
         val value:Long,
         val script:String)

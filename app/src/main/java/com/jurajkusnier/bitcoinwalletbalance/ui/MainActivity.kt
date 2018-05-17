@@ -1,9 +1,9 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui
 
 import android.os.Bundle
+import android.view.MenuItem
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
-import com.jurajkusnier.bitcoinwalletbalance.ui.jobs.JobsFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainFragment
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
 
@@ -19,8 +19,20 @@ class MainActivity: DaggerAppCompatActivity() {
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, DetailFragment.newInstance())
+                    .replace(R.id.container, MainFragment.newInstance())
                     .commitNow()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            android.R.id.home -> {
+                super.onBackPressed()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
         }
     }
 
