@@ -9,7 +9,6 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -23,7 +22,7 @@ class NetworkModule {
 
     private fun getInterceptorLevel(): HttpLoggingInterceptor.Level {
         return if (BuildConfig.DEBUG)
-            HttpLoggingInterceptor.Level.BODY
+            HttpLoggingInterceptor.Level.BASIC
         else
             HttpLoggingInterceptor.Level.NONE
     }

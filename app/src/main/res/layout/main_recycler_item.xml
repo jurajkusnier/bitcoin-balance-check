@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+        <ImageView
+                android:id="@+id/imageViewItemMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="center|end"
+                android:layout_margin="10dp"
+                app:srcCompat="@drawable/ic_more_vert_white_24dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"/>
+        <LinearLayout   android:id="@+id/linearLayoutOneItem"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                        android:layout_marginEnd="50dp"
+                      android:padding="10dp">
+            <TextView
+                    android:text="Wed, 4 Jul 2001 12:08:56 "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:visibility="visible"
+                    android:id="@+id/textViewItemDate"
+            />
+            <TextView
+                    android:text="13t4ibu3mnChiZwK3gJFdEyfaWxjY2ZEgt"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewItemWalletId"
+            />
+            <TextView
+                    android:text="0.093641372 BTC"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewItemBalance"
+            />
+        </LinearLayout>
+</RelativeLayout>

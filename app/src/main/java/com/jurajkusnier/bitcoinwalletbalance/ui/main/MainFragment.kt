@@ -1,91 +1,102 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
+import android.support.design.widget.Snackbar
+import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.zxing.integration.android.IntentIntegrator
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
-import kotlinx.android.synthetic.main.main_fragment.*
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
+import com.jurajkusnier.bitcoinwalletbalance.utils.DaggerLifecycleFragment
+import dagger.android.AndroidInjection
+import kotlinx.android.synthetic.main.main_fragment.view.*
+import javax.inject.Inject
 
-class MainFragment : Fragment() {
+abstract class MainFragment : DaggerLifecycleFragment() {
 
-    val TAG = MainFragment::class.java.simpleName
+    @Inject lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var _thisView:View
+    protected lateinit var viewModel: MainViewModel
 
-    val MY_CAMERA_PERMISSION = 123
+    abstract fun getViewModelClass():Class<out ViewModel>
 
     companion object {
-        fun newInstance() = MainFragment()
+        val TAG = MainFragment::class.java.simpleName
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.main_fragment, container, false)
+    override fun onAttach(context: Context?) {
+        //DI activity injection first
+        AndroidInjection.inject(activity)
+        super.onAttach(context)
+    }
+
+    private lateinit var adapter: MainListAdapter
+
+    abstract fun getEmptyText():CharSequence
+
+    protected fun showUndoSnackbar(deletedRecord: WalletRecord, undoText:String) {
+        val snackbar = Snackbar.make(_thisView, undoText, Snackbar.LENGTH_LONG)
+        snackbar.setAction(getString(R.string.undo), {
+            viewModel.addRecord(deletedRecord)
+        })
+        snackbar.view.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.colorSnackbar,null))
+        snackbar.show()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _thisView = inflater.inflate(R.layout.main_fragment, container, false)
+
+        _thisView.emptyListText.text = getEmptyText()
+
+        return _thisView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        floatingButtonAdd.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(context!!,
-                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(getViewModelClass()) as MainViewModel
 
-                ActivityCompat.requestPermissions(activity!!,
-                        arrayOf(Manifest.permission.CAMERA),
-                        MY_CAMERA_PERMISSION)
-            } else {
-                startBarcodeScanner()
-            }
-        }
-    }
+        adapter = MainListAdapter(context!!, viewModel)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //Fragment Lifecycle Hack from https://medium.com/@BladeCoder/architecture-components-pitfalls-part-1-9300dd969808
+        val thisLifecycleOwner = getViewLifecycleOwner()
+        if (thisLifecycleOwner != null) {
 
-        if (requestCode == IntentIntegrator.REQUEST_CODE) {
-            val result= IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-            if (result?.contents != null) {
+            viewModel.deletedItem.observe(thisLifecycleOwner, Observer deletedItemObserver@{
+                deletedRecord ->
+                    if (deletedRecord  == null) return@deletedItemObserver
+                    showUndoSnackbar(deletedRecord, getString(R.string.address_deleted))
+            })
 
-                var bitcoinAddress= result.contents
-                val bitcoinAddressPrefix = getString(R.string.bitcoin_addr_prefix)
+            viewModel.data.observe(thisLifecycleOwner, Observer<List<WalletRecord>> dbObserver@{
 
-                if (bitcoinAddress.startsWith(bitcoinAddressPrefix,true)) {
-                    bitcoinAddress = bitcoinAddress.substring(bitcoinAddressPrefix.length)
+                if (it == null || it.isEmpty()) {
+                    _thisView.layoutEmptyList.visibility = View.VISIBLE
+                } else {
+                    _thisView.layoutEmptyList.visibility = View.GONE
                 }
 
-                activity?.supportFragmentManager?.beginTransaction()
-                        ?.replace(R.id.container, DetailFragment.newInstance(bitcoinAddress))
-                        ?.addToBackStack(DetailFragment.TAG)
-                        ?.commit()
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
+                adapter.submitList(it)
+            })
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == MY_CAMERA_PERMISSION ) {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startBarcodeScanner()
-                }
-            }
         }
 
-    private fun startBarcodeScanner() {
-        val intentIntegrator = IntentIntegrator.forSupportFragment(this)
-        intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
-        intentIntegrator.setPrompt(getString(R.string.scan_qr_code))
-        intentIntegrator.setCameraId(0)  // Use a specific camera of the device
-        intentIntegrator.setBeepEnabled(false)
-        intentIntegrator.setBarcodeImageEnabled(false)
-        intentIntegrator.setOrientationLocked(true)
-        intentIntegrator.initiateScan()
+        val recyclerView = _thisView.recyclerViewMain
+
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.setHasFixedSize(false)
+        recyclerView.adapter = adapter
+        adapter.submitList(null)
+
+        val mDividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        recyclerView.addItemDecoration(mDividerItemDecoration)
     }
 }

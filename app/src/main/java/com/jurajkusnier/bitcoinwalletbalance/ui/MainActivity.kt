@@ -3,7 +3,7 @@ package com.jurajkusnier.bitcoinwalletbalance.ui
 import android.os.Bundle
 import android.view.MenuItem
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.main.ParentFragment
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
 
@@ -19,7 +19,7 @@ class MainActivity: DaggerAppCompatActivity() {
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, MainFragment.newInstance())
+                    .replace(R.id.container, ParentFragment.newInstance())
                     .commitNow()
         }
     }

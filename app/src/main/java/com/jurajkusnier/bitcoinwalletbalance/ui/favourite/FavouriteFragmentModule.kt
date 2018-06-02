@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.detail
+package com.jurajkusnier.bitcoinwalletbalance.ui.favourite
 
 import android.arch.lifecycle.ViewModel
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelKey
@@ -8,13 +8,12 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 
 @Module
-internal abstract class DetailFragmentModule {
-
+internal abstract class FavouriteFragmentModule {
     @Binds
     @IntoMap
-    @ViewModelKey(DetailViewModel::class)
-    abstract fun bindJobsViewModel( viewModel: DetailViewModel): ViewModel
+    @ViewModelKey(FavouriteViewModel::class)
+    abstract fun bindViewModel( viewModel: FavouriteViewModel): ViewModel
 
     @ContributesAndroidInjector
-    abstract fun contributeDetailFragment(): DetailFragment
+    abstract fun contributeFragment(): FavouriteFragment
 }

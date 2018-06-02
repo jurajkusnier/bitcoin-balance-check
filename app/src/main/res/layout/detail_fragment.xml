@@ -133,7 +133,7 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="12sp"/>
                         <TextView
-                                android:text="@string/default_zero_EUR"
+                                android:text="@string/default_zero_BTC"
                                 app:layout_constraintTop_toBottomOf="@+id/textTotalSentLabel"
                                 app:layout_constraintStart_toStartOf="parent"
                                 android:layout_marginLeft="25dp"

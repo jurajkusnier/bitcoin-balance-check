@@ -8,4 +8,7 @@
     <color name="colorInvisible">#00FFFFFF</color>
     <color name="colorSelected">#22FFFFFF</color>
     <color name="colorGrayBackground">#AAAAAA</color>
+    <color name="colorSnackbar">#424242</color>
+    <color name="colorTabActive">#FFFFFFFF</color>
+    <color name="colorTabInactive">#FBDFC3</color>
 </resources>

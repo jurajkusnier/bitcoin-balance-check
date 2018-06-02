@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/menu_items_group_1">
+        <item android:id="@+id/menu_favourite"
+              android:title="@string/favourites"
+              android:icon="@drawable/ic_favorite_white_24dp"
+        />
+        <item android:id="@+id/menu_unfavourite"
+              android:title="@string/unfavourite"
+              android:icon="@drawable/ic_favorite_border_white_24dp"
+        />
+        <item android:id="@+id/menu_edit"
+              android:title="@string/edit"
+              android:icon="@drawable/ic_edit_white_24dp"
+        />
+    </group>
+    <group android:id="@+id/menu_items_group_2">
+        <item android:id="@+id/menu_delete"
+              android:title="@string/delete"
+              android:icon="@android:drawable/ic_menu_delete"
+        />
+    </group>
+
+</menu>

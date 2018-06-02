@@ -18,6 +18,17 @@
     <string name="a_few_seconds_ago">a few seconds ago</string>
     <string name="scan_qr_code">Scan a QR Code</string>
     <string name="bitcoin_addr_prefix">bitcoin:</string>
+    <string name="favourites">Favourites</string>
+    <string name="favourite">Favourite</string>
+    <string name="unfavourite">Unfavourite</string>
+    <string name="history">History</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="favourites_list_is_empty">Favourites list is empty</string>
+    <string name="history_is_empty">History is empty</string>
+    <string name="address_unfavourited">Address was unfavourited</string>
+    <string name="undo">Undo</string>
+    <string name="address_deleted">Address was deleted from history</string>
     <plurals name="x_min_ago">
         <item quantity="one">%d minute ago</item>
         <item quantity="other">%d minutes ago</item>

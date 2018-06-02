@@ -25,7 +25,7 @@ data class OneTransaction(
 
 data class OneInput(
         val sequence: Long,
-        val prev_out: PrevOut,
+        val prev_out: PrevOut?,
         val script:String)
 
 data class PrevOut(val addr: String,

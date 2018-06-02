@@ -13,7 +13,8 @@ import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import kotlinx.android.synthetic.main.transaction_layout.view.*
 
-class TransactionListAdapter(private val myWalletID:String, private val transactions:Array<OneTransaction>, private val context:Context):RecyclerView.Adapter<TransactionListAdapter.ViewHolder>() {
+class TransactionListAdapter(private val myWalletID:String, private val transactions:Array<OneTransaction>, private val context:Context):
+        RecyclerView.Adapter<TransactionListAdapter.ViewHolder>() {
 
     private lateinit var recyclerView: ViewGroup
     private var mExpandedPosition = RecyclerView.NO_POSITION
@@ -65,7 +66,7 @@ class TransactionListAdapter(private val myWalletID:String, private val transact
             var sumGet = 0L
 
             for (item in data.inputs) {
-                if (myWalletID == item.prev_out.addr) {
+                if (myWalletID == item.prev_out?.addr) {
                     sumSent += item.prev_out.value
                 }
             }
