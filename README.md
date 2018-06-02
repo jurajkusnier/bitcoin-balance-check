@@ -5,9 +5,9 @@ This project is based on **Android App Template** from https://github.com/jurajk
 ## About
 Wealth Check allows you to check balance an history of any bitcoin wallet. Just scan bitcoin address QR code to see all important information like bitcoin balance, fiat balance by current conversation rate, transactions history, etc. All scanned wallets are safely stored on your phone for offline access. You can sort wallets in the favorites list.
 
-![Screenshot](https://github.com/jurajkusnier/bitcoin-balance-check/raw/master/screenshots/device-2018-06-02-223418.png)
-![Screenshot](https://github.com/jurajkusnier/bitcoin-balance-check/raw/master/screenshots/device-2018-06-02-223449.png)
-![Screenshot](https://github.com/jurajkusnier/bitcoin-balance-check/raw/master/screenshots/device-2018-06-02-223501.png)
+![Screenshot](https://github.com/jurajkusnier/bitcoin-balance-check/raw/master/screenshots/device-2018-06-02-223449.png | width=200)
+![Screenshot](https://github.com/jurajkusnier/bitcoin-balance-check/raw/master/screenshots/device-2018-06-02-223501.png | width=200)
+![Screenshot](https://github.com/jurajkusnier/bitcoin-balance-check/raw/master/screenshots/device-2018-06-02-223418.png | width=200)
 
 ## Codebase
 The project is written in Kotlin. Following MVVM architecture and using Android Jetpack libraries like ViewModel, Room, LiveData etc. Project is structured to modules divided by features. Dependencies between modules are solved by dependency injections with Dagger 2.   
