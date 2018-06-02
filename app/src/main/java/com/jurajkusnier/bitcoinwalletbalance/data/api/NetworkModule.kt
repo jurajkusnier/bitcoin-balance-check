@@ -58,10 +58,6 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGitHubJobsApiService(retrofit: Retrofit): GitHubJobsApiService = retrofit.create(GitHubJobsApiService::class.java)
-
-    @Provides
-    @Singleton
     fun provideBlockchainApiService(retrofit: Retrofit): BlockchainApiService = retrofit.create(BlockchainApiService::class.java)
 
     @Provides
