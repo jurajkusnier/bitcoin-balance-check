@@ -1,6 +1,5 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
-import android.app.ActionBar
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -12,7 +11,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import com.jurajkusnier.bitcoinwalletbalance.R
@@ -136,10 +134,10 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             swiperefresh.isRefreshing = (it == DetailViewModel.LoadingState.LOADING)
             optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = (it != DetailViewModel.LoadingState.LOADING)
 
-            if (it == DetailViewModel.LoadingState.ERROR) {
-                showErrorSnackbar()
-            } else {
-                hideErrorShackbar()
+            when (it) {
+                DetailViewModel.LoadingState.ERROR -> showErrorSnackbar(false)
+                DetailViewModel.LoadingState.ERROR_OFFLINE -> showErrorSnackbar(true)
+                else -> hideErrorShackbar()
             }
         })
 
@@ -149,8 +147,15 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
     private var errorSnackbar: Snackbar? = null
     private var colorAccent:Int = Color.RED
 
-    private fun showErrorSnackbar() {
-        errorSnackbar = Snackbar.make(detailLayout,getString(R.string.network_connection_error),Snackbar.LENGTH_INDEFINITE)
+    private fun showErrorSnackbar(isOffline: Boolean) {
+
+        errorSnackbar = Snackbar.make(detailLayout,getString(
+                if (isOffline) {
+                    R.string.offline_error
+                } else {
+                    R.string.network_connection_error
+                }
+                ),Snackbar.LENGTH_INDEFINITE)
         errorSnackbar?.view?.setBackgroundColor(colorAccent)
         errorSnackbar?.show()
     }

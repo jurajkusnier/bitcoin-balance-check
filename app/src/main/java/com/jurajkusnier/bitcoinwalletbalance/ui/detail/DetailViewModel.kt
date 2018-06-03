@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
+import com.jurajkusnier.bitcoinwalletbalance.data.api.OfflineException
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
 import io.reactivex.disposables.Disposable
@@ -14,7 +15,7 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
 
     private val TAG = DetailViewModel::class.java.simpleName
 
-    enum class LoadingState {DONE, LOADING, ERROR}
+    enum class LoadingState {DONE, LOADING, ERROR, ERROR_OFFLINE}
 
     private var disposables = mutableListOf<Disposable>()
     private var mWalletID: String? = null
@@ -78,7 +79,11 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
                                 _walletRecord.value = v
                             },
                             { error ->
-                                _loadingState.value = LoadingState.ERROR
+                                if (error is OfflineException) {
+                                    _loadingState.value = LoadingState.ERROR_OFFLINE
+                                } else {
+                                    _loadingState.value = LoadingState.ERROR
+                                }
                                 _rawData.value = null
 
                                 Log.e(TAG,Log.getStackTraceString(error))
