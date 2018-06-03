@@ -12,9 +12,7 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.google.zxing.integration.android.IntentIntegrator
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
@@ -56,12 +54,13 @@ class ParentFragment : Fragment() {
                 }
             }
         }
+
+        setHasOptionsMenu(true)
     }
 
     private fun initView(context: AppCompatActivity) {
 
-        context.setSupportActionBar(toolbarResults)
-
+        context.setSupportActionBar(toolbar)
 
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.favourites)).setIcon(R.drawable.ic_favorite_white_24dp))
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.history)).setIcon(R.drawable.ic_history_white_24dp))
@@ -149,5 +148,10 @@ class ParentFragment : Fragment() {
         intentIntegrator.setBarcodeImageEnabled(false)
         intentIntegrator.setOrientationLocked(true)
         intentIntegrator.initiateScan()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.parent_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

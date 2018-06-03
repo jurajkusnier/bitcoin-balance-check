@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorRed">#f52b2b</color>
     <color name="colorDetailsTop">#444</color>
+    <color name="colorMainBackground">#333</color>
     <color name="colorInvisible">#00FFFFFF</color>
     <color name="colorSelected">#22FFFFFF</color>
     <color name="colorGrayBackground">#AAAAAA</color>
