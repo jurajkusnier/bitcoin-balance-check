@@ -29,6 +29,8 @@
     <string name="address_unfavourited">Address was unfavourited</string>
     <string name="undo">Undo</string>
     <string name="address_deleted">Address was deleted from history</string>
+    <string name="refresh">Refresh</string>
+    <string name="settings">Settings</string>
     <plurals name="x_min_ago">
         <item quantity="one">%d minute ago</item>
         <item quantity="other">%d minutes ago</item>

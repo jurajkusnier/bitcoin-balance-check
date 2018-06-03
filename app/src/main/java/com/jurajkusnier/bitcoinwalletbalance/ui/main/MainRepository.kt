@@ -36,7 +36,7 @@ class MainRepository @Inject constructor(private val appDatabase: AppDatabase) {
                 .subscribe ()
     }
 
-    //Duplicated
+    //TODO: refactor Repositories, Duplicated in DetailViewModel
     fun saveRecordToHistory(record:WalletRecord) {
 
         Observable.fromCallable {

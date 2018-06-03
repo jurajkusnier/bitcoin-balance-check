@@ -1,5 +1,6 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
+import android.app.ActionBar
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -11,18 +12,18 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.util.DisplayMetrics
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.jurajkusnier.bitcoinwalletbalance.R
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.detail_fragment.*
+import kotlinx.android.synthetic.main.detail_fragment.view.*
 import javax.inject.Inject
 
 
@@ -58,12 +59,22 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.detail_fragment, container, false)
+
+        val view = inflater.inflate(R.layout.detail_fragment, container, false)
+
+        //Let's make detail view look nicer on every screen
+        context?.let {
+            val displayMetrics = it.resources.displayMetrics
+            view.detailCardView.minimumHeight = displayMetrics.heightPixels
+        }
+
+        return view
     }
+
+    var walletRecord:WalletRecord? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         //ViewModel
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
 
@@ -84,11 +95,25 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             initView(thisContext)
         }
 
+        viewModel.walletRecord.observe(this, Observer walletRecordObserver@{
+
+            walletRecord = it
+
+            optionsMenu?.findItem(R.id.menu_favourite)?.isVisible = it?.favourite == false
+            optionsMenu?.findItem(R.id.menu_unfavourite)?.isVisible = it?.favourite == true
+            optionsMenu?.findItem(R.id.menu_edit)?.isVisible = (it != null)
+
+            textFinalBalanceCrypto.text = sathoshiToBTCstring(it?.satoshis ?: 0)
+        })
+
         viewModel.rawData.observe (this, Observer<RawData> RawDataObserver@{
             rawData ->
             Log.d(TAG,rawData.toString())
 
-            if (rawData == null) return@RawDataObserver
+            if (rawData == null) {
+                textViewNoTransaction.visibility = View.VISIBLE
+                return@RawDataObserver
+            }
 
             val balanceInSatoshi = rawData.final_balance
 
@@ -109,12 +134,16 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
 
         viewModel.loadingState.observe(this, Observer<DetailViewModel.LoadingState> {
             swiperefresh.isRefreshing = (it == DetailViewModel.LoadingState.LOADING)
+            optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = (it != DetailViewModel.LoadingState.LOADING)
+
             if (it == DetailViewModel.LoadingState.ERROR) {
                 showErrorSnackbar()
             } else {
                 hideErrorShackbar()
             }
         })
+
+        setHasOptionsMenu(true)
     }
 
     private var errorSnackbar: Snackbar? = null
@@ -179,4 +208,37 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             }
         }
     }
+
+    var optionsMenu: Menu? = null
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        optionsMenu = menu
+        inflater?.inflate(R.menu.detail_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when(item?.itemId) {
+            R.id.menu_refresh -> {
+                viewModel.loadWalletDetails()
+                true
+            }
+            R.id.menu_favourite -> {
+                walletRecord?.let {
+                    viewModel.favouriteRecord(it)
+                }
+                true
+            }
+            R.id.menu_unfavourite-> {
+                walletRecord?.let {
+                    viewModel.unfavouriteRecord(it)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+
+    }
+
 }
