@@ -8,7 +8,7 @@ import com.jurajkusnier.bitcoinwalletbalance.data.api.OfflineException
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.data.model.LiveExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 
@@ -18,7 +18,7 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
 
     enum class LoadingState {DONE, LOADING, ERROR, ERROR_OFFLINE}
 
-    private var disposables = mutableListOf<Disposable>()
+    private var disposables = CompositeDisposable()
     private var mWalletID: String? = null
 
     //Live Data
@@ -47,20 +47,15 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
     }
 
     override fun onCleared() {
-        clearDisposables()
         super.onCleared()
-    }
 
-    private fun clearDisposables() {
-        for (disposable in disposables) {
-            disposable.dispose()
-        }
+        // clear all the subscription
         disposables.clear()
     }
 
     fun loadWalletDetails() {
 
-        clearDisposables()
+        disposables.clear()
 
         _loadingState.value = LoadingState.LOADING
 
