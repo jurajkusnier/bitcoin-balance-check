@@ -11,12 +11,13 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.*
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
+import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerFragment
@@ -69,7 +70,26 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
         return view
     }
 
-    var walletRecord:WalletRecord? = null
+    var _walletRecord:WalletRecord? = null
+    var _exchangeRate:ExchangeRate? = null
+    var _rawData:RawData? = null
+
+    private fun getBitcoinPriceInMoney():String? {
+        _exchangeRate?.let { rate ->
+
+            var satoshiBalance = -1L
+
+            _walletRecord?.let { satoshiBalance = it.satoshis }
+
+            _rawData?.let { satoshiBalance = it.final_balance }
+
+            if (satoshiBalance >= 0) {
+                return "${(rate.price * satoshiBalance / 100_000_000).format(2)} ${rate.currency}"
+            }
+        }
+
+        return null
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -93,20 +113,29 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             initView(thisContext)
         }
 
+        viewModel.liveExchangeRate.observe(this, Observer {
+
+            _exchangeRate = it
+            textFinalBalanceMoney.text = getBitcoinPriceInMoney()?:""
+
+        })
+
         viewModel.walletRecord.observe(this, Observer walletRecordObserver@{
 
-            walletRecord = it
+            _walletRecord = it
 
             optionsMenu?.findItem(R.id.menu_favourite)?.isVisible = it?.favourite == false
             optionsMenu?.findItem(R.id.menu_unfavourite)?.isVisible = it?.favourite == true
             optionsMenu?.findItem(R.id.menu_edit)?.isVisible = (it != null)
 
             textFinalBalanceCrypto.text = sathoshiToBTCstring(it?.satoshis ?: 0)
+            textFinalBalanceMoney.text = getBitcoinPriceInMoney()?:""
         })
 
         viewModel.rawData.observe (this, Observer<RawData> RawDataObserver@{
             rawData ->
-            Log.d(TAG,rawData.toString())
+
+            _rawData = rawData
 
             if (rawData == null) {
                 textViewNoTransaction.visibility = View.VISIBLE
@@ -128,6 +157,8 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
                 recyclerViewTransactions.adapter.notifyDataSetChanged()
                 recyclerViewTransactions.isNestedScrollingEnabled = false
             }
+
+            textFinalBalanceMoney.text = getBitcoinPriceInMoney()?:""
         })
 
         viewModel.loadingState.observe(this, Observer<DetailViewModel.LoadingState> {
@@ -229,13 +260,13 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
                 true
             }
             R.id.menu_favourite -> {
-                walletRecord?.let {
+                _walletRecord?.let {
                     viewModel.favouriteRecord(it)
                 }
                 true
             }
             R.id.menu_unfavourite-> {
-                walletRecord?.let {
+                _walletRecord?.let {
                     viewModel.unfavouriteRecord(it)
                 }
                 true

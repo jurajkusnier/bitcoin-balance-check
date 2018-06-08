@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.data.api.OfflineException
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+import com.jurajkusnier.bitcoinwalletbalance.data.model.LiveExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -21,6 +22,8 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
     private var mWalletID: String? = null
 
     //Live Data
+    @Inject lateinit var liveExchangeRate: LiveExchangeRate
+
     private val _loadingState:MutableLiveData<LoadingState> = MutableLiveData()
     val loadingState:LiveData<LoadingState>
         get() = _loadingState

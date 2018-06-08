@@ -79,11 +79,35 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideBlockchainApiService(retrofit: Retrofit): BlockchainApiService = retrofit.create(BlockchainApiService::class.java)
+    @Named("CoinmarketcapUrl")
+    fun provideCoinmarketcapUrl(): String{
+        return "https://api.coinmarketcap.com/"
+    }
 
     @Provides
     @Singleton
-    fun provideRetrofit(@Named("BlockchainUrl") baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
+    fun provideBlockchainApiService(@Named("Blockchain") retrofit: Retrofit): BlockchainApiService = retrofit.create(BlockchainApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCoinmarketcapApiService(@Named("Coinmarketcap") retrofit: Retrofit): CoinmarketcapApiService = retrofit.create(CoinmarketcapApiService::class.java)
+
+    @Provides
+    @Singleton
+    @Named("Blockchain")
+    fun provideRetrofitForBlockchainApi(@Named("BlockchainUrl") baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .baseUrl(baseUrl)
+                .client(httpClient)
+                .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("Coinmarketcap")
+    fun provideRetrofitForCoinmarketcapApi(@Named("CoinmarketcapUrl") baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
