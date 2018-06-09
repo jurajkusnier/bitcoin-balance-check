@@ -9,7 +9,6 @@ import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.model.LiveExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
-import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
 import com.squareup.moshi.Moshi
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
@@ -34,13 +33,6 @@ class DetailViewModel @Inject constructor(private val moshi: Moshi, private val 
     private val _walletDetail:MutableLiveData<WalletRecordView> = MutableLiveData()
     val walletDetail:LiveData<WalletRecordView>
         get() = _walletDetail
-
-//    private val _rawData:MutableLiveData<RawData> = MutableLiveData()
-//    val rawData:LiveData<RawData>
-//        get() = _rawData
-//    private val _walletRecord:MutableLiveData<WalletRecord> = MutableLiveData()
-//    val walletRecord:LiveData<WalletRecord>
-//            get() = _walletRecord
 
     init {
         _loadingState.value = LoadingState.DONE
