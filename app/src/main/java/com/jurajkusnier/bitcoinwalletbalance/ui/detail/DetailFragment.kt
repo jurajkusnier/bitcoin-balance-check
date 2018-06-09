@@ -13,12 +13,12 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
-import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
+import com.squareup.moshi.Moshi
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.detail_fragment.*
@@ -30,6 +30,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
 
     private lateinit var viewModel:DetailViewModel
     @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var moshi: Moshi
 
     companion object {
         val TAG = DetailFragment::class.java.simpleName
@@ -70,25 +71,17 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
         return view
     }
 
-    var _walletRecord:WalletRecord? = null
+    var _walletRecord:WalletRecordView? = null
     var _exchangeRate:ExchangeRate? = null
-    var _rawData:RawData? = null
 
-    private fun getBitcoinPriceInMoney():String? {
+    private fun getBitcoinPriceInMoney():String {
         _exchangeRate?.let { rate ->
-
-            var satoshiBalance = -1L
-
-            _walletRecord?.let { satoshiBalance = it.satoshis }
-
-            _rawData?.let { satoshiBalance = it.final_balance }
-
-            if (satoshiBalance >= 0) {
-                return "${(rate.price * satoshiBalance / 100_000_000).format(2)} ${rate.currency}"
+            _walletRecord?.let {
+                return "${(rate.price * it.finalBalance / 100_000_000).format(2)} ${rate.currency}"
             }
         }
 
-        return null
+        return ""
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -106,6 +99,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
 
 
         textWalletID.text = walletID
+
         //UI initialization
         val thisContext = activity
         if (thisContext != null) {
@@ -116,11 +110,11 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
         viewModel.liveExchangeRate.observe(this, Observer {
 
             _exchangeRate = it
-            textFinalBalanceMoney.text = getBitcoinPriceInMoney()?:""
+            textFinalBalanceMoney.text = getBitcoinPriceInMoney()
 
         })
 
-        viewModel.walletRecord.observe(this, Observer walletRecordObserver@{
+        viewModel.walletDetail.observe(this, Observer walletRecordObserver@{
 
             _walletRecord = it
 
@@ -128,37 +122,23 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             optionsMenu?.findItem(R.id.menu_unfavourite)?.isVisible = it?.favourite == true
             optionsMenu?.findItem(R.id.menu_edit)?.isVisible = (it != null)
 
-            textFinalBalanceCrypto.text = sathoshiToBTCstring(it?.satoshis ?: 0)
-            textFinalBalanceMoney.text = getBitcoinPriceInMoney()?:""
-        })
+            textFinalBalanceCrypto.text = sathoshiToBTCstring(it?.finalBalance ?: 0)
+            textTotalReceived.text = sathoshiToBTCstring(it?.totalReceived ?: 0)
+            textTotalSent.text = sathoshiToBTCstring(it?.totalSent ?: 0)
 
-        viewModel.rawData.observe (this, Observer<RawData> RawDataObserver@{
-            rawData ->
+            if (thisContext != null && it != null) {
+                    recyclerViewTransactions.adapter = TransactionListAdapter(it.address, it.transactions, thisContext)
+                    recyclerViewTransactions.adapter.notifyDataSetChanged()
+                    recyclerViewTransactions.isNestedScrollingEnabled = false
+            }
 
-            _rawData = rawData
-
-            if (rawData == null) {
+            if (it == null || it.transactions.isEmpty()) {
                 textViewNoTransaction.visibility = View.VISIBLE
-                return@RawDataObserver
+            } else {
+                textViewNoTransaction.visibility = View.GONE
             }
 
-            val balanceInSatoshi = rawData.final_balance
-
-            textViewNoTransaction.visibility = if (rawData.txs.isNotEmpty()) View.GONE else View.VISIBLE
-
-            newTitle.text = textFinalBalanceCrypto.text
-
-            textFinalBalanceCrypto.text = sathoshiToBTCstring(balanceInSatoshi)
-            textTotalReceived.text = sathoshiToBTCstring(rawData.total_received)
-            textTotalSent.text = sathoshiToBTCstring(rawData.total_sent)
-
-            if (thisContext != null) {
-                recyclerViewTransactions.adapter = TransactionListAdapter(rawData.address, rawData.txs, thisContext)
-                recyclerViewTransactions.adapter.notifyDataSetChanged()
-                recyclerViewTransactions.isNestedScrollingEnabled = false
-            }
-
-            textFinalBalanceMoney.text = getBitcoinPriceInMoney()?:""
+            textFinalBalanceMoney.text = getBitcoinPriceInMoney()
         })
 
         viewModel.loadingState.observe(this, Observer<DetailViewModel.LoadingState> {
@@ -261,13 +241,13 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             }
             R.id.menu_favourite -> {
                 _walletRecord?.let {
-                    viewModel.favouriteRecord(it)
+                    viewModel.favouriteRecord()
                 }
                 true
             }
             R.id.menu_unfavourite-> {
                 _walletRecord?.let {
-                    viewModel.unfavouriteRecord(it)
+                    viewModel.unfavouriteRecord()
                 }
                 true
             }

@@ -19,6 +19,12 @@ interface AppDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addWalletRecord(walletRecord: WalletRecord)
 
+    @Query("UPDATE WalletRecord SET favourite = 1 WHERE address = :address")
+    fun favouriteRecord(address: String)
+
+    @Query("UPDATE WalletRecord SET favourite = 0 WHERE address = :address")
+    fun unfavouriteRecord(address: String)
+
     @Delete
     fun deleteWalletRecord(walletRecord: WalletRecord)
 

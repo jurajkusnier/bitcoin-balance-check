@@ -47,4 +47,24 @@ class MainRepository @Inject constructor(private val appDatabase: AppDatabase) {
                 .doOnError { Log.e(TAG,Log.getStackTraceString(it)) }
                 .subscribe ()
     }
+
+    fun favouriteRecord(walletID: String) {
+        Observable.fromCallable {
+            appDatabase.walletRecordDao().favouriteRecord(walletID)
+        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { Log.e(TAG,Log.getStackTraceString(it)) }
+                .subscribe ()
+    }
+
+    fun unfavouriteRecord(walletID: String) {
+        Observable.fromCallable {
+            appDatabase.walletRecordDao().unfavouriteRecord(walletID)
+        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { Log.e(TAG,Log.getStackTraceString(it)) }
+                .subscribe ()
+    }
 }

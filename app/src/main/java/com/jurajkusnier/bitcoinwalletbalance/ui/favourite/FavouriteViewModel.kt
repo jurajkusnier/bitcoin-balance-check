@@ -15,7 +15,6 @@ class FavouriteViewModel @Inject constructor (private val mainRepository: MainRe
 
     override fun unfavouriteRecord(record: WalletRecord) {
         val recordCopy= record.copy()
-        recordCopy.favourite = true
         unfavouritedItem.value = recordCopy
 
         super.unfavouriteRecord(record)

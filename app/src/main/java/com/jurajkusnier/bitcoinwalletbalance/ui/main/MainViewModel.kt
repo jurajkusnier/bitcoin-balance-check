@@ -22,13 +22,11 @@ abstract class MainViewModel constructor(private val mainRepository: MainReposit
     }
 
     fun favouriteRecord(record: WalletRecord) {
-        record.favourite = true
-        mainRepository.saveRecordToHistory(record)
+        mainRepository.favouriteRecord(record.address)
     }
 
     open fun unfavouriteRecord(record: WalletRecord) {
-        record.favourite = false
-        mainRepository.saveRecordToHistory(record)
+        mainRepository.unfavouriteRecord(record.address)
     }
 
     fun addRecord(record: WalletRecord) {

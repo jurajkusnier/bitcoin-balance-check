@@ -6,13 +6,16 @@ import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.data.api.OfflineException
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.model.LiveExchangeRate
+import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
+import com.squareup.moshi.Moshi
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 
-class DetailViewModel @Inject constructor(private val detailRepository: DetailRepository): ViewModel() {
+class DetailViewModel @Inject constructor(private val moshi: Moshi, private val detailRepository: DetailRepository): ViewModel() {
 
     private val TAG = DetailViewModel::class.java.simpleName
 
@@ -27,12 +30,17 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
     private val _loadingState:MutableLiveData<LoadingState> = MutableLiveData()
     val loadingState:LiveData<LoadingState>
         get() = _loadingState
-    private val _rawData:MutableLiveData<RawData> = MutableLiveData()
-    val rawData:LiveData<RawData>
-        get() = _rawData
-    private val _walletRecord:MutableLiveData<WalletRecord> = MutableLiveData()
-    val walletRecord:LiveData<WalletRecord>
-            get() = _walletRecord
+
+    private val _walletDetail:MutableLiveData<WalletRecordView> = MutableLiveData()
+    val walletDetail:LiveData<WalletRecordView>
+        get() = _walletDetail
+
+//    private val _rawData:MutableLiveData<RawData> = MutableLiveData()
+//    val rawData:LiveData<RawData>
+//        get() = _rawData
+//    private val _walletRecord:MutableLiveData<WalletRecord> = MutableLiveData()
+//    val walletRecord:LiveData<WalletRecord>
+//            get() = _walletRecord
 
     init {
         _loadingState.value = LoadingState.DONE
@@ -64,17 +72,16 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
             disposables.add(detailRepository.loadDetail(address)
                     .subscribe(
                             { data ->
-                                _loadingState.value = LoadingState.DONE
-                                _rawData.value = data
 
                                 val timestamp = System.currentTimeMillis()
-                                val v = walletRecord.value ?: WalletRecord(address,timestamp,true,false,data.final_balance)
-                                v.lastAccess = timestamp
-                                v.satoshis = data.final_balance
-                                v.showInHistory = true
+                                val moshiAdapter =  moshi.adapter(Array<OneTransaction>::class.java)
+                                val transactionsJson = moshiAdapter.toJson(data.txs)
 
-                                detailRepository.saveRecordToHistory(v)
-                                _walletRecord.value = v
+                                val newRecord = WalletRecord(address,timestamp,timestamp,true,_walletDetail.value?.favourite == true, data.total_received, data.total_sent, data.final_balance,transactionsJson)
+                                detailRepository.saveRecordToHistory(newRecord)
+
+                                _walletDetail.value = WalletRecordView(data.address, timestamp,timestamp,true,_walletDetail.value?.favourite == true,data.total_received,data.total_sent,data.final_balance,data.txs)
+                                _loadingState.value = LoadingState.DONE
                             },
                             { error ->
                                 if (error is OfflineException) {
@@ -82,37 +89,39 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
                                 } else {
                                     _loadingState.value = LoadingState.ERROR
                                 }
-                                _rawData.value = null
-
                                 Log.e(TAG,Log.getStackTraceString(error))
                             }
                     ))
 
            disposables.add(detailRepository.loadDetailFromDatabase(address)
                    .doOnSuccess {
-                       data -> _walletRecord.value = data
+
+                       data ->
+                       val moshiAdapter =  moshi.adapter(Array<OneTransaction>::class.java)
+                       val transactions = moshiAdapter.fromJson(data.transactions)?: emptyArray()
+                       _walletDetail.value = WalletRecordView(data.address,data.lastAccess,data.lastUpdate,data.showInHistory,data.favourite,data.totalReceived,data.totalSent,data.finalBalance,transactions)
                    }.doOnError {
-                       _ -> _walletRecord.value = null
+                       _ -> _walletDetail.value = null
                    }.doOnComplete {
-                       _walletRecord.value = null
+                       _walletDetail.value  = null
                    }.subscribe())
         }
 
     }
 
     //TODO: refactor ViewModels, duplicated in MainViewModel
-    fun favouriteRecord(record: WalletRecord) {
-        record.favourite = true
-        detailRepository.saveRecordToHistory(record)
-
-        _walletRecord.value = record
+    fun favouriteRecord() {
+        val address = _walletDetail.value?.address
+        if (address != null) detailRepository.favouriteRecord(address)
+        val newWalletRecordView = _walletDetail.value?.copy(favourite = true)
+        _walletDetail.value = newWalletRecordView
     }
 
-    fun unfavouriteRecord(record: WalletRecord) {
-        record.favourite = false
-        detailRepository.saveRecordToHistory(record)
-
-        _walletRecord.value = record
+    fun unfavouriteRecord() {
+        val address = _walletDetail.value?.address
+        if (address != null) detailRepository.unfavouriteRecord(address)
+        val newWalletRecordView = _walletDetail.value?.copy(favourite = false)
+        _walletDetail.value = newWalletRecordView
     }
 
 
