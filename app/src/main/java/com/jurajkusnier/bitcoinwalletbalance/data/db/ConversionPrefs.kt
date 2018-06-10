@@ -10,8 +10,11 @@ class ConversionPrefs @Inject constructor(context: Application) {
     val TAG = ConversionPrefs::class.java.simpleName
 
     val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val KEY_SELECTED_CURRENCY = "selected_currency"
 
-    private val currencyCodes = arrayOf("USD", "EUR")
+    companion object {
+        val currencyCodes = arrayOf( "AUD","BRL","CAD","CHF","CLP","CNY","CZK","DKK","EUR","GBP","HKD","HUF","IDR","ILS","INR","JPY","KRW","MXN","MYR","NOK","NZD","PHP","PKR","PLN","RUB","SEK","SGD","THB","TRY","TWD","USD","ZAR")
+    }
 
     fun saveCurrency(currency: CryptocurrencyInfo) {
         val editor = mSharedPreferences.edit()
@@ -26,9 +29,27 @@ class ConversionPrefs @Inject constructor(context: Application) {
         editor.apply()
     }
 
-    fun getLastUpdate(): Long = mSharedPreferences.getLong(getLastUpdateKey(),0L)
+    fun changeCurrency(currencyId:Int) {
+        if (currencyId < 0 || currencyId >= currencyCodes.size) return
 
-    fun getCurrencyCode():String = currencyCodes[1]
+        val editor = mSharedPreferences.edit()
+        editor.putInt(KEY_SELECTED_CURRENCY,currencyId)
+        editor.apply()
+    }
+
+    fun getLastUpdate(currencyCode:String? = null): Long {
+
+        if (currencyCode == null)
+            return  mSharedPreferences.getLong(getLastUpdateKey(), 0L)
+
+        return mSharedPreferences.getLong(getLastUpdateFromKey(currencyCode), 0L)
+    }
+
+    fun getCurrencyExchangeRate(currencyCode: String):Float = mSharedPreferences.getFloat(getCurrencyCodeFromKey(currencyCode),0f)
+
+    fun getCurrencyCode():String = currencyCodes[getCurrencyIndex()]
+
+    fun getCurrencyIndex():Int = mSharedPreferences.getInt(KEY_SELECTED_CURRENCY,8) // 8 = EUR
 
     fun getCurrencyCodeKey():String = getCurrencyCodeFromKey(getCurrencyCode())
 

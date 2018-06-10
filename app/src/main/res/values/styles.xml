@@ -9,4 +9,7 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Dialog.Alert">
+    </style>
+
 </resources>

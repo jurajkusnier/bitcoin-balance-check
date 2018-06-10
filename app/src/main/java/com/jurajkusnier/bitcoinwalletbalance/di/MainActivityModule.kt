@@ -7,6 +7,7 @@ import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragmentModule
 import com.jurajkusnier.bitcoinwalletbalance.ui.favourite.FavouriteFragmentModule
 import com.jurajkusnier.bitcoinwalletbalance.ui.history.HistoryFragmentModule
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainActivityViewModel
+import com.jurajkusnier.bitcoinwalletbalance.ui.settings.SettingDialogModule
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -26,6 +27,8 @@ internal abstract class MainActivityModule {
     @ContributesAndroidInjector(modules = [
         DetailFragmentModule::class,
         HistoryFragmentModule::class,
-        FavouriteFragmentModule::class])
+        FavouriteFragmentModule::class,
+        SettingDialogModule::class])
+
     internal abstract fun contributeMainActivity(): MainActivity
 }

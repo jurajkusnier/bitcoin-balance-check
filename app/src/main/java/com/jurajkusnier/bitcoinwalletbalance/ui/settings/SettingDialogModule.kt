@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.history
+package com.jurajkusnier.bitcoinwalletbalance.ui.settings
 
 import android.arch.lifecycle.ViewModel
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelKey
@@ -8,12 +8,12 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 
 @Module
-internal abstract class HistoryFragmentModule {
+interface SettingDialogModule {
     @Binds
     @IntoMap
-    @ViewModelKey(HistoryViewModel::class)
-    abstract fun bindViewModel( viewModel: HistoryViewModel): ViewModel
+    @ViewModelKey(SettingViewModel::class)
+    abstract fun bindViewModel( viewModel: SettingViewModel): ViewModel
 
     @ContributesAndroidInjector
-    abstract fun contributeFragment(): HistoryFragment
+    abstract fun contributeDialog(): SettingsDialog
 }

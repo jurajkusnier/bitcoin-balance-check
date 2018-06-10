@@ -7,6 +7,7 @@ import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainActivityViewModel
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.ParentFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.settings.SettingsDialog
 import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -47,6 +48,10 @@ class MainActivity: DaggerAppCompatActivity() {
         return when (item?.itemId) {
             android.R.id.home -> {
                 super.onBackPressed()
+                true
+            }
+            R.id.menu_settings -> {
+                SettingsDialog().show(supportFragmentManager,SettingsDialog.TAG)
                 true
             }
             else -> {
