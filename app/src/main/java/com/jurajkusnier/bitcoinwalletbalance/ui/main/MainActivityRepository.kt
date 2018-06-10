@@ -25,4 +25,7 @@ class MainActivityRepository @Inject constructor(private val coinmarketcapApi: C
             error -> Log.e(TAG, Log.getStackTraceString(error))
         })
     }
+
+    fun getLastCurrencyUpdate():Long = prefsModule.getLastUpdate()
+
 }

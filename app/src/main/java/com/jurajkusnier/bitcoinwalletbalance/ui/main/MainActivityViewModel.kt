@@ -18,13 +18,20 @@ class MainActivityViewModel @Inject constructor(private val mainActivityReposito
         }
     }
 
-    init {
-        handler.post(runnable)
-    }
-
     override fun onCleared() {
+        handler.removeCallbacks(runnable)
         mainActivityRepository.clear()
         super.onCleared()
+    }
+
+    fun onPause() {
+        handler.removeCallbacks(runnable)
+    }
+
+    fun onResume() {
+        val lastUpdate = mainActivityRepository.getLastCurrencyUpdate()
+        val timeDiff = System.currentTimeMillis() - lastUpdate
+        handler.postDelayed(runnable,UPDATE_DELAY - timeDiff)
     }
 
 }

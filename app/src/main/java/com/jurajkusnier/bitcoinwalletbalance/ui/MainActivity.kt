@@ -17,18 +17,30 @@ class MainActivity: DaggerAppCompatActivity() {
 
     val TAG = MainActivity::class.simpleName
 
+    lateinit var viewModel: MainActivityViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         //DI activity injection first
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, ParentFragment.newInstance())
                     .commitNow()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPause()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
