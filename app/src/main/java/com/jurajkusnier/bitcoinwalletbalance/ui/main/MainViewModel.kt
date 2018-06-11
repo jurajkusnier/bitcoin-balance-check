@@ -32,4 +32,8 @@ abstract class MainViewModel constructor(private val mainRepository: MainReposit
     fun addRecord(record: WalletRecord) {
         mainRepository.saveRecordToHistory(record)
     }
+
+    fun editRecord(record: WalletRecord) {
+
+    }
 }

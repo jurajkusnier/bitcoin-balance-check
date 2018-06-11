@@ -37,6 +37,9 @@
     <string name="last_updated">Last updated %s</string>
     <string name="last_updated_on">Last updated on %s</string>
     <string name="last_updated_time_format">MMM d, yyyy</string>
+    <string name="edit_dialog_text">Name your favourite wallet to distinguish it from others</string>
+    <string name="nickname">Nickname</string>
+    <string name="my_favourited_wallet">My Favourited Wallet</string>
     <plurals name="x_min_ago">
         <item quantity="one">%d minute ago</item>
         <item quantity="other">%d minutes ago</item>

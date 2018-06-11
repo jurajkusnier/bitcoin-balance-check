@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.jurajkusnier.bitcoinwalletbalance.ui.MainActivity
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragmentModule
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogModule
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogViewModel
 import com.jurajkusnier.bitcoinwalletbalance.ui.favourite.FavouriteFragmentModule
 import com.jurajkusnier.bitcoinwalletbalance.ui.history.HistoryFragmentModule
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainActivityViewModel
@@ -28,7 +30,8 @@ internal abstract class MainActivityModule {
         DetailFragmentModule::class,
         HistoryFragmentModule::class,
         FavouriteFragmentModule::class,
-        SettingDialogModule::class])
+        SettingDialogModule::class,
+        EditDialogModule::class])
 
     internal abstract fun contributeMainActivity(): MainActivity
 }

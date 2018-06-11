@@ -15,12 +15,14 @@ import android.view.ViewGroup
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
 import com.jurajkusnier.bitcoinwalletbalance.utils.DaggerLifecycleFragment
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import javax.inject.Inject
 
-abstract class MainFragment : DaggerLifecycleFragment() {
+abstract class MainFragment : DaggerLifecycleFragment(), EditDialogInterface {
 
     @Inject lateinit var viewModelFactory: ViewModelFactory
     private lateinit var _thisView:View
@@ -64,7 +66,7 @@ abstract class MainFragment : DaggerLifecycleFragment() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(getViewModelClass()) as MainViewModel
 
-        adapter = MainListAdapter(context!!, viewModel)
+        adapter = MainListAdapter(context!!, viewModel,this)
 
         //Fragment Lifecycle Hack from https://medium.com/@BladeCoder/architecture-components-pitfalls-part-1-9300dd969808
         val thisLifecycleOwner = getViewLifecycleOwner()
@@ -98,5 +100,9 @@ abstract class MainFragment : DaggerLifecycleFragment() {
 
         val mDividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(mDividerItemDecoration)
+    }
+
+    override fun showEditDialog(address:String, nickname:String) {
+        EditDialog.newInstance(address,nickname).show(fragmentManager, EditDialog.TAG)
     }
 }

@@ -53,12 +53,13 @@ class DetailRepository @Inject constructor(
                             val timestamp = System.currentTimeMillis()
                             val moshiAdapter =  moshi.adapter(Array<OneTransaction>::class.java)
                             val transactionsJson = moshiAdapter.toJson(it.txs)
-                            val newRecord = WalletRecord(address,timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance, transactionsJson)
+                            val nickname = lastWalletDetails?.nickname?:""
+                            val newRecord = WalletRecord(address, nickname, timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance, transactionsJson)
                             saveRecordToHistory(newRecord)
 
                             Log.d(TAG,"API respone: RawData($address,${it.final_balance})")
 
-                            lastWalletDetails = WalletRecordView(address,timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance,it.txs, false)
+                            lastWalletDetails = WalletRecordView(address, nickname, timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance,it.txs, false)
                             lastWalletDetails
 
                         }
@@ -69,7 +70,7 @@ class DetailRepository @Inject constructor(
 
                             Log.d(TAG,"DB response: WalletRecord($address,${it.finalBalance})")
 
-                            lastWalletDetails = WalletRecordView(it.address,it.lastAccess,it.lastUpdate,it.showInHistory,it.favourite,it.totalReceived,it.totalSent,it.finalBalance,transactions,true)
+                            lastWalletDetails = WalletRecordView(it.address,it.nickname,it.lastAccess,it.lastUpdate,it.showInHistory,it.favourite,it.totalReceived,it.totalSent,it.finalBalance,transactions,true)
                             lastWalletDetails
                         }
                         //UNKNOWN

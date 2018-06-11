@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
 import com.jurajkusnier.bitcoinwalletbalance.ui.favourite.FavouriteViewModel
 import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
 import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
@@ -31,7 +32,7 @@ class TaskDiffCallback : DiffUtil.ItemCallback<WalletRecord>() {
 }
 
 
-class MainListAdapter(context:Context, private val mainViewModel: MainViewModel) :
+class MainListAdapter(context:Context, private val mainViewModel: MainViewModel, private val editDialogInterface: EditDialogInterface) :
         ListAdapter<WalletRecord, MainListAdapter.ViewHolder>(TaskDiffCallback()) {
 
     val TAG = MainListAdapter::class.java.name
@@ -68,6 +69,8 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel)
                 if (position != RecyclerView.NO_POSITION)
                     when (it.itemId) {
                         R.id.menu_edit -> {
+                            val item = getItem(position)
+                            editDialogInterface.showEditDialog(item.address,item.nickname)
                             true
                         }
                         R.id.menu_unfavourite -> {
@@ -125,6 +128,13 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel)
             } else {
                 v.imageDefaultLogo.visibility = View.VISIBLE
                 v.imageFavouritedLogo.visibility = View.INVISIBLE
+            }
+
+            if (data.nickname.isNotBlank()) {
+                v.textViewItemWalletNickname.text = data.nickname
+                v.textViewItemWalletNickname.visibility = View.VISIBLE
+            } else {
+                v.textViewItemWalletNickname.visibility = View.GONE
             }
 
         }

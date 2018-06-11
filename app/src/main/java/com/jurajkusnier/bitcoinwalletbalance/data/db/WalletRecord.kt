@@ -7,6 +7,7 @@ import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
 @Entity
 data class WalletRecord(
         @PrimaryKey val address:String,
+        val nickname:String,
 
         val lastAccess:Long,
         val lastUpdate:Long,
@@ -22,6 +23,7 @@ data class WalletRecord(
 
 data class WalletRecordView(
         val address:String,
+        val nickname: String,
 
         val lastAccess:Long,
         val lastUpdate:Long,

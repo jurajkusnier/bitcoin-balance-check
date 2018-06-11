@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/dialogEdit"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+<LinearLayout android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="20dp">
+
+    <TextView
+            android:text="@string/edit_dialog_text"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp" />
+
+    <TextView
+            android:text="@string/address"
+            android:layout_width="wrap_content"
+            android:layout_height="19dp"
+            android:textSize="12sp"
+            android:layout_marginTop="20dp" />
+    <TextView
+            android:text="@string/placeholder_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:id="@+id/textWalletAddress"/>
+
+    <TextView
+            android:text="@string/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="19dp"
+            android:textSize="12sp"
+            android:layout_marginTop="20dp" />
+
+    <EditText
+            android:id="@+id/editTextWalletNickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/my_favourited_wallet"
+    />
+
+
+</LinearLayout>
+
+</FrameLayout>

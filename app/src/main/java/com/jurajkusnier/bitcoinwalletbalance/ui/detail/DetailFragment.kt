@@ -16,6 +16,8 @@ import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
 import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import com.squareup.moshi.Moshi
@@ -26,7 +28,11 @@ import kotlinx.android.synthetic.main.detail_fragment.view.*
 import javax.inject.Inject
 
 
-class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
+class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, EditDialogInterface {
+
+    override fun showEditDialog(address: String, nickname: String) {
+        EditDialog.newInstance(address,nickname).show(fragmentManager, EditDialog.TAG)
+    }
 
     private lateinit var viewModel:DetailViewModel
     @Inject lateinit var viewModelFactory: ViewModelFactory
@@ -96,6 +102,8 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
 
 //        viewModel.initViewModel("14FWSLwNWHCQjsA2teKSKeiaxA3F5kH1tZ") // Empty wallet
 //        viewModel.initViewModel("14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m") // Not empty wallet
+//        viewModel.initViewModel("1r8JvHjYFiFDNdrDBW1iqDp8pmoaWuSaz") // Lot of transactions
+
 
 
         textWalletID.text = walletID
@@ -248,6 +256,12 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener {
             R.id.menu_unfavourite-> {
                 _walletRecord?.let {
                     viewModel.unfavouriteRecord()
+                }
+                true
+            }
+            R.id.menu_edit-> {
+                _walletRecord?.let {
+                    showEditDialog(it.address,it.nickname)
                 }
                 true
             }

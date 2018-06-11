@@ -25,6 +25,9 @@ interface AppDatabaseDao {
     @Query("UPDATE WalletRecord SET favourite = 0 WHERE address = :address")
     fun unfavouriteRecord(address: String)
 
+    @Query("UPDATE WalletRecord SET nickname = :nickname WHERE address = :address")
+    fun setNickName(address: String, nickname:String)
+
     @Delete
     fun deleteWalletRecord(walletRecord: WalletRecord)
 

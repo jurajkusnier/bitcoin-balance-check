@@ -42,13 +42,14 @@
             app:srcCompat="@drawable/ic_more_vert_white_24dp" />
 
     <TextView
-            android:text=""
+            android:text="@string/nickname"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end"
-            android:visibility="gone"
-
+            android:visibility="visible"
+            android:paddingTop="10dp"
             android:layout_width="0dp"
+            android:textSize="16sp"
             android:layout_height="wrap_content"
             android:id="@+id/textViewItemWalletNickname"
             app:layout_constraintStart_toEndOf="@id/imageDefaultLogo"
@@ -56,11 +57,11 @@
     />
 
     <TextView
-            android:text="13t4ibu3mnChiZwK3gJFdEyfaWxjY2ZEgt"
+            android:text="@string/placeholder_address"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end"
-            android:layout_marginTop="5dp"
+            android:paddingTop="10dp"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -89,6 +90,7 @@
             android:id="@+id/textViewItemDate"
             app:layout_constraintTop_toBottomOf="@id/textViewItemBalance"
             app:layout_constraintEnd_toStartOf="@id/imageViewItemMenu"
+            android:paddingBottom="5dp"
     />
 
 
