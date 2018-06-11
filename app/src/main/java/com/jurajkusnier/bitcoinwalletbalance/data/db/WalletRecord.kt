@@ -17,9 +17,7 @@ data class WalletRecord(
 
         val totalReceived:Long,
         val totalSent:Long,
-        val finalBalance:Long,
-
-        val transactions:String) //Transactions are saved in JSON format in sqlite DB
+        val finalBalance:Long)
 
 data class WalletRecordView(
         val address:String,

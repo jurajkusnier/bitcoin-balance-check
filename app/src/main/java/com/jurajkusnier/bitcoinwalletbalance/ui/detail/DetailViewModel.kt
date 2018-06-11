@@ -7,6 +7,7 @@ import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.data.api.OfflineException
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import io.reactivex.disposables.Disposable
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -49,13 +50,13 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
         disposable?.dispose()
     }
 
-    fun loadWalletDetails() {
+    fun loadWalletDetails(apiOnly:Boolean = false) {
         mWalletID?.let { address ->
             _loadingState.value = LoadingState.LOADING
 
             disposable?.dispose()
 
-            disposable = detailRepository.loadDetails(address).subscribe (
+            disposable = detailRepository.loadDetails(address, apiOnly).subscribe (
             {
                 data ->
                     _walletDetail.value = data
@@ -65,10 +66,12 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
             }, {
                 error ->
                 Log.e(TAG,Log.getStackTraceString(error))
-                if (error is OfflineException) {
-                    _loadingState.value = LoadingState.ERROR_OFFLINE
-                } else {
-                    _loadingState.value = LoadingState.ERROR
+                when (error) {
+                    is OfflineException -> _loadingState.value = LoadingState.ERROR_OFFLINE
+                    is IOException -> {
+                        //Ignore so far
+                    }
+                    else -> _loadingState.value = LoadingState.ERROR
                 }
             })
         }

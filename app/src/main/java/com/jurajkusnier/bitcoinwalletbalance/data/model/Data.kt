@@ -15,6 +15,8 @@ data class RawData(
         val final_balance:Long,
         val txs:Array<OneTransaction>)
 
+data class AllTransactions(val transactions:Array<OneTransaction>)
+
 data class OneTransaction(
         val ver:Int,
         val inputs:Array<OneInput>,

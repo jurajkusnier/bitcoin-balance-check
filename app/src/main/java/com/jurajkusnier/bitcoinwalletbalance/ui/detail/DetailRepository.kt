@@ -6,7 +6,8 @@ import com.jurajkusnier.bitcoinwalletbalance.data.db.AppDatabase
 import com.jurajkusnier.bitcoinwalletbalance.data.db.ConversionPrefs
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
-import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
+import com.jurajkusnier.bitcoinwalletbalance.data.filesystem.FileCacheService
+import com.jurajkusnier.bitcoinwalletbalance.data.model.AllTransactions
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
 import com.squareup.moshi.Moshi
 import io.reactivex.Maybe
@@ -19,12 +20,18 @@ class DetailRepository @Inject constructor(
         private val blockchainApi: BlockchainApiService,
         private val appDatabase: AppDatabase,
         private val conversionPrefs: ConversionPrefs,
-        private val moshi: Moshi) {
+        private val fileCacheService: FileCacheService) {
 
     val TAG = DetailRepository::class.java.simpleName
     var lastWalletDetails:WalletRecordView? = null
 
     fun getLiveConversion() = conversionPrefs.liveExchangeRate
+
+    private fun loadDetailFromFileSystem(walletID: String):Observable<AllTransactions> {
+        return fileCacheService.getTransactionsFromFile(walletID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+    }
 
     private fun loadDetailFromDatabase(walletID: String):Maybe<WalletRecord> {
         return appDatabase.walletRecordDao().getWalletRecord(walletID)
@@ -38,11 +45,17 @@ class DetailRepository @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun loadDetails(address:String):Observable<WalletRecordView?> {
+    fun loadDetails(address:String, apiOnly:Boolean = false):Observable<WalletRecordView?> {
 
-        val sources= arrayListOf(
-                loadDetailFromDatabase(address).toObservable(),
-                loadDetailFromAPI(address)).asIterable()
+        val sources=
+                if (apiOnly) {
+                    arrayListOf(loadDetailFromAPI(address)).asIterable()
+                } else {
+                    arrayListOf(
+                            loadDetailFromDatabase(address).toObservable(),
+                            loadDetailFromFileSystem(address),
+                            loadDetailFromAPI(address)).asIterable()
+                }
 
         return Observable.concatDelayError(sources)
                 .observeOn(AndroidSchedulers.mainThread(),true)
@@ -51,26 +64,31 @@ class DetailRepository @Inject constructor(
                         //API
                         is RawData -> {
                             val timestamp = System.currentTimeMillis()
-                            val moshiAdapter =  moshi.adapter(Array<OneTransaction>::class.java)
-                            val transactionsJson = moshiAdapter.toJson(it.txs)
                             val nickname = lastWalletDetails?.nickname?:""
-                            val newRecord = WalletRecord(address, nickname, timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance, transactionsJson)
-                            saveRecordToHistory(newRecord)
 
                             Log.d(TAG,"API respone: RawData($address,${it.final_balance})")
 
-                            lastWalletDetails = WalletRecordView(address, nickname, timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance,it.txs, false)
+                            val newWalletRecord = WalletRecordView(address, nickname, timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance,it.txs, false)
+
+                            saveRecordToHistory(newWalletRecord)
+
+                            lastWalletDetails = newWalletRecord
+
                             lastWalletDetails
 
                         }
                         //DB
                         is WalletRecord -> {
-                            val moshiAdapter =  moshi.adapter(Array<OneTransaction>::class.java)
-                            val transactions = moshiAdapter.fromJson(it.transactions)?: emptyArray()
 
                             Log.d(TAG,"DB response: WalletRecord($address,${it.finalBalance})")
 
-                            lastWalletDetails = WalletRecordView(it.address,it.nickname,it.lastAccess,it.lastUpdate,it.showInHistory,it.favourite,it.totalReceived,it.totalSent,it.finalBalance,transactions,true)
+                            lastWalletDetails = WalletRecordView(it.address,it.nickname,it.lastAccess,it.lastUpdate,it.showInHistory,it.favourite,it.totalReceived,it.totalSent,it.finalBalance, emptyArray(),true)
+                            lastWalletDetails
+                        }
+                        is AllTransactions -> {
+                            Log.d(TAG,"FileSystem response: ${it.transactions.size} Transactions")
+                            lastWalletDetails = lastWalletDetails?.copy(transactions = it.transactions)
+
                             lastWalletDetails
                         }
                         //UNKNOWN
@@ -82,10 +100,13 @@ class DetailRepository @Inject constructor(
         }
     }
 
-    private fun saveRecordToHistory(record:WalletRecord) {
+    private fun saveRecordToHistory(record:WalletRecordView) {
 
         Observable.fromCallable {
-            appDatabase.walletRecordDao().addWalletRecord(record)
+            val newRecord = WalletRecord(record.address, record.nickname, record.lastAccess, record.lastUpdate,true,record.favourite, record.totalReceived, record.totalSent, record.finalBalance)
+
+            appDatabase.walletRecordDao().addWalletRecord(newRecord)
+            fileCacheService.setTransactionsToFile(record.address, AllTransactions(record.transactions))
         }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())

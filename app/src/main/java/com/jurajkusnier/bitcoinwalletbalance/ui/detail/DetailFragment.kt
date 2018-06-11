@@ -90,6 +90,9 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         return ""
     }
 
+    var stillLoading = false
+
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         //ViewModel
@@ -140,7 +143,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
                     recyclerViewTransactions.isNestedScrollingEnabled = false
             }
 
-            if (it == null || it.transactions.isEmpty()) {
+            if ((it == null || it.transactions.isEmpty()) && !stillLoading) {
                 textViewNoTransaction.visibility = View.VISIBLE
             } else {
                 textViewNoTransaction.visibility = View.GONE
@@ -150,7 +153,9 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         })
 
         viewModel.loadingState.observe(this, Observer<DetailViewModel.LoadingState> {
-            swiperefresh.isRefreshing = (it == DetailViewModel.LoadingState.LOADING)
+            stillLoading = (it == DetailViewModel.LoadingState.LOADING)
+
+            swiperefresh.isRefreshing = stillLoading
             optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = (it != DetailViewModel.LoadingState.LOADING)
 
             when (it) {
@@ -204,7 +209,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         recyclerViewTransactions.addItemDecoration(mDividerItemDecoration)
 
         swiperefresh.setOnRefreshListener {
-            viewModel.loadWalletDetails()
+            viewModel.loadWalletDetails(true)
         }
     }
 
@@ -244,7 +249,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when(item?.itemId) {
             R.id.menu_refresh -> {
-                viewModel.loadWalletDetails()
+                viewModel.loadWalletDetails(true)
                 true
             }
             R.id.menu_favourite -> {
