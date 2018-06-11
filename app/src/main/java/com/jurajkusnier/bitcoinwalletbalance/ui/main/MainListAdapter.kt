@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.favourite.FavouriteViewModel
 import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
 import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
@@ -97,6 +98,10 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel)
                 menu.menu.findItem(R.id.menu_unfavourite).isVisible = false
             }
 
+            if (mainViewModel is FavouriteViewModel) {
+                menu.menu.findItem(R.id.menu_delete).isVisible = false
+            }
+
             val menuHelper = MenuPopupHelper(parent.context, menu.menu as MenuBuilder, it)
             menuHelper.setForceShowIcon(true)
             menuHelper.show()
@@ -113,6 +118,15 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel)
             v.textViewItemWalletId.text = data.address
             v.textViewItemBalance.text = sathoshiToBTCstring(data.finalBalance)
             v.textViewItemDate.text = customDate.getLastUpdatedString(data.lastAccess)
+
+            if (data.favourite) {
+                v.imageDefaultLogo.visibility = View.INVISIBLE
+                v.imageFavouritedLogo.visibility = View.VISIBLE
+            } else {
+                v.imageDefaultLogo.visibility = View.VISIBLE
+                v.imageFavouritedLogo.visibility = View.INVISIBLE
+            }
+
         }
     }
 
