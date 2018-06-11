@@ -112,7 +112,7 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel)
             v.visibility=View.VISIBLE
             v.textViewItemWalletId.text = data.address
             v.textViewItemBalance.text = sathoshiToBTCstring(data.finalBalance)
-            v.textViewItemDate.text = customDate.getDate(data.lastAccess)
+            v.textViewItemDate.text = customDate.getLastUpdatedString(data.lastAccess)
         }
     }
 
