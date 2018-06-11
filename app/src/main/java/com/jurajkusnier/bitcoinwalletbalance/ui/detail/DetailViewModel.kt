@@ -5,26 +5,21 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.data.api.OfflineException
-import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
-import com.jurajkusnier.bitcoinwalletbalance.data.model.LiveExchangeRate
-import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
-import com.squareup.moshi.Moshi
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 
-class DetailViewModel @Inject constructor(private val moshi: Moshi, private val detailRepository: DetailRepository): ViewModel() {
+class DetailViewModel @Inject constructor(private val detailRepository: DetailRepository): ViewModel() {
 
     private val TAG = DetailViewModel::class.java.simpleName
 
     enum class LoadingState {DONE, LOADING, ERROR, ERROR_OFFLINE}
 
-    private var disposables = CompositeDisposable()
     private var mWalletID: String? = null
 
     //Live Data
-    @Inject lateinit var liveExchangeRate: LiveExchangeRate
+    val liveExchangeRate = detailRepository.getLiveConversion()
 
     private val _loadingState:MutableLiveData<LoadingState> = MutableLiveData()
     val loadingState:LiveData<LoadingState>
@@ -46,74 +41,58 @@ class DetailViewModel @Inject constructor(private val moshi: Moshi, private val 
         loadWalletDetails()
     }
 
+    var disposable:Disposable? = null
+
     override fun onCleared() {
         super.onCleared()
 
-        // clear all the subscription
-        disposables.clear()
+        disposable?.dispose()
     }
 
     fun loadWalletDetails() {
+        mWalletID?.let { address ->
+            _loadingState.value = LoadingState.LOADING
 
-        disposables.clear()
+            disposable?.dispose()
 
-        _loadingState.value = LoadingState.LOADING
-
-        mWalletID?.let {address ->
-
-            disposables.add(detailRepository.loadDetail(address)
-                    .subscribe(
-                            { data ->
-
-                                val timestamp = System.currentTimeMillis()
-                                val moshiAdapter =  moshi.adapter(Array<OneTransaction>::class.java)
-                                val transactionsJson = moshiAdapter.toJson(data.txs)
-
-                                val newRecord = WalletRecord(address,timestamp,timestamp,true,_walletDetail.value?.favourite == true, data.total_received, data.total_sent, data.final_balance,transactionsJson)
-                                detailRepository.saveRecordToHistory(newRecord)
-
-                                _walletDetail.value = WalletRecordView(data.address, timestamp,timestamp,true,_walletDetail.value?.favourite == true,data.total_received,data.total_sent,data.final_balance,data.txs)
-                                _loadingState.value = LoadingState.DONE
-                            },
-                            { error ->
-                                if (error is OfflineException) {
-                                    _loadingState.value = LoadingState.ERROR_OFFLINE
-                                } else {
-                                    _loadingState.value = LoadingState.ERROR
-                                }
-                                Log.e(TAG,Log.getStackTraceString(error))
-                            }
-                    ))
-
-           disposables.add(detailRepository.loadDetailFromDatabase(address)
-                   .doOnSuccess {
-
-                       data ->
-                       val moshiAdapter =  moshi.adapter(Array<OneTransaction>::class.java)
-                       val transactions = moshiAdapter.fromJson(data.transactions)?: emptyArray()
-                       _walletDetail.value = WalletRecordView(data.address,data.lastAccess,data.lastUpdate,data.showInHistory,data.favourite,data.totalReceived,data.totalSent,data.finalBalance,transactions)
-                   }.doOnError {
-                       _ -> _walletDetail.value = null
-                   }.doOnComplete {
-                       _walletDetail.value  = null
-                   }.subscribe())
+            disposable = detailRepository.loadDetails(address).subscribe (
+            {
+                data ->
+                    _walletDetail.value = data
+                    if (data?.fromCache == false) {
+                        _loadingState.value = LoadingState.DONE
+                    }
+            }, {
+                error ->
+                Log.e(TAG,Log.getStackTraceString(error))
+                if (error is OfflineException) {
+                    _loadingState.value = LoadingState.ERROR_OFFLINE
+                } else {
+                    _loadingState.value = LoadingState.ERROR
+                }
+            })
         }
-
     }
+
+
 
     //TODO: refactor ViewModels, duplicated in MainViewModel
     fun favouriteRecord() {
         val address = _walletDetail.value?.address
-        if (address != null) detailRepository.favouriteRecord(address)
-        val newWalletRecordView = _walletDetail.value?.copy(favourite = true)
-        _walletDetail.value = newWalletRecordView
+        if (address != null) {
+            detailRepository.favouriteRecord(address)
+            val newWalletRecordView = _walletDetail.value?.copy(favourite = true)
+            _walletDetail.value = newWalletRecordView
+        }
     }
 
     fun unfavouriteRecord() {
         val address = _walletDetail.value?.address
-        if (address != null) detailRepository.unfavouriteRecord(address)
-        val newWalletRecordView = _walletDetail.value?.copy(favourite = false)
-        _walletDetail.value = newWalletRecordView
+        if (address != null) {
+            detailRepository.unfavouriteRecord(address)
+            val newWalletRecordView = _walletDetail.value?.copy(favourite = false)
+            _walletDetail.value = newWalletRecordView
+        }
     }
 
 

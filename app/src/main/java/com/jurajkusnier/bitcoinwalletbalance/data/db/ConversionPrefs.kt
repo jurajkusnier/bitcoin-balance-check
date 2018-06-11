@@ -1,16 +1,52 @@
 package com.jurajkusnier.bitcoinwalletbalance.data.db
 
 import android.app.Application
+import android.arch.lifecycle.LiveData
+import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.jurajkusnier.bitcoinwalletbalance.data.model.CryptocurrencyInfo
+import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
 import javax.inject.Inject
 
 class ConversionPrefs @Inject constructor(context: Application) {
+
+    inner class LiveCurrentExchangeRate:LiveData<ExchangeRate>() {
+
+        private val mListener: SharedPreferences.OnSharedPreferenceChangeListener
+
+        init {
+            val value = mSharedPreferences.getFloat(getCurrencyCodeKey(),0f)
+            updateValue(value)
+
+            mListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+                val currencyCodeKey = getCurrencyCodeKey()
+                if (key == currencyCodeKey  || key == KEY_SELECTED_CURRENCY) {
+                    updateValue(sharedPreferences.getFloat(currencyCodeKey,0f))
+                }
+            }
+        }
+
+        private fun updateValue(value:Float) {
+            setValue(ExchangeRate(value, getCurrencyCode()))
+        }
+
+        override fun onActive() {
+            super.onActive()
+            mSharedPreferences.registerOnSharedPreferenceChangeListener(mListener)
+        }
+
+        override fun onInactive() {
+            super.onInactive()
+            mSharedPreferences.unregisterOnSharedPreferenceChangeListener(mListener)
+        }
+    }
 
     val TAG = ConversionPrefs::class.java.simpleName
 
     val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     val KEY_SELECTED_CURRENCY = "selected_currency"
+
+    val liveExchangeRate:LiveCurrentExchangeRate by lazy { LiveCurrentExchangeRate() }
 
     companion object {
         val currencyCodes = arrayOf( "AUD","BRL","CAD","CHF","CLP","CNY","CZK","DKK","EUR","GBP","HKD","HUF","IDR","ILS","INR","JPY","KRW","MXN","MYR","NOK","NZD","PHP","PKR","PLN","RUB","SEK","SGD","THB","TRY","TWD","USD","ZAR")
@@ -51,12 +87,11 @@ class ConversionPrefs @Inject constructor(context: Application) {
 
     fun getCurrencyIndex():Int = mSharedPreferences.getInt(KEY_SELECTED_CURRENCY,8) // 8 = EUR
 
-    fun getCurrencyCodeKey():String = getCurrencyCodeFromKey(getCurrencyCode())
+    private fun getCurrencyCodeKey():String = getCurrencyCodeFromKey(getCurrencyCode())
 
     private fun getLastUpdateKey():String = getLastUpdateFromKey(getCurrencyCode())
 
     private fun getLastUpdateFromKey(key:String):String = "UPDATED_$key"
 
     private fun getCurrencyCodeFromKey(key:String):String = "PRICE_$key"
-
 }
