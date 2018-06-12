@@ -13,12 +13,13 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.google.zxing.integration.android.IntentIntegrator
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import com.jurajkusnier.bitcoinwalletbalance.ui.favourite.FavouriteFragment
 import com.jurajkusnier.bitcoinwalletbalance.ui.history.HistoryFragment
-import kotlinx.android.synthetic.main.detail_fragment.*
 import kotlinx.android.synthetic.main.parent_fragment.*
 
 class ParentFragment : Fragment() {
@@ -36,8 +37,47 @@ class ParentFragment : Fragment() {
         return inflater.inflate(R.layout.parent_fragment, container, false)
     }
 
+    lateinit var fabOpenAnimation: Animation
+    lateinit var fabCloseAnimation:Animation
+    lateinit var fabRotateForwad:Animation
+    lateinit var fabRotateBackward:Animation
+    lateinit var backdropShow: Animation
+    lateinit var backdropHide: Animation
+
+    var isFabOpen = false
+
+    fun animateFAB() {
+        if (isFabOpen) {
+            floatingButtonAdd.startAnimation(fabRotateBackward)
+            floatingButtonAddManual.startAnimation(fabCloseAnimation)
+            floatingButtonAddQr.startAnimation(fabCloseAnimation)
+            floatingButtonAddManual.isClickable = false
+            floatingButtonAddQr.isClickable = false
+            fabBackdrop.isClickable = false
+            fabBackdrop.isFocusable = false
+            fabBackdrop.startAnimation(backdropHide)
+        } else {
+            floatingButtonAdd.startAnimation(fabRotateForwad)
+            floatingButtonAddManual.startAnimation(fabOpenAnimation)
+            floatingButtonAddQr.startAnimation(fabOpenAnimation)
+            floatingButtonAddManual.isClickable = true
+            floatingButtonAddQr.isClickable = true
+            fabBackdrop.isClickable = true
+            fabBackdrop.isFocusable = true
+            fabBackdrop.startAnimation(backdropShow)
+        }
+        isFabOpen = !isFabOpen
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        fabOpenAnimation = AnimationUtils.loadAnimation(context,R.anim.fab_open)
+        fabCloseAnimation = AnimationUtils.loadAnimation(context,R.anim.fab_close)
+        fabRotateForwad = AnimationUtils.loadAnimation(context,R.anim.rotate_forward)
+        fabRotateBackward = AnimationUtils.loadAnimation(context,R.anim.rotate_backward)
+        backdropShow = AnimationUtils.loadAnimation(context,R.anim.backdrop_show)
+        backdropHide = AnimationUtils.loadAnimation(context,R.anim.backdrop_hide)
 
         activity?.let {
             if (it is AppCompatActivity) {
@@ -45,7 +85,17 @@ class ParentFragment : Fragment() {
             }
         }
 
-        floatingButtonAdd.setOnClickListener {
+        fabBackdrop.setOnClickListener {
+            if (isFabOpen) animateFAB()
+        }
+
+        floatingButtonAddManual.setOnClickListener {
+            animateFAB()
+        }
+
+        floatingButtonAddQr.setOnClickListener {
+            animateFAB()
+
             context?.let {
                 if (ContextCompat.checkSelfPermission(it, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(arrayOf(Manifest.permission.CAMERA), MY_CAMERA_PERMISSION)
@@ -53,6 +103,10 @@ class ParentFragment : Fragment() {
                     startBarcodeScanner()
                 }
             }
+        }
+
+        floatingButtonAdd.setOnClickListener {
+            animateFAB()
         }
 
         setHasOptionsMenu(true)

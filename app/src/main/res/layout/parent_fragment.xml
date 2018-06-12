@@ -52,6 +52,46 @@
                 app:layout_constraintTop_toBottomOf="@id/tabLayout"/>
 
     </android.support.constraint.ConstraintLayout>
+
+    <View
+            android:id="@+id/fabBackdrop"
+            android:focusable="true"
+            android:clickable="true"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#60000000"
+    />
+
+    <android.support.design.widget.FloatingActionButton
+            android:layout_marginBottom="160dp"
+            app:srcCompat="@drawable/ic_edit_white_24dp"
+            app:fabSize="normal"
+            android:id="@+id/floatingButtonAddManual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            app:elevation="6dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_gravity="bottom|end" />
+
+
+    <android.support.design.widget.FloatingActionButton
+            android:layout_marginBottom="90dp"
+            android:src="@drawable/qr_128_light"
+            app:fabSize="normal"
+            android:id="@+id/floatingButtonAddQr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            app:elevation="6dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_gravity="bottom|end" />
+
     <android.support.design.widget.FloatingActionButton
             app:srcCompat="@drawable/ic_add_white_24dp"
             app:fabSize="normal"
@@ -59,6 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:layout_gravity="bottom|end"
-            app:layout_anchorGravity="bottom|right|end" />
+            app:elevation="6dp"
+            app:backgroundTint="@color/colorAccent"
+            android:layout_gravity="bottom|end" />
 </android.support.design.widget.CoordinatorLayout>
