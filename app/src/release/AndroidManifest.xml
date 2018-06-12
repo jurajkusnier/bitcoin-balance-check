@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+          package="com.jurajkusnier.bitcoinwalletbalance">
+    <application>
+        <activity
+                android:name="com.jurajkusnier.bitcoinwalletbalance.ui.MainActivity"
+                tools:node="merge"
+                android:screenOrientation="portrait"
+                android:configChanges="orientation|keyboardHidden">
+        </activity>
+    </application>
+</manifest>
