@@ -159,8 +159,9 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = (it != DetailViewModel.LoadingState.LOADING)
 
             when (it) {
-                DetailViewModel.LoadingState.ERROR -> showErrorSnackbar(false)
-                DetailViewModel.LoadingState.ERROR_OFFLINE -> showErrorSnackbar(true)
+                DetailViewModel.LoadingState.ERROR -> showErrorSnackbar(getString(R.string.network_connection_error))
+                DetailViewModel.LoadingState.ERROR_OFFLINE -> showErrorSnackbar(getString(R.string.offline_error))
+                DetailViewModel.LoadingState.ERROR_INVALID_ADDRESS -> showErrorSnackbar(getString(R.string.invalid_bitcoin_address))
                 else -> hideErrorShackbar()
             }
         })
@@ -171,15 +172,8 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
     private var errorSnackbar: Snackbar? = null
     private var colorAccent:Int = Color.RED
 
-    private fun showErrorSnackbar(isOffline: Boolean) {
-
-        errorSnackbar = Snackbar.make(detailLayout,getString(
-                if (isOffline) {
-                    R.string.offline_error
-                } else {
-                    R.string.network_connection_error
-                }
-                ),Snackbar.LENGTH_INDEFINITE)
+    private fun showErrorSnackbar(errorText:String) {
+        errorSnackbar = Snackbar.make(detailLayout, errorText, Snackbar.LENGTH_INDEFINITE)
         errorSnackbar?.view?.setBackgroundColor(colorAccent)
         errorSnackbar?.show()
     }

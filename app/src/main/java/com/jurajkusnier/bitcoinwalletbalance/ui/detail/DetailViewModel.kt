@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.data.api.OfflineException
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
+import com.jurajkusnier.bitcoinwalletbalance.utils.isBitcoinAddressValid
 import io.reactivex.disposables.Disposable
 import java.io.IOException
 import javax.inject.Inject
@@ -15,7 +16,7 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
 
     private val TAG = DetailViewModel::class.java.simpleName
 
-    enum class LoadingState {DONE, LOADING, ERROR, ERROR_OFFLINE}
+    enum class LoadingState {DONE, LOADING, ERROR, ERROR_OFFLINE, ERROR_INVALID_ADDRESS}
 
     private var mWalletID: String? = null
 
@@ -52,6 +53,11 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
 
     fun loadWalletDetails(apiOnly:Boolean = false) {
         mWalletID?.let { address ->
+            if (!isBitcoinAddressValid(address)) {
+                _loadingState.value = LoadingState.ERROR_INVALID_ADDRESS
+                return
+            }
+
             _loadingState.value = LoadingState.LOADING
 
             disposable?.dispose()

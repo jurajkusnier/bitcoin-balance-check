@@ -6,6 +6,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+/**
+ * Returns `false` is address can't be a Bitcoin address, otherwise return `true`
+ */
+fun isBitcoinAddressValid(address:String):Boolean {
+    //TODO: use checksum to validate addresses
+    return address.matches("^[1-9A-HJ-NP-Za-z]+$".toRegex())
+}
 
 fun sathoshiToBTCstring(s:Long):String {
     val sStr = s.toString()
