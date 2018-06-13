@@ -85,7 +85,7 @@ class ConversionPrefs @Inject constructor(context: Application) {
 
     fun getCurrencyCode():String = currencyCodes[getCurrencyIndex()]
 
-    fun getCurrencyIndex():Int = mSharedPreferences.getInt(KEY_SELECTED_CURRENCY,8) // 8 = EUR
+    fun getCurrencyIndex():Int = mSharedPreferences.getInt(KEY_SELECTED_CURRENCY,30) // 8 = EUR, 30 = USD
 
     private fun getCurrencyCodeKey():String = getCurrencyCodeFromKey(getCurrencyCode())
 

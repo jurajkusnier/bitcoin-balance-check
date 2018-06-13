@@ -69,7 +69,7 @@
                                 android:textStyle="bold"
                                 android:id="@+id/textFinalBalanceCrypto"/>
                         <TextView
-                                android:text="@string/default_zero_EUR"
+                                android:text="@string/default_zero_USD"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"

@@ -4,7 +4,7 @@
     <string name="network_connection_error">Network Connection Error</string>
     <string name="offline_error">You are offline</string>
     <string name="default_zero_BTC">0.000000000 BTC</string>
-    <string name="default_zero_EUR">0 EUR</string>
+    <string name="default_zero_USD">0 USD</string>
     <string name="address">Address</string>
     <string name="total_received">Total Received</string>
     <string name="total_sent">Total Sent</string>
