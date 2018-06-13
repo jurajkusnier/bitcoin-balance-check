@@ -17,9 +17,11 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.google.zxing.integration.android.IntentIntegrator
 import com.jurajkusnier.bitcoinwalletbalance.R
+import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import com.jurajkusnier.bitcoinwalletbalance.ui.favourite.FavouriteFragment
 import com.jurajkusnier.bitcoinwalletbalance.ui.history.HistoryFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.settings.SettingsDialog
 import kotlinx.android.synthetic.main.parent_fragment.*
 
 class ParentFragment : Fragment() {
@@ -91,6 +93,7 @@ class ParentFragment : Fragment() {
 
         floatingButtonAddManual.setOnClickListener {
             animateFAB()
+            AddAddressDialog.newInstance ().show(fragmentManager, SettingsDialog.TAG)
         }
 
         floatingButtonAddQr.setOnClickListener {
