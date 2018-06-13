@@ -37,11 +37,18 @@
             android:textSize="12sp"
             android:layout_marginTop="20dp" />
 
-    <EditText
+    <android.support.v7.widget.AppCompatEditText
             android:id="@+id/editTextWalletNickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/my_favourited_wallet"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:scrollHorizontally="true"
+            android:inputType="text"
+            android:backgroundTint="@color/colorPrimary"
+            android:textCursorDrawable="@null"
+            android:imeOptions="actionDone"
     />
 
 
