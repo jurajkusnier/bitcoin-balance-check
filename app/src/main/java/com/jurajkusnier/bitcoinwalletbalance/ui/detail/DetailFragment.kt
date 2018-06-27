@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
+import android.support.transition.Transition
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
@@ -18,6 +19,7 @@ import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
+import com.jurajkusnier.bitcoinwalletbalance.utils.convertDpToPixel
 import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import com.squareup.moshi.Moshi
@@ -72,6 +74,11 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         context?.let {
             val displayMetrics = it.resources.displayMetrics
             view.detailCardView.minimumHeight = displayMetrics.heightPixels
+        }
+
+        //TODO: load position automatically from layout (imgDetailsBitcoin)
+        context?.let {
+            view.swiperefresh.setProgressViewOffset(false, 0, it.convertDpToPixel(58.5f))
         }
 
         return view
