@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
+import android.widget.Toast
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
@@ -28,6 +29,12 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.detail_fragment.*
 import kotlinx.android.synthetic.main.detail_fragment.view.*
 import javax.inject.Inject
+import android.R.attr.label
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.os.Build
+import android.support.transition.TransitionInflater
+import kotlinx.android.synthetic.main.edit_dialog_layout.*
 
 
 class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, EditDialogInterface {
@@ -102,6 +109,9 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        setHasOptionsMenu(true)
+
         //ViewModel
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
 
@@ -173,7 +183,14 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             }
         })
 
-        setHasOptionsMenu(true)
+        buttonCopyAddressToClipboard.setOnClickListener {
+            val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(getText(R.string.address),textWalletID.text)
+            clipboard.primaryClip = clip
+            Toast.makeText(context,getString(R.string.address_copied),Toast.LENGTH_SHORT).show()
+        }
+
+
     }
 
     private var errorSnackbar: Snackbar? = null

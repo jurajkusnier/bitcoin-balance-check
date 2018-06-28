@@ -46,6 +46,7 @@
     <string name="enter_your_address">Enter your address</string>
     <string name="clipboard_is_empty">Clipboard is empty!</string>
     <string name="invalid_bitcoin_address">Bitcoin Address is Invalid!</string>
+    <string name="address_copied">Address has been copied to clipboard</string>
     <plurals name="x_min_ago">
         <item quantity="one">%d minute ago</item>
         <item quantity="other">%d minutes ago</item>
