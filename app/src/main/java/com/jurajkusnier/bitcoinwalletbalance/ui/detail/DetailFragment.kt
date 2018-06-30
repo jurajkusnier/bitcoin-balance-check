@@ -2,6 +2,8 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -29,15 +31,51 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.detail_fragment.*
 import kotlinx.android.synthetic.main.detail_fragment.view.*
 import javax.inject.Inject
-import android.R.attr.label
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.os.Build
-import android.support.transition.TransitionInflater
-import kotlinx.android.synthetic.main.edit_dialog_layout.*
 
 
 class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, EditDialogInterface {
+
+    var isAnimating = false
+
+    override fun setEnterTransition(transition: Any?) {
+
+        if (transition is android.support.transition.Transition) {
+            transition.addListener(object :Transition.TransitionListener {
+                override fun onTransitionResume(transition: Transition) {
+
+                }
+
+                override fun onTransitionPause(transition: Transition) {
+
+                }
+
+                override fun onTransitionCancel(transition: Transition) {
+
+                }
+
+                override fun onTransitionStart(transition: Transition) {
+
+                    isAnimating = true
+                }
+
+                override fun onTransitionEnd(transition: Transition) {
+                    isAnimating = false
+                    updateTransactionListView()
+                }
+
+            })
+        }
+
+        super.setEnterTransition(transition)
+    }
+
+    private fun updateTransactionListView() {
+        _walletRecord?.let {
+            recyclerViewTransactions?.adapter = TransactionListAdapter(it.address, it.transactions, activity as Context)
+            recyclerViewTransactions?.adapter?.notifyDataSetChanged()
+            recyclerViewTransactions?.isNestedScrollingEnabled = false
+        }
+    }
 
     override fun showEditDialog(address: String, nickname: String) {
         EditDialog.newInstance(address,nickname).show(fragmentManager, EditDialog.TAG)
@@ -154,10 +192,8 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             textTotalReceived.text = sathoshiToBTCstring(it?.totalReceived ?: 0)
             textTotalSent.text = sathoshiToBTCstring(it?.totalSent ?: 0)
 
-            if (thisContext != null && it != null) {
-                    recyclerViewTransactions.adapter = TransactionListAdapter(it.address, it.transactions, thisContext)
-                    recyclerViewTransactions.adapter.notifyDataSetChanged()
-                    recyclerViewTransactions.isNestedScrollingEnabled = false
+            if (thisContext != null && it != null && !isAnimating) {
+                    updateTransactionListView()
             }
 
             if ((it == null || it.transactions.isEmpty()) && !stillLoading) {

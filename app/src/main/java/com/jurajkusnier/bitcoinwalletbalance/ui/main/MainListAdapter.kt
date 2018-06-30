@@ -1,6 +1,9 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.content.Context
+import android.support.transition.Fade
+import android.support.transition.Slide
+import android.support.transition.TransitionSet
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.util.DiffUtil
@@ -54,9 +57,23 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel,
                 val position = viewHolder.adapterPosition
                 if (position == RecyclerView.NO_POSITION) return@clickListener
 
-                parentContext.supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, DetailFragment.newInstance(getItem(position).address))
+                val transactionTime = 300L
+
+                val previousFragment = parentContext.supportFragmentManager.findFragmentById(R.id.container)
+                val nextFragment = DetailFragment.newInstance(getItem(position).address)
+
+                val exitFade = Fade()
+                exitFade.duration = transactionTime
+                previousFragment.exitTransition = exitFade
+                nextFragment.enterTransition = TransitionSet()
+                        .addTransition(Fade(Fade.IN)
+                            .setInterpolator { (it - 0.5f) * 2 })
+                        .addTransition(Slide()).setDuration(transactionTime)
+
+                parentContext.supportFragmentManager
+                        .beginTransaction()
                         .addToBackStack(DetailFragment.TAG)
+                        .replace(R.id.container, nextFragment )
                         .commit()
             }
         }
