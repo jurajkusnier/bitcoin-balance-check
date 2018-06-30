@@ -2,11 +2,10 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
-
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import com.jurajkusnier.bitcoinwalletbalance.*
+import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
 import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
 import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
@@ -36,12 +35,12 @@ class TransactionListAdapter(private val myWalletID:String, private val transact
 
             // collapse any currently expanded items
             if (RecyclerView.NO_POSITION != mExpandedPosition) {
-                notifyItemChanged(mExpandedPosition)
+                notifyItemChanged(mExpandedPosition, COLLAPSE)
             }
 
             if (mExpandedPosition != position) {
                 mExpandedPosition = position
-                notifyItemChanged(position)
+                notifyItemChanged(position, EXPAND)
             } else {
                 mExpandedPosition = RecyclerView.NO_POSITION
             }
@@ -52,6 +51,14 @@ class TransactionListAdapter(private val myWalletID:String, private val transact
 
     override fun getItemCount(): Int {
         return transactions.size
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.contains(EXPAND) || payloads.contains(COLLAPSE)) {
+            holder.setExpanded(position == mExpandedPosition)
+        } else {
+            onBindViewHolder(holder,position)
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -89,6 +96,10 @@ class TransactionListAdapter(private val myWalletID:String, private val transact
             v.textViewTransactionDate.text = customDate.getDate(data.time)
             v.textViewTransactionID.text = data.hash
 
+            setExpanded(isExpanded)
+        }
+
+        fun setExpanded(isExpanded: Boolean) {
             v.isActivated = isExpanded
 
             if (isExpanded) {
@@ -100,4 +111,7 @@ class TransactionListAdapter(private val myWalletID:String, private val transact
             }
         }
     }
+
+    private val EXPAND = 0x1
+    private val COLLAPSE = 0x2
 }
