@@ -179,8 +179,7 @@
                             android:id="@+id/toolbarResults"
                             android:layout_width="match_parent"
                             android:layout_height="?attr/actionBarSize"
-                            app:layout_collapseMode="pin"
-                            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+                            app:layout_collapseMode="pin" >
                         <TextView android:id="@+id/newTitle"
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
