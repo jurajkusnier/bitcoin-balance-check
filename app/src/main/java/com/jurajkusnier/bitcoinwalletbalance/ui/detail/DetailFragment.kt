@@ -184,9 +184,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
 
             _walletRecord = it
 
-            optionsMenu?.findItem(R.id.menu_favourite)?.isVisible = it?.favourite == false
-            optionsMenu?.findItem(R.id.menu_unfavourite)?.isVisible = it?.favourite == true
-            optionsMenu?.findItem(R.id.menu_edit)?.isVisible = (it != null)
+            refreshOptionsMenu()
 
             textFinalBalanceCrypto.text = sathoshiToBTCstring(it?.finalBalance ?: 0)
             textTotalReceived.text = sathoshiToBTCstring(it?.totalReceived ?: 0)
@@ -209,7 +207,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             stillLoading = (it == DetailViewModel.LoadingState.LOADING)
 
             swiperefresh.isRefreshing = stillLoading
-            optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = (it != DetailViewModel.LoadingState.LOADING)
+            refreshOptionsMenu()
 
             when (it) {
                 DetailViewModel.LoadingState.ERROR -> showErrorSnackbar(getString(R.string.network_connection_error))
@@ -226,6 +224,16 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             Toast.makeText(context,getString(R.string.address_copied),Toast.LENGTH_SHORT).show()
         }
 
+
+    }
+
+    fun refreshOptionsMenu() {
+        //Loading
+        optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = !stillLoading
+        //Others
+        optionsMenu?.findItem(R.id.menu_favourite)?.isVisible = _walletRecord?.favourite == false
+        optionsMenu?.findItem(R.id.menu_unfavourite)?.isVisible = _walletRecord?.favourite == true
+        optionsMenu?.findItem(R.id.menu_edit)?.isVisible = (_walletRecord != null)
 
     }
 
@@ -298,6 +306,8 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         optionsMenu = menu
         inflater?.inflate(R.menu.detail_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+
+        refreshOptionsMenu()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
