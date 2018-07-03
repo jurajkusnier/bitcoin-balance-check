@@ -3,7 +3,6 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.settings
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
 import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import javax.inject.Inject
@@ -24,20 +23,16 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     val currencyRate:LiveData<ExchangeDetails>
         get() = _currencyRate
 
-    fun changeCurrency(id:Int) {
-        settingRepository.changeCurrency(id)
-    }
+    fun changeCurrency(id:Int) = settingRepository.conversionPrefs.changeCurrency(id)
 
-    fun getCurrencyId():Int {
-        return settingRepository.getCurrencyId()
-    }
+    fun getCurrencyId():Int = settingRepository.conversionPrefs.getCurrencyIndex()
 
-    fun changeCurrencyPreview(currencyCode:String? = null) {
-        val _currencyCode = currencyCode?:settingRepository.getCurrencyCode()
+    fun changeCurrencyPreview(newCurrencyCode:String? = null) {
+        val oldCurrencyCode = newCurrencyCode?:settingRepository.conversionPrefs.getCurrencyCode()
 
         _loadingState.value = LoadingState.LOADING
 
-        settingRepository.getBitcoinPrice(_currencyCode, object :SettingRepository.priceLoaderCallback{
+        settingRepository.getBitcoinPrice(oldCurrencyCode, object : SettingRepository.PriceLoaderCallback {
             override fun setResults(currencyRate: Float, currencyCode: String, lastUpdate: Long) {
                 _currencyRate.postValue (ExchangeDetails("1 BTC = ${currencyRate.format(2)} $currencyCode",customDate.getLastUpdatedString(lastUpdate)))
             }

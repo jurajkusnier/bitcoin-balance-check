@@ -7,27 +7,15 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class SettingRepository @Inject constructor(private val conversionPrefs: ConversionPrefs, private val coinmarketcapApiService: CoinmarketcapApiService) {
+class SettingRepository @Inject constructor(val conversionPrefs: ConversionPrefs, private val coinmarketcapApiService: CoinmarketcapApiService) {
 
     val TAG = SettingRepository::class.java.simpleName
 
     val UPDATE_DELAY = 10*60*1000L //10 min
 
-    fun changeCurrency(id:Int) {
-        conversionPrefs.changeCurrency(id)
-    }
-
-    fun getCurrencyId():Int {
-        return conversionPrefs.getCurrencyIndex()
-    }
-
-    fun getCurrencyCode():String {
-        return conversionPrefs.getCurrencyCode()
-    }
-
     var disposable:Disposable? = null
 
-    fun getBitcoinPrice(currencyCode:String, priceLoaderCallback: priceLoaderCallback ) {
+    fun getBitcoinPrice(currencyCode:String, priceLoaderCallback: PriceLoaderCallback ) {
         val now = System.currentTimeMillis()
 
         //Load from prefs
@@ -61,7 +49,7 @@ class SettingRepository @Inject constructor(private val conversionPrefs: Convers
         }
     }
 
-    interface priceLoaderCallback {
+    interface PriceLoaderCallback {
         fun setResults(currencyRate:Float, currencyCode: String, lastUpdate:Long)
         fun loadingDone()
         fun loadingFailed()
