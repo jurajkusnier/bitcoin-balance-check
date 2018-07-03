@@ -2,9 +2,10 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.arch.lifecycle.ViewModel
 import android.os.Handler
+import com.jurajkusnier.bitcoinwalletbalance.data.db.RateMePrefs
 import javax.inject.Inject
 
-class MainActivityViewModel @Inject constructor(private val mainActivityRepository: MainActivityRepository) :ViewModel() {
+class MainActivityViewModel @Inject constructor(private val mainActivityRepository: MainActivityRepository, val rateMePrefs: RateMePrefs) :ViewModel() {
 
     val UPDATE_DELAY = 10*60*1000L //10 min
 

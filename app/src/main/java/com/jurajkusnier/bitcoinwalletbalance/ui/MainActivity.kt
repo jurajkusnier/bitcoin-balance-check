@@ -1,8 +1,12 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.MenuItem
+import com.jurajkusnier.bitcoinwalletbalance.BuildConfig
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainActivityViewModel
@@ -37,6 +41,10 @@ class MainActivity: DaggerAppCompatActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.onResume()
+
+        if (viewModel.rateMePrefs.isTimeToShow()) {
+            showRateMeDialog()
+        }
     }
 
     override fun onPause() {
@@ -58,6 +66,29 @@ class MainActivity: DaggerAppCompatActivity() {
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    private fun showRateMeDialog() {
+        viewModel.rateMePrefs.setShowed()
+
+        val alertRateMe = AlertDialog.Builder(this,R.style.AppCompatAlertDialogStyle)
+        alertRateMe.setPositiveButton(getString(R.string.rate_now)) {
+            _, _ ->
+            viewModel.rateMePrefs.setNeverShowAgain()
+            openPlayStore()
+        }
+        alertRateMe.setNegativeButton(getString(R.string.rate_never)) {
+            _, _ -> viewModel.rateMePrefs.setNeverShowAgain()
+        }
+        alertRateMe.setTitle(getString(R.string.rate_title))
+        alertRateMe.setMessage(getString(R.string.rate_text))
+        alertRateMe.create().show()
+    }
+
+    private fun openPlayStore() = try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${BuildConfig.APPLICATION_ID}")))
+    } catch (_: android.content.ActivityNotFoundException) {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}")))
     }
 
 }

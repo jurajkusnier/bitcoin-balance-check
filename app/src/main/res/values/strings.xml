@@ -1,5 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [
+        <!ENTITY appname "Wealth Check">
+        ]>
 <resources>
-    <string name="app_name">Wealth Check</string>
+    <string name="app_name">&appname;</string>
     <string name="no_search_results">No search results found</string>
     <string name="network_connection_error">Network Connection Error</string>
     <string name="offline_error">You are offline</string>
@@ -55,4 +59,10 @@
         <item quantity="one">%d hour ago</item>
         <item quantity="other">%d hours ago</item>
     </plurals>
+    <string name="rate_now">Rate Now</string>
+    <string name="rate_never">Never</string>
+    <string name="rate_later">Later</string>
+    <string name="rate_title">Do you like &appname;?</string>
+    <string name="rate_text">Please take a minute to rate this app. Thank you for your support!</string>
+
 </resources>
