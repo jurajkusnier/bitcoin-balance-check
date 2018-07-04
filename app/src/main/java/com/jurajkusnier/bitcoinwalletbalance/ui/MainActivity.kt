@@ -80,6 +80,7 @@ class MainActivity: DaggerAppCompatActivity() {
         alertRateMe.setNegativeButton(getString(R.string.rate_never)) {
             _, _ -> viewModel.rateMePrefs.setNeverShowAgain()
         }
+        alertRateMe.setNeutralButton(getString(R.string.rate_later)) { _,_ -> }
         alertRateMe.setTitle(getString(R.string.rate_title))
         alertRateMe.setMessage(getString(R.string.rate_text))
         alertRateMe.create().show()
