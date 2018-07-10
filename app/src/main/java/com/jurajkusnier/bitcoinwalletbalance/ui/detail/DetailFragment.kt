@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -16,6 +17,9 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import android.widget.Toast
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.qrcode.QRCodeWriter
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
@@ -157,6 +161,10 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         if (walletID != null) {
             viewModel.initViewModel(walletID)
         }
+
+        viewModel.barcodeBitmap.observe(this, Observer {
+            imageViewQrCode.setImageBitmap(it)
+        })
 
 //        viewModel.initViewModel("14FWSLwNWHCQjsA2teKSKeiaxA3F5kH1tZ") // Empty wallet
 //        viewModel.initViewModel("14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m") // Not empty wallet

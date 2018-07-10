@@ -171,6 +171,18 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp" />
 
+                        <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                app:layout_constraintRight_toLeftOf="@id/buttonCopyAddressToClipboard"
+                                app:layout_constraintTop_toTopOf="@id/textTotalReceivedLabel"
+                                app:layout_constraintBottom_toBottomOf="@id/textTotalSent"
+                                android:layout_margin="10dp"
+                                app:layout_constraintDimensionRatio="H,1:1"
+                                android:background="@drawable/qr_128_light"
+                                android:id="@+id/imageViewQrCode"
+                        />
+
 
                     </android.support.constraint.ConstraintLayout>
 

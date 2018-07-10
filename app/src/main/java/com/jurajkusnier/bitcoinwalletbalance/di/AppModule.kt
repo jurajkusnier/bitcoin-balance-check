@@ -8,7 +8,7 @@ import com.jurajkusnier.bitcoinwalletbalance.data.db.PrefsModule
 import dagger.Binds
 import dagger.Module
 
-@Module(includes = [NetworkModule::class, DatabaseModule::class, PrefsModule::class])
+@Module(includes = [NetworkModule::class, DatabaseModule::class, PrefsModule::class, BarcodeModule::class])
 abstract class AppModule {
 
     @Binds
