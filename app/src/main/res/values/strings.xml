@@ -64,5 +64,6 @@
     <string name="rate_later">Later</string>
     <string name="rate_title">Do you like &appname;?</string>
     <string name="rate_text">Please take a minute to rate this app. Thank you for your support!</string>
+    <string name="first_instruction">"Use + to add new Bitcoin address\nand  *  to save it to Favourite"</string>
 
 </resources>

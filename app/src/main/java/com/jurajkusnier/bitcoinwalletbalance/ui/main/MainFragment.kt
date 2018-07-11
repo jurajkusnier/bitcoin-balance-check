@@ -6,9 +6,13 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +25,7 @@ import com.jurajkusnier.bitcoinwalletbalance.utils.DaggerLifecycleFragment
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import javax.inject.Inject
+
 
 abstract class MainFragment : DaggerLifecycleFragment(), EditDialogInterface {
 
@@ -57,8 +62,26 @@ abstract class MainFragment : DaggerLifecycleFragment(), EditDialogInterface {
         _thisView = inflater.inflate(R.layout.main_fragment, container, false)
 
         _thisView.emptyListText.text = getEmptyText()
+        _thisView.textSpannableInfo.text = getSpannableInfo(_thisView.context)
 
         return _thisView
+    }
+
+    private fun getSpannableInfo(context: Context): SpannableString {
+        val text = SpannableString(getString(R.string.first_instruction))
+        val addIcon = ContextCompat.getDrawable(context,R.drawable.ic_add_white_24dp)
+        val favIcon= ContextCompat.getDrawable(context,R.drawable.ic_favorite_white_24dp)
+
+        addIcon?.setBounds(0, 0, (addIcon.intrinsicWidth * 0.9f).toInt(), (addIcon.intrinsicHeight * 0.9f).toInt())
+        favIcon?.setBounds(0,0, (favIcon.intrinsicWidth * 0.9f).toInt(), (favIcon.intrinsicHeight * 0.9f).toInt())
+        val spanAdd = ImageSpan(addIcon, ImageSpan.ALIGN_BOTTOM)
+        val spanFav = ImageSpan(favIcon,ImageSpan.ALIGN_BOTTOM)
+        val pAdd = text.indexOf('+')
+        val pFav = text.indexOf('*')
+        text.setSpan(spanAdd, pAdd, pAdd+1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        text.setSpan(spanFav, pFav, pFav+1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+
+        return text
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
