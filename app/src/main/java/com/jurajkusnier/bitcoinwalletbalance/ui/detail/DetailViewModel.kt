@@ -48,9 +48,13 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
         if (mWalletID == walletID) return
         mWalletID = walletID
 
-        loadWalletDetails()
-        launch {
-            generateQrCode(walletID)
+        if (isBitcoinAddressValid(walletID)) {
+            loadWalletDetails()
+            launch {
+                generateQrCode(walletID)
+            }
+        } else {
+            _loadingState.value = LoadingState.ERROR_INVALID_ADDRESS
         }
     }
 
@@ -68,11 +72,6 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
 
     fun loadWalletDetails(apiOnly:Boolean = false) {
         mWalletID?.let { address ->
-            if (!isBitcoinAddressValid(address)) {
-                _loadingState.value = LoadingState.ERROR_INVALID_ADDRESS
-                return
-            }
-
             _loadingState.value = LoadingState.LOADING
 
             disposable?.dispose()

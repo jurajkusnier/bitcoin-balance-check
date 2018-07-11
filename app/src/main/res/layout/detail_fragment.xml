@@ -181,6 +181,7 @@
                                 app:layout_constraintDimensionRatio="H,1:1"
                                 android:background="@drawable/qr_128_light"
                                 android:id="@+id/imageViewQrCode"
+                                android:visibility="gone"
                         />
 
 

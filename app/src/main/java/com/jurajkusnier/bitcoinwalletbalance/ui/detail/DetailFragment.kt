@@ -164,6 +164,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
 
         viewModel.barcodeBitmap.observe(this, Observer {
             imageViewQrCode.setImageBitmap(it)
+            imageViewQrCode.visibility = View.VISIBLE
         })
 
 //        viewModel.initViewModel("14FWSLwNWHCQjsA2teKSKeiaxA3F5kH1tZ") // Empty wallet
