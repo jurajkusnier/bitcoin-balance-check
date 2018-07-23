@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -17,15 +16,13 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import android.widget.Toast
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.qrcode.QRCodeWriter
-import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
+import com.jurajkusnier.bitcoinwalletbalance.ui.qrdialog.QrDialog
 import com.jurajkusnier.bitcoinwalletbalance.utils.convertDpToPixel
 import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
@@ -148,7 +145,6 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
 
     var stillLoading = false
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -160,12 +156,11 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         val walletID = arguments?.getString(WALLET_ID)
         if (walletID != null) {
             viewModel.initViewModel(walletID)
-        }
 
-        viewModel.barcodeBitmap.observe(this, Observer {
-            imageViewQrCode.setImageBitmap(it)
-            imageViewQrCode.visibility = View.VISIBLE
-        })
+            imageViewQrCode.setOnClickListener {
+                QrDialog.newInstance(walletID).show(activity?.supportFragmentManager,QrDialog.TAG)
+            }
+        }
 
 //        viewModel.initViewModel("14FWSLwNWHCQjsA2teKSKeiaxA3F5kH1tZ") // Empty wallet
 //        viewModel.initViewModel("14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m") // Not empty wallet

@@ -12,4 +12,6 @@
     <color name="colorSnackbar">#424242</color>
     <color name="colorTabActive">#FFFFFFFF</color>
     <color name="colorTabInactive">#FBDFC3</color>
+    <color name="colorGrey">#666</color>
+    <color name="colorDarkerGrey">#444</color>
 </resources>

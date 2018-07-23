@@ -179,9 +179,8 @@
                                 app:layout_constraintBottom_toBottomOf="@id/textTotalSent"
                                 android:layout_margin="10dp"
                                 app:layout_constraintDimensionRatio="H,1:1"
-                                android:background="@drawable/qr_128_light"
+                                android:background="@drawable/ic_qr_button"
                                 android:id="@+id/imageViewQrCode"
-                                android:visibility="gone"
                         />
 
 
