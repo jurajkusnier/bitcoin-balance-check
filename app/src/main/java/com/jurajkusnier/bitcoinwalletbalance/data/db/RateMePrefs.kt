@@ -1,15 +1,12 @@
 package com.jurajkusnier.bitcoinwalletbalance.data.db
 
 import android.content.SharedPreferences
-import android.util.Log
-import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import javax.inject.Inject
 
 class RateMePrefs @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
     val TAG = RateMePrefs::class.java.simpleName
 
-//    private val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val DONT_SHOW = "rate_me_not"
     private val SHOW_TIME = "rate_me_time"
     private val WAITITNG_TIME = 1000 * 60 * 60 * 48 //2 days in ms
@@ -29,7 +26,6 @@ class RateMePrefs @Inject constructor(private val sharedPreferences: SharedPrefe
         }
 
         val timeDiff = currentTime - lastTime
-//        Log.d(TAG,"Show Rate me in ${((WAITITNG_TIME - timeDiff)/1000.0f/60.0f/60.0f).format(4)}h" )
         return (timeDiff > WAITITNG_TIME)
     }
 

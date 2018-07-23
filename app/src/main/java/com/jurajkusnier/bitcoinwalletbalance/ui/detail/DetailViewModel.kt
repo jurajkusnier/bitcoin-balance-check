@@ -47,7 +47,7 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
         }
     }
 
-    var disposable:Disposable? = null
+    private var disposable:Disposable? = null
 
     override fun onCleared() {
         super.onCleared()

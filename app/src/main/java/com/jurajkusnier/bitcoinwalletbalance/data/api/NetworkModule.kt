@@ -20,6 +20,18 @@ import javax.inject.Singleton
 @Module
 class NetworkModule {
     private val TAG = NetworkModule::class.simpleName
+    private val blockchainServer = "https://blockchain.info/"
+    private val coinmarketcapServer = "https://api.coinmarketcap.com/"
+
+    companion object {
+        private const val offlineInterceptorName = "offlineInterceptor"
+        private const val delayInterceptorName = "delayInterceptor"
+        private const val blockchainUrlName = "blockchainUrl"
+        private const val coinmarketcapUrlName = "coinmarketcapUrl"
+        private const val blockchainName = "blockchain"
+        private const val coinmarketcapName = "coinmarketcap"
+    }
+
 
     @Provides
     @Singleton
@@ -29,7 +41,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    @Named("offlineInterceptor")
+    @Named(offlineInterceptorName)
     fun provideOfflineCheckInterceptor(networkInfo: NetworkInfo):Interceptor{
         return Interceptor { chain ->
             if (networkInfo.isNetworkAvailable()) {
@@ -58,7 +70,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    @Named("delayInterceptor")
+    @Named(delayInterceptorName)
     fun provideDelayInterceptor():Interceptor{
         return Interceptor { chain ->
                 try {
@@ -78,30 +90,26 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    @Named("BlockchainUrl")
-    fun provideBlockchainUrl(): String{
-        return "https://blockchain.info/"
-    }
+    @Named(blockchainUrlName)
+    fun provideBlockchainUrl() = blockchainServer
 
     @Provides
     @Singleton
-    @Named("CoinmarketcapUrl")
-    fun provideCoinmarketcapUrl(): String{
-        return "https://api.coinmarketcap.com/"
-    }
+    @Named(coinmarketcapUrlName)
+    fun provideCoinmarketcapUrl() = coinmarketcapServer
 
     @Provides
     @Singleton
-    fun provideBlockchainApiService(@Named("Blockchain") retrofit: Retrofit): BlockchainApiService = retrofit.create(BlockchainApiService::class.java)
+    fun provideBlockchainApiService(@Named(blockchainName) retrofit: Retrofit): BlockchainApiService = retrofit.create(BlockchainApiService::class.java)
 
     @Provides
     @Singleton
-    fun provideCoinmarketcapApiService(@Named("Coinmarketcap") retrofit: Retrofit): CoinmarketcapApiService = retrofit.create(CoinmarketcapApiService::class.java)
+    fun provideCoinmarketcapApiService(@Named(coinmarketcapName) retrofit: Retrofit): CoinmarketcapApiService = retrofit.create(CoinmarketcapApiService::class.java)
 
     @Provides
     @Singleton
-    @Named("Blockchain")
-    fun provideRetrofitForBlockchainApi(@Named("BlockchainUrl") baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
+    @Named(blockchainName)
+    fun provideRetrofitForBlockchainApi(@Named(blockchainUrlName) baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -112,8 +120,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    @Named("Coinmarketcap")
-    fun provideRetrofitForCoinmarketcapApi(@Named("CoinmarketcapUrl") baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
+    @Named(coinmarketcapName)
+    fun provideRetrofitForCoinmarketcapApi(@Named(coinmarketcapUrlName) baseUrl: String, moshi: Moshi, httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -124,7 +132,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(loggingInterceptor: HttpLoggingInterceptor, @Named("delayInterceptor")delayInterceptor: Interceptor, @Named("offlineInterceptor")offlineCheckInterceptor: Interceptor):OkHttpClient {
+    fun provideHttpClient(loggingInterceptor: HttpLoggingInterceptor, @Named(delayInterceptorName)delayInterceptor: Interceptor, @Named(offlineInterceptorName)offlineCheckInterceptor: Interceptor):OkHttpClient {
 
         val okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)

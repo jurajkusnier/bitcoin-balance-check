@@ -15,7 +15,7 @@ class FileCacheService @Inject constructor(private val context:Context, private 
 
     val TAG =FileCacheService::class.java.simpleName
 
-    fun getFileName(walletID: String):String {
+    private fun getFileName(walletID: String):String {
         return "$walletID.json"
     }
 

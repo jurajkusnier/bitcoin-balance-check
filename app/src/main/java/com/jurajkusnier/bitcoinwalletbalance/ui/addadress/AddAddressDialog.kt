@@ -16,7 +16,7 @@ class AddAddressDialog: AppCompatDialogFragment() {
 
     private lateinit var dialogViewModel: AddAddressDialogViewModel
 
-    var _view: View? = null
+    private var _view: View? = null
 
     companion object {
         val TAG = AddAddressDialog::class.java.simpleName
@@ -40,10 +40,10 @@ class AddAddressDialog: AppCompatDialogFragment() {
         builder.setTitle(getString(R.string.add_address))
         builder.setView(_view)
                 // Add action buttons
-                .setNegativeButton(getString(R.string.close), { _, _ ->
+                .setNegativeButton(getString(R.string.close)) { _, _ ->
 
-                })
-                .setPositiveButton(getString(R.string.add), { _, _ ->
+                }
+                .setPositiveButton(getString(R.string.add)) { _, _ ->
 
                     val bitcoinAddress = _view?.editTextWalletAddress?.text.toString()
 
@@ -53,7 +53,7 @@ class AddAddressDialog: AppCompatDialogFragment() {
                                 ?.addToBackStack(DetailFragment.TAG)
                                 ?.commit()
                     }
-                })
+                }
 
         _view?.buttonAddClipboard?.setOnClickListener {
             val addressFromClipboard = dialogViewModel.getClipboardText()

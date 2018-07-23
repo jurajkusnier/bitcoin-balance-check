@@ -2,7 +2,8 @@ package com.jurajkusnier.bitcoinwalletbalance.data.model
 
 /*
 
-More info at https://blockchain.info/api
+Holds data from Blockain API
+https://blockchain.info/api
 
  */
 

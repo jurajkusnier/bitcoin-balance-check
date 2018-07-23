@@ -323,12 +323,14 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             R.id.menu_favourite -> {
                 _walletRecord?.let {
                     viewModel.favouriteRecord()
+                    Toast.makeText(context,getString(R.string.address_favourited),Toast.LENGTH_SHORT).show()
                 }
                 true
             }
             R.id.menu_unfavourite-> {
                 _walletRecord?.let {
                     viewModel.unfavouriteRecord()
+                    Toast.makeText(context,getString(R.string.address_unfavourited),Toast.LENGTH_SHORT).show()
                 }
                 true
             }

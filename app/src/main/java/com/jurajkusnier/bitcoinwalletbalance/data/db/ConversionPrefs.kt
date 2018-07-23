@@ -41,10 +41,10 @@ class ConversionPrefs @Inject constructor(context: Application) {
         }
     }
 
-    val TAG = ConversionPrefs::class.java.simpleName
+    private val TAG = ConversionPrefs::class.java.simpleName
 
-    val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    val KEY_SELECTED_CURRENCY = "selected_currency"
+    private val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val KEY_SELECTED_CURRENCY = "selected_currency"
 
     val liveExchangeRate:LiveCurrentExchangeRate by lazy { LiveCurrentExchangeRate() }
 
