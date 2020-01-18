@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -30,10 +31,10 @@ class FileCacheService @Inject constructor(private val context:Context, private 
                 val content = file.readText()
 
                 val moshiAdapter =  moshi.adapter(AllTransactions::class.java)
-                val transactions = moshiAdapter.fromJson(content)?: AllTransactions(emptyArray())
+                val transactions = moshiAdapter.fromJson(content)?: AllTransactions(listOf())
                 observer.onNext(transactions)
                 observer.onComplete()
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 observer.onError(e)
             }
         }

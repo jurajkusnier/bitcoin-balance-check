@@ -12,7 +12,7 @@ import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import kotlinx.android.synthetic.main.transaction_layout.view.*
 
-class TransactionListAdapter(private val myWalletID:String, private val transactions:Array<OneTransaction>, private val context:Context):
+class TransactionListAdapter(private val myWalletID:String, private val transactions:List<OneTransaction>, private val context:Context):
         RecyclerView.Adapter<TransactionListAdapter.ViewHolder>() {
 
     private lateinit var recyclerView: ViewGroup

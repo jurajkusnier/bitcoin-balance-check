@@ -33,6 +33,6 @@ data class WalletRecordView(
         val totalSent:Long,
         val finalBalance:Long,
 
-        val transactions:Array<OneTransaction>,
+        val transactions:List<OneTransaction>,
         val fromCache: Boolean)
 

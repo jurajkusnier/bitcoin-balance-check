@@ -9,7 +9,6 @@ import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
 import com.jurajkusnier.bitcoinwalletbalance.data.filesystem.FileCacheService
 import com.jurajkusnier.bitcoinwalletbalance.data.model.AllTransactions
 import com.jurajkusnier.bitcoinwalletbalance.data.model.RawData
-import com.squareup.moshi.Moshi
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,31 +22,31 @@ class DetailRepository @Inject constructor(
         private val fileCacheService: FileCacheService) {
 
     val TAG = DetailRepository::class.java.simpleName
-    var lastWalletDetails:WalletRecordView? = null
+    var lastWalletDetails: WalletRecordView? = null
 
     fun getLiveConversion() = conversionPrefs.liveExchangeRate
 
-    private fun loadDetailFromFileSystem(walletID: String):Observable<AllTransactions> {
+    private fun loadDetailFromFileSystem(walletID: String): Observable<AllTransactions> {
         return fileCacheService.getTransactionsFromFile(walletID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
-    private fun loadDetailFromDatabase(walletID: String):Maybe<WalletRecord> {
+    private fun loadDetailFromDatabase(walletID: String): Maybe<WalletRecord> {
         return appDatabase.walletRecordDao().getWalletRecord(walletID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
-    private fun loadDetailFromAPI(walletID:String):Observable<RawData> {
+    private fun loadDetailFromAPI(walletID: String): Observable<RawData> {
         return blockchainApi.getDetails(walletID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun loadDetails(address:String, apiOnly:Boolean = false):Observable<WalletRecordView?> {
+    fun loadDetails(address: String, apiOnly: Boolean = false): Observable<WalletRecordView?> {
 
-        val sources=
+        val sources =
                 if (apiOnly) {
                     arrayListOf(loadDetailFromAPI(address)).asIterable()
                 } else {
@@ -58,17 +57,17 @@ class DetailRepository @Inject constructor(
                 }
 
         return Observable.concatDelayError(sources)
-                .observeOn(AndroidSchedulers.mainThread(),true)
+                .observeOn(AndroidSchedulers.mainThread(), true)
                 .map {
                     when (it) {
                         //API
                         is RawData -> {
                             val timestamp = System.currentTimeMillis()
-                            val nickname = lastWalletDetails?.nickname?:""
+                            val nickname = lastWalletDetails?.nickname ?: ""
 
-                            Log.d(TAG,"API respone: RawData($address,${it.final_balance})")
+                            Log.d(TAG, "API respone: RawData($address,${it.final_balance})")
 
-                            val newWalletRecord = WalletRecordView(address, nickname, timestamp,timestamp,true,lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance,it.txs, false)
+                            val newWalletRecord = WalletRecordView(address, nickname, timestamp, timestamp, true, lastWalletDetails?.favourite == true, it.total_received, it.total_sent, it.final_balance, it.txs, false)
 
                             saveRecordToHistory(newWalletRecord)
 
@@ -80,13 +79,13 @@ class DetailRepository @Inject constructor(
                         //DB
                         is WalletRecord -> {
 
-                            Log.d(TAG,"DB response: WalletRecord($address,${it.finalBalance})")
+                            Log.d(TAG, "DB response: WalletRecord($address,${it.finalBalance})")
 
-                            lastWalletDetails = WalletRecordView(it.address,it.nickname,it.lastAccess,it.lastUpdate,it.showInHistory,it.favourite,it.totalReceived,it.totalSent,it.finalBalance, emptyArray(),true)
+                            lastWalletDetails = WalletRecordView(it.address, it.nickname, it.lastAccess, it.lastUpdate, it.showInHistory, it.favourite, it.totalReceived, it.totalSent, it.finalBalance, listOf(), true)
                             lastWalletDetails
                         }
                         is AllTransactions -> {
-                            Log.d(TAG,"FileSystem response: ${it.transactions.size} Transactions")
+                            Log.d(TAG, "FileSystem response: ${it.transactions.size} Transactions")
                             lastWalletDetails = lastWalletDetails?.copy(transactions = it.transactions)
 
                             lastWalletDetails
@@ -97,21 +96,21 @@ class DetailRepository @Inject constructor(
                             null
                         }
                     }
-        }
+                }
     }
 
-    private fun saveRecordToHistory(record:WalletRecordView) {
+    private fun saveRecordToHistory(record: WalletRecordView) {
 
         Observable.fromCallable {
-            val newRecord = WalletRecord(record.address, record.nickname, record.lastAccess, record.lastUpdate,true,record.favourite, record.totalReceived, record.totalSent, record.finalBalance)
+            val newRecord = WalletRecord(record.address, record.nickname, record.lastAccess, record.lastUpdate, true, record.favourite, record.totalReceived, record.totalSent, record.finalBalance)
 
             appDatabase.walletRecordDao().addWalletRecord(newRecord)
             fileCacheService.setTransactionsToFile(record.address, AllTransactions(record.transactions))
         }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnError { Log.e(TAG,Log.getStackTraceString(it)) }
-        .subscribe ()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { Log.e(TAG, Log.getStackTraceString(it)) }
+                .subscribe()
     }
 
     fun favouriteRecord(walletID: String) {
@@ -120,8 +119,8 @@ class DetailRepository @Inject constructor(
         }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { Log.e(TAG,Log.getStackTraceString(it)) }
-                .subscribe ()
+                .doOnError { Log.e(TAG, Log.getStackTraceString(it)) }
+                .subscribe()
     }
 
     fun unfavouriteRecord(walletID: String) {
@@ -130,8 +129,8 @@ class DetailRepository @Inject constructor(
         }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { Log.e(TAG,Log.getStackTraceString(it)) }
-                .subscribe ()
+                .doOnError { Log.e(TAG, Log.getStackTraceString(it)) }
+                .subscribe()
     }
 
 }
