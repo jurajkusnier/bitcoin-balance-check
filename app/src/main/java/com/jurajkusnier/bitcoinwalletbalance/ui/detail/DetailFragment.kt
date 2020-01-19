@@ -34,14 +34,14 @@ import kotlinx.android.synthetic.main.detail_fragment.view.*
 import javax.inject.Inject
 
 
-class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, EditDialogInterface {
+class DetailFragment : DaggerFragment(), AppBarLayout.OnOffsetChangedListener, EditDialogInterface {
 
     var isAnimating = false
 
     override fun setEnterTransition(transition: Any?) {
 
-        if (transition is android.support.transition.Transition) {
-            transition.addListener(object :Transition.TransitionListener {
+        if (transition is Transition) {
+            transition.addListener(object : Transition.TransitionListener {
                 override fun onTransitionResume(transition: Transition) {
 
                 }
@@ -79,19 +79,21 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
     }
 
     override fun showEditDialog(address: String, nickname: String) {
-        EditDialog.newInstance(address,nickname).show(fragmentManager, EditDialog.TAG)
+        EditDialog.newInstance(address, nickname).show(fragmentManager, EditDialog.TAG)
     }
 
-    private lateinit var viewModel:DetailViewModel
-    @Inject lateinit var viewModelFactory: ViewModelFactory
-    @Inject lateinit var moshi: Moshi
+    private lateinit var viewModel: DetailViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var moshi: Moshi
 
     companion object {
         val TAG = DetailFragment::class.java.simpleName
         val WALLET_ID = "WALLET_ID"
 
-        fun newInstance(walletID:String):DetailFragment {
-            val detailFragment =DetailFragment()
+        fun newInstance(walletID: String): DetailFragment {
+            val detailFragment = DetailFragment()
             val bundle = Bundle()
             bundle.putString(WALLET_ID, walletID)
             detailFragment.arguments = bundle
@@ -130,10 +132,10 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
         return view
     }
 
-    var _walletRecord:WalletRecordView? = null
-    var _exchangeRate:ExchangeRate? = null
+    var _walletRecord: WalletRecordView? = null
+    var _exchangeRate: ExchangeRate? = null
 
-    private fun getBitcoinPriceInMoney():String {
+    private fun getBitcoinPriceInMoney(): String {
         _exchangeRate?.let { rate ->
             _walletRecord?.let {
                 return "${(rate.price * it.finalBalance / 100_000_000).format(2)} ${rate.currency}"
@@ -158,14 +160,13 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             viewModel.initViewModel(walletID)
 
             imageViewQrCode.setOnClickListener {
-                QrDialog.newInstance(walletID).show(activity?.supportFragmentManager,QrDialog.TAG)
+                QrDialog.newInstance(walletID).show(activity?.supportFragmentManager, QrDialog.TAG)
             }
         }
 
 //        viewModel.initViewModel("14FWSLwNWHCQjsA2teKSKeiaxA3F5kH1tZ") // Empty wallet
 //        viewModel.initViewModel("14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m") // Not empty wallet
 //        viewModel.initViewModel("1r8JvHjYFiFDNdrDBW1iqDp8pmoaWuSaz") // Lot of transactions
-
 
 
         textWalletID.text = walletID
@@ -190,12 +191,14 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
 
             refreshOptionsMenu()
 
-            textFinalBalanceCrypto.text = sathoshiToBTCstring(it?.finalBalance ?: 0)
+            val btcString = sathoshiToBTCstring(it?.finalBalance ?: 0)
+            textFinalBalanceCrypto.text = btcString
+            newTitle.text = btcString
             textTotalReceived.text = sathoshiToBTCstring(it?.totalReceived ?: 0)
             textTotalSent.text = sathoshiToBTCstring(it?.totalSent ?: 0)
 
             if (thisContext != null && it != null && !isAnimating) {
-                    updateTransactionListView()
+                updateTransactionListView()
             }
 
             if ((it == null || it.transactions.isEmpty()) && !stillLoading) {
@@ -223,9 +226,9 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
 
         buttonCopyAddressToClipboard.setOnClickListener {
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(getText(R.string.address),textWalletID.text)
+            val clip = ClipData.newPlainText(getText(R.string.address), textWalletID.text)
             clipboard.primaryClip = clip
-            Toast.makeText(context,getString(R.string.address_copied),Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.address_copied), Toast.LENGTH_SHORT).show()
         }
 
 
@@ -242,9 +245,9 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
     }
 
     private var errorSnackbar: Snackbar? = null
-    private var colorAccent:Int = Color.RED
+    private var colorAccent: Int = Color.RED
 
-    private fun showErrorSnackbar(errorText:String) {
+    private fun showErrorSnackbar(errorText: String) {
         errorSnackbar = Snackbar.make(detailLayout, errorText, Snackbar.LENGTH_INDEFINITE)
         errorSnackbar?.view?.setBackgroundColor(colorAccent)
         errorSnackbar?.show()
@@ -260,7 +263,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             context.setSupportActionBar(toolbarResults)
             context.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             context.supportActionBar?.setDisplayShowHomeEnabled(true)
-            context.supportActionBar?.title=""
+            context.supportActionBar?.title = ""
         }
 
         appbar.addOnOffsetChangedListener(this)
@@ -282,23 +285,23 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
         if (appBarLayout == null) return
 
-        val range= appBarLayout.totalScrollRange.toFloat()
+        val range = appBarLayout.totalScrollRange.toFloat()
 
         when {
             Math.abs(verticalOffset) == range.toInt() -> {
                 // Collapsed
-                newTitle.alpha=1.0f
+                newTitle.alpha = 1.0f
                 swiperefresh.isEnabled = false
             }
             verticalOffset == 0 -> {
                 // Expanded
-                newTitle.alpha=0.0f
+                newTitle.alpha = 0.0f
                 swiperefresh.isEnabled = true
             }
             else -> {
                 // Somewhere in between
                 swiperefresh.isEnabled = false
-                val value = Math.abs(verticalOffset/range) - 0.5f
+                val value = Math.abs(verticalOffset / range) - 0.5f
                 newTitle.alpha = value * 2f
             }
         }
@@ -315,7 +318,7 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when(item?.itemId) {
+        return when (item?.itemId) {
             R.id.menu_refresh -> {
                 viewModel.loadWalletDetails(true)
                 true
@@ -323,20 +326,20 @@ class DetailFragment: DaggerFragment(), AppBarLayout.OnOffsetChangedListener, Ed
             R.id.menu_favourite -> {
                 _walletRecord?.let {
                     viewModel.favouriteRecord()
-                    Toast.makeText(context,getString(R.string.address_favourited),Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.address_favourited), Toast.LENGTH_SHORT).show()
                 }
                 true
             }
-            R.id.menu_unfavourite-> {
+            R.id.menu_unfavourite -> {
                 _walletRecord?.let {
                     viewModel.unfavouriteRecord()
-                    Toast.makeText(context,getString(R.string.address_unfavourited),Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.address_unfavourited), Toast.LENGTH_SHORT).show()
                 }
                 true
             }
-            R.id.menu_edit-> {
+            R.id.menu_edit -> {
                 _walletRecord?.let {
-                    showEditDialog(it.address,it.nickname)
+                    showEditDialog(it.address, it.nickname)
                 }
                 true
             }
