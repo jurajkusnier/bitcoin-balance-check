@@ -5,16 +5,17 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import com.google.android.material.tabs.TabLayout
 import com.google.zxing.integration.android.IntentIntegrator
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
@@ -40,9 +41,9 @@ class ParentFragment : Fragment() {
     }
 
     lateinit var fabOpenAnimation: Animation
-    lateinit var fabCloseAnimation:Animation
-    lateinit var fabRotateForwad:Animation
-    lateinit var fabRotateBackward:Animation
+    lateinit var fabCloseAnimation: Animation
+    lateinit var fabRotateForwad: Animation
+    lateinit var fabRotateBackward: Animation
     lateinit var backdropShow: Animation
     lateinit var backdropHide: Animation
 
@@ -74,12 +75,12 @@ class ParentFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        fabOpenAnimation = AnimationUtils.loadAnimation(context,R.anim.fab_open)
-        fabCloseAnimation = AnimationUtils.loadAnimation(context,R.anim.fab_close)
-        fabRotateForwad = AnimationUtils.loadAnimation(context,R.anim.rotate_forward)
-        fabRotateBackward = AnimationUtils.loadAnimation(context,R.anim.rotate_backward)
-        backdropShow = AnimationUtils.loadAnimation(context,R.anim.backdrop_show)
-        backdropHide = AnimationUtils.loadAnimation(context,R.anim.backdrop_hide)
+        fabOpenAnimation = AnimationUtils.loadAnimation(context, R.anim.fab_open)
+        fabCloseAnimation = AnimationUtils.loadAnimation(context, R.anim.fab_close)
+        fabRotateForwad = AnimationUtils.loadAnimation(context, R.anim.rotate_forward)
+        fabRotateBackward = AnimationUtils.loadAnimation(context, R.anim.rotate_backward)
+        backdropShow = AnimationUtils.loadAnimation(context, R.anim.backdrop_show)
+        backdropHide = AnimationUtils.loadAnimation(context, R.anim.backdrop_hide)
 
         activity?.let {
             if (it is AppCompatActivity) {
@@ -93,7 +94,7 @@ class ParentFragment : Fragment() {
 
         floatingButtonAddManual.setOnClickListener {
             animateFAB()
-            AddAddressDialog.newInstance ().show(fragmentManager, SettingsDialog.TAG)
+            AddAddressDialog.newInstance().show(fragmentManager!!, SettingsDialog.TAG)
         }
 
         floatingButtonAddQr.setOnClickListener {
@@ -129,11 +130,11 @@ class ParentFragment : Fragment() {
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
-                tab.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabActive,null), PorterDuff.Mode.SRC_ATOP)
+                tab.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabActive, null), PorterDuff.Mode.SRC_ATOP)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
-                tab.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabInactive,null), PorterDuff.Mode.SRC_ATOP)
+                tab.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabInactive, null), PorterDuff.Mode.SRC_ATOP)
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
@@ -141,20 +142,19 @@ class ParentFragment : Fragment() {
             }
         })
 
-        tabLayout.getTabAt(1)?.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabInactive,null), PorterDuff.Mode.SRC_ATOP)
+        tabLayout.getTabAt(1)?.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabInactive, null), PorterDuff.Mode.SRC_ATOP)
     }
 
-    class PagerAdapter (private val fm: FragmentManager, private val NumOfTabs: Int): FragmentStatePagerAdapter(fm) {
+    class PagerAdapter(private val fm: FragmentManager, private val NumOfTabs: Int) : FragmentStatePagerAdapter(fm) {
 
-        override fun getItem(position: Int): Fragment? {
+        override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> {
                     FavouriteFragment.newInstance()
                 }
-                1 -> {
+                else -> {
                     HistoryFragment.newInstance()
                 }
-                else -> null
             }
         }
 
@@ -167,13 +167,13 @@ class ParentFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (requestCode == IntentIntegrator.REQUEST_CODE) {
-            val result= IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result?.contents != null) {
 
-                var bitcoinAddress= result.contents
+                var bitcoinAddress = result.contents
                 val bitcoinAddressPrefix = getString(R.string.bitcoin_addr_prefix)
 
-                if (bitcoinAddress.startsWith(bitcoinAddressPrefix,true)) {
+                if (bitcoinAddress.startsWith(bitcoinAddressPrefix, true)) {
                     bitcoinAddress = bitcoinAddress.substring(bitcoinAddressPrefix.length)
                 }
 
@@ -188,13 +188,13 @@ class ParentFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == MY_CAMERA_PERMISSION ) {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startBarcodeScanner()
-                }
+        if (requestCode == MY_CAMERA_PERMISSION) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startBarcodeScanner()
             }
         }
+    }
 
     private fun startBarcodeScanner() {
         val intentIntegrator = IntentIntegrator.forSupportFragment(this)
@@ -207,8 +207,8 @@ class ParentFragment : Fragment() {
         intentIntegrator.initiateScan()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.parent_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.parent_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 }

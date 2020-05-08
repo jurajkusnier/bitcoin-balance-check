@@ -1,10 +1,9 @@
 package com.jurajkusnier.bitcoinwalletbalance.data.db
 
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.Database
+import androidx.room.Database
+import androidx.room.RoomDatabase
 
-
-@Database(entities = [WalletRecord::class], version = 1)
+@Database(entities = [WalletRecordEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun walletRecordDao(): AppDatabaseDao
 }

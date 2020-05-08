@@ -1,47 +1,47 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".ui.main.ParentFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.ParentFragment">
 
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewMain"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="120dp"
-            android:clipToPadding="false"
-    />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingBottom="120dp" />
+
     <LinearLayout
-            android:id="@+id/layoutEmptyList"
-            android:orientation="vertical"
+        android:id="@+id/layoutEmptyList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="50dp"
+            android:src="@drawable/bitcoin_logo_2" />
+
+        <TextView
+            android:id="@+id/emptyListText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-    >
-        <ImageView
-                android:layout_gravity="center"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:src="@drawable/bitcoin_logo_2"
-                android:layout_marginBottom="50dp"/>
+            android:layout_marginBottom="5dp"
+            android:text="@string/favourites_list_is_empty"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:id="@+id/emptyListText"
-                android:text="@string/favourites_list_is_empty"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginBottom="5dp"
-        />
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textAlignment="center"
-                android:text="@string/first_instruction"
-                android:id="@+id/textSpannableInfo"
-        />
+            android:id="@+id/textSpannableInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/first_instruction"
+            android:textAlignment="center"
+            android:textSize="15sp" />
     </LinearLayout>
 
 </FrameLayout>

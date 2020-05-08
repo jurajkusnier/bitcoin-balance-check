@@ -1,12 +1,12 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.favourite
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModel
 import android.os.Bundle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainFragment
 
-class FavouriteFragment: MainFragment() {
+class FavouriteFragment : MainFragment() {
 
     override fun getViewModelClass(): Class<out ViewModel> = FavouriteViewModel::class.java
 
@@ -15,22 +15,16 @@ class FavouriteFragment: MainFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.let {
-            if (it !is FavouriteViewModel) return
-            val thisLifecycleOwner = getViewLifecycleOwner() ?: return
-            it.unfavouritedItem.observe(thisLifecycleOwner, Observer unfavouritedItemObserver@{
-                unfavouritedRecord ->
-                if (unfavouritedRecord == null) return@unfavouritedItemObserver
-                showUndoSnackbar(unfavouritedRecord, getString(R.string.address_unfavourited))
-            })
-        }
+        (viewModel as FavouriteViewModel).unfavouritedAddress
+                .observe(viewLifecycleOwner, Observer { address ->
+                    showUndoSnackbar(getString(R.string.address_unfavourited)) {
+                        viewModel.favouriteRecord(address)
+                    }
+                })
     }
 
     companion object {
-        val TAG = FavouriteFragment::class.java.simpleName
-
         fun newInstance(): FavouriteFragment {
-
             return FavouriteFragment()
         }
     }

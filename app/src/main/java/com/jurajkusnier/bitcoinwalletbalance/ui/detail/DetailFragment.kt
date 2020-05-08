@@ -1,227 +1,94 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.Snackbar
-import android.support.transition.Transition
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.snackbar.Snackbar
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordView
-import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
 import com.jurajkusnier.bitcoinwalletbalance.ui.qrdialog.QrDialog
 import com.jurajkusnier.bitcoinwalletbalance.utils.convertDpToPixel
-import com.jurajkusnier.bitcoinwalletbalance.utils.format
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import com.squareup.moshi.Moshi
-import dagger.android.AndroidInjection
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.detail_fragment.*
-import kotlinx.android.synthetic.main.detail_fragment.view.*
 import javax.inject.Inject
-
+import kotlin.math.abs
 
 class DetailFragment : DaggerFragment(), AppBarLayout.OnOffsetChangedListener, EditDialogInterface {
 
-    var isAnimating = false
-
-    override fun setEnterTransition(transition: Any?) {
-
-        if (transition is Transition) {
-            transition.addListener(object : Transition.TransitionListener {
-                override fun onTransitionResume(transition: Transition) {
-
-                }
-
-                override fun onTransitionPause(transition: Transition) {
-
-                }
-
-                override fun onTransitionCancel(transition: Transition) {
-
-                }
-
-                override fun onTransitionStart(transition: Transition) {
-
-                    isAnimating = true
-                }
-
-                override fun onTransitionEnd(transition: Transition) {
-                    isAnimating = false
-                    updateTransactionListView()
-                }
-
-            })
-        }
-
-        super.setEnterTransition(transition)
-    }
-
-    private fun updateTransactionListView() {
-        _walletRecord?.let {
-            recyclerViewTransactions?.adapter = TransactionListAdapter(it.address, it.transactions, activity as Context)
-            recyclerViewTransactions?.adapter?.notifyDataSetChanged()
-            recyclerViewTransactions?.isNestedScrollingEnabled = false
-        }
-    }
-
-    override fun showEditDialog(address: String, nickname: String) {
-        EditDialog.newInstance(address, nickname).show(fragmentManager, EditDialog.TAG)
-    }
-
-    private lateinit var viewModel: DetailViewModel
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     @Inject
     lateinit var moshi: Moshi
-
-    companion object {
-        val TAG = DetailFragment::class.java.simpleName
-        val WALLET_ID = "WALLET_ID"
-
-        fun newInstance(walletID: String): DetailFragment {
-            val detailFragment = DetailFragment()
-            val bundle = Bundle()
-            bundle.putString(WALLET_ID, walletID)
-            detailFragment.arguments = bundle
-
-            return detailFragment
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        errorSnackbar?.dismiss()
-    }
-
-    override fun onAttach(context: Context?) {
-        //DI activity injection first
-        AndroidInjection.inject(activity)
-        super.onAttach(context)
-    }
+    private var optionsMenu: Menu? = null
+    private lateinit var viewModel: DetailViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-
-        val view = inflater.inflate(R.layout.detail_fragment, container, false)
-
-        //Let's make detail view look nicer on every screen
-        context?.let {
-            val displayMetrics = it.resources.displayMetrics
-            view.detailCardView.minimumHeight = displayMetrics.heightPixels
-        }
-
-        //TODO: load position automatically from layout (imgDetailsBitcoin)
-        context?.let {
-            view.swiperefresh.setProgressViewOffset(false, 0, it.convertDpToPixel(58.5f))
-        }
-
-        return view
+        return inflater.inflate(R.layout.detail_fragment, container, false)
     }
-
-    var _walletRecord: WalletRecordView? = null
-    var _exchangeRate: ExchangeRate? = null
-
-    private fun getBitcoinPriceInMoney(): String {
-        _exchangeRate?.let { rate ->
-            _walletRecord?.let {
-                return "${(rate.price * it.finalBalance / 100_000_000).format(2)} ${rate.currency}"
-            }
-        }
-
-        return ""
-    }
-
-    var stillLoading = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         setHasOptionsMenu(true)
 
-        //ViewModel
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
 
-        val walletID = arguments?.getString(WALLET_ID)
-        if (walletID != null) {
-            viewModel.initViewModel(walletID)
+        val walletID = getAddress() ?: return //TODO: maybe throw exception
+        setupUI(walletID)
 
-            imageViewQrCode.setOnClickListener {
-                QrDialog.newInstance(walletID).show(activity?.supportFragmentManager, QrDialog.TAG)
+        viewModel.loadWalletDetails(walletID)
+
+        viewModel.walledDetailsViewState.observe(viewLifecycleOwner, Observer {
+            swiperefresh.isRefreshing = it.loading
+            if (it.error != null && it.wallet != null) {
+                textInfo.visibility = View.VISIBLE
+            } else {
+                textInfo.visibility = View.GONE
             }
-        }
-
-//        viewModel.initViewModel("14FWSLwNWHCQjsA2teKSKeiaxA3F5kH1tZ") // Empty wallet
-//        viewModel.initViewModel("14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m") // Not empty wallet
-//        viewModel.initViewModel("1r8JvHjYFiFDNdrDBW1iqDp8pmoaWuSaz") // Lot of transactions
-
-
-        textWalletID.text = walletID
-
-        //UI initialization
-        val thisContext = activity
-        if (thisContext != null) {
-            colorAccent = ContextCompat.getColor(thisContext, R.color.colorAccent)
-            initView(thisContext)
-        }
-
-        viewModel.liveExchangeRate.observe(this, Observer {
-
-            _exchangeRate = it
-            textFinalBalanceMoney.text = getBitcoinPriceInMoney()
-
-        })
-
-        viewModel.walletDetail.observe(this, Observer walletRecordObserver@{
-
-            _walletRecord = it
-
-            refreshOptionsMenu()
-
-            val btcString = sathoshiToBTCstring(it?.finalBalance ?: 0)
+            when (it.error) {
+                WalledDetailsViewState.ErrorCode.UNKNOWN -> showErrorSnackbar(getString(R.string.network_connection_error))
+                WalledDetailsViewState.ErrorCode.OFFLINE -> showErrorSnackbar(getString(R.string.offline_error))
+                WalledDetailsViewState.ErrorCode.INVALID_ADDRESS -> showErrorSnackbar(getString(R.string.invalid_bitcoin_address))
+                null -> hideErrorSnackbar()
+            }
+            updateOptionsMenu(it.loading, it.wallet?.favourite == true, it.wallet != null)
+            val btcString = sathoshiToBTCstring(it?.wallet?.finalBalance ?: 0)
             textFinalBalanceCrypto.text = btcString
             newTitle.text = btcString
-            textTotalReceived.text = sathoshiToBTCstring(it?.totalReceived ?: 0)
-            textTotalSent.text = sathoshiToBTCstring(it?.totalSent ?: 0)
+            textTotalReceived.text = sathoshiToBTCstring(it?.wallet?.totalReceived ?: 0)
+            textTotalSent.text = sathoshiToBTCstring(it?.wallet?.totalSent ?: 0)
+            updateTransactionListView(it)
 
-            if (thisContext != null && it != null && !isAnimating) {
-                updateTransactionListView()
-            }
-
-            if ((it == null || it.transactions.isEmpty()) && !stillLoading) {
+            if ((it.wallet == null || it.wallet.transactions.isEmpty()) && !it.loading) {
                 textViewNoTransaction.visibility = View.VISIBLE
             } else {
                 textViewNoTransaction.visibility = View.GONE
             }
 
-            textFinalBalanceMoney.text = getBitcoinPriceInMoney()
+            textFinalBalanceMoney.text = if (it?.wallet?.finalBalance != null && it.exchangeRate?.rate != null) {
+                val btcValue = it.wallet.finalBalance / 100_000_000.00
+                val fiat = btcValue * it.exchangeRate.rate
+                getString(R.string.btc_price_in_fiat, fiat, it.currencyCode)
+            } else ""
         })
 
-        viewModel.loadingState.observe(this, Observer<DetailViewModel.LoadingState> {
-            stillLoading = (it == DetailViewModel.LoadingState.LOADING)
-
-            swiperefresh.isRefreshing = stillLoading
-            refreshOptionsMenu()
-
-            when (it) {
-                DetailViewModel.LoadingState.ERROR -> showErrorSnackbar(getString(R.string.network_connection_error))
-                DetailViewModel.LoadingState.ERROR_OFFLINE -> showErrorSnackbar(getString(R.string.offline_error))
-                DetailViewModel.LoadingState.ERROR_INVALID_ADDRESS -> showErrorSnackbar(getString(R.string.invalid_bitcoin_address))
-                else -> hideErrorShackbar()
-            }
+        viewModel.showEditDialog.observe(viewLifecycleOwner, Observer {
+            EditDialog.newInstance(it).show(fragmentManager!!, EditDialog.TAG)
         })
 
         buttonCopyAddressToClipboard.setOnClickListener {
@@ -230,65 +97,60 @@ class DetailFragment : DaggerFragment(), AppBarLayout.OnOffsetChangedListener, E
             clipboard.primaryClip = clip
             Toast.makeText(context, getString(R.string.address_copied), Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
-    fun refreshOptionsMenu() {
-        //Loading
-        optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = !stillLoading
-        //Others
-        optionsMenu?.findItem(R.id.menu_favourite)?.isVisible = _walletRecord?.favourite == false
-        optionsMenu?.findItem(R.id.menu_unfavourite)?.isVisible = _walletRecord?.favourite == true
-        optionsMenu?.findItem(R.id.menu_edit)?.isVisible = (_walletRecord != null)
+    private fun getAddress(): String? {
+        return arguments?.getString(WALLET_ID)
+    }
 
+    private fun updateOptionsMenu(isLoading: Boolean, isFavorited: Boolean, canEdit: Boolean) {
+        optionsMenu?.findItem(R.id.menu_refresh)?.isEnabled = !isLoading
+        optionsMenu?.findItem(R.id.menu_favourite)?.isVisible = !isFavorited
+        optionsMenu?.findItem(R.id.menu_unfavourite)?.isVisible = isFavorited
+        optionsMenu?.findItem(R.id.menu_edit)?.isVisible = canEdit
     }
 
     private var errorSnackbar: Snackbar? = null
-    private var colorAccent: Int = Color.RED
+    private val colorAccent: Int by lazy {
+        ResourcesCompat.getColor(resources, R.color.colorAccent, null)
+    }
 
     private fun showErrorSnackbar(errorText: String) {
+        if (errorSnackbar?.isShown == true) return
         errorSnackbar = Snackbar.make(detailLayout, errorText, Snackbar.LENGTH_INDEFINITE)
         errorSnackbar?.view?.setBackgroundColor(colorAccent)
         errorSnackbar?.show()
     }
 
-    private fun hideErrorShackbar() {
+    private fun hideErrorSnackbar() {
         errorSnackbar?.dismiss()
+        errorSnackbar = null
     }
 
-    private fun initView(context: Context) {
-
-        if (context is AppCompatActivity) {
-            context.setSupportActionBar(toolbarResults)
-            context.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            context.supportActionBar?.setDisplayShowHomeEnabled(true)
-            context.supportActionBar?.title = ""
-        }
-
+    private fun setupUI(address: String) {
         appbar.addOnOffsetChangedListener(this)
+        textWalletID.text = address
 
-        recyclerViewTransactions.layoutManager = LinearLayoutManager(context)
-        recyclerViewTransactions.setHasFixedSize(false)
-        recyclerViewTransactions.adapter = null
-
-        textInfo.visibility = View.GONE
-
-        val mDividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        recyclerViewTransactions.addItemDecoration(mDividerItemDecoration)
-
-        swiperefresh.setOnRefreshListener {
-            viewModel.loadWalletDetails(true)
+        imageViewQrCode.setOnClickListener {
+            QrDialog.newInstance(address).show(requireActivity().supportFragmentManager, QrDialog.TAG)
         }
+
+        setupToolbar()
+        setupRecyclerView()
+        setupSwipeToRefresh(address)
+        setSquareDetailCardView()
+    }
+
+    private fun setSquareDetailCardView() {
+        detailCardView.minimumHeight = resources.displayMetrics.heightPixels
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
         if (appBarLayout == null) return
-
         val range = appBarLayout.totalScrollRange.toFloat()
 
         when {
-            Math.abs(verticalOffset) == range.toInt() -> {
+            abs(verticalOffset) == range.toInt() -> {
                 // Collapsed
                 newTitle.alpha = 1.0f
                 swiperefresh.isEnabled = false
@@ -301,52 +163,97 @@ class DetailFragment : DaggerFragment(), AppBarLayout.OnOffsetChangedListener, E
             else -> {
                 // Somewhere in between
                 swiperefresh.isEnabled = false
-                val value = Math.abs(verticalOffset / range) - 0.5f
+                val value = abs(verticalOffset / range) - 0.5f
                 newTitle.alpha = value * 2f
             }
         }
     }
 
-    var optionsMenu: Menu? = null
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        optionsMenu = menu
-        inflater?.inflate(R.menu.detail_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-
-        refreshOptionsMenu()
+    private fun updateTransactionListView(walletDetailsViewState: WalledDetailsViewState) {
+        walletDetailsViewState.wallet?.let {
+            recyclerViewTransactions?.adapter = TransactionListAdapter(it.address, it.transactions, activity as Context)
+            recyclerViewTransactions?.adapter?.notifyDataSetChanged()
+            recyclerViewTransactions?.isNestedScrollingEnabled = false
+        }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
+    private fun setupToolbar() {
+        (activity as? AppCompatActivity)?.apply {
+            setSupportActionBar(toolbarResults)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+            supportActionBar?.title = ""
+        }
+    }
+
+    private fun setupRecyclerView() {
+        val dividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        recyclerViewTransactions.apply {
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(false)
+            adapter = null
+            addItemDecoration(dividerItemDecoration)
+        }
+    }
+
+    private fun setupSwipeToRefresh(address: String) {
+        //TODO: load position automatically from layout (imgDetailsBitcoin)
+        swiperefresh.setProgressViewOffset(false, 0, requireContext().convertDpToPixel(58.5f))
+        swiperefresh.setOnRefreshListener {
+            viewModel.loadWalletDetails(address, true)
+        }
+    }
+
+    override fun showEditDialog(address: String, nickname: String) {
+        EditDialog.newInstance(EditDialog.Parameters(address, nickname)).show(fragmentManager!!, EditDialog.TAG)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.detail_menu, menu)
+        optionsMenu = menu
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        errorSnackbar?.dismiss()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
             R.id.menu_refresh -> {
-                viewModel.loadWalletDetails(true)
+                getAddress()?.let { viewModel.loadWalletDetails(it, true) }
                 true
             }
             R.id.menu_favourite -> {
-                _walletRecord?.let {
-                    viewModel.favouriteRecord()
-                    Toast.makeText(context, getString(R.string.address_favourited), Toast.LENGTH_SHORT).show()
-                }
+                viewModel.favouriteRecord()
+                Toast.makeText(context, getString(R.string.address_favourited), Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.menu_unfavourite -> {
-                _walletRecord?.let {
-                    viewModel.unfavouriteRecord()
-                    Toast.makeText(context, getString(R.string.address_unfavourited), Toast.LENGTH_SHORT).show()
-                }
+                viewModel.unfavouriteRecord()
+                Toast.makeText(context, getString(R.string.address_unfavourited), Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.menu_edit -> {
-                _walletRecord?.let {
-                    showEditDialog(it.address, it.nickname)
-                }
+                viewModel.showEditDialog()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
 
+    companion object {
+        const val TAG = "DetailFragment"
+        const val WALLET_ID = "WALLET_ID"
 
+        fun newInstance(walletID: String): DetailFragment {
+            val detailFragment = DetailFragment()
+            val bundle = Bundle()
+            bundle.putString(WALLET_ID, walletID)
+            detailFragment.arguments = bundle
+            return detailFragment
+        }
     }
 
 }

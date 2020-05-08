@@ -1,5 +1,7 @@
 package com.jurajkusnier.bitcoinwalletbalance.data.model
 
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+
 /*
 
 Holds data from Blockain API
@@ -7,31 +9,36 @@ https://blockchain.info/api
 
  */
 
-data class RawData(
-        val total_received:Long,
-        val total_sent:Long,
-        val final_balance:Long,
-        val txs:List<OneTransaction>)
+data class WalletDetailsDTO(
+        val total_received: Long,
+        val total_sent: Long,
+        val final_balance: Long,
+        val txs: List<OneTransaction>) {
 
-data class AllTransactions(val transactions:List<OneTransaction>)
+    fun toWalletDetails(address: String, timestamp: Long): WalletRecord {
+        return WalletRecord(address, "", timestamp, timestamp, true, false, total_received, total_sent, final_balance, txs)
+    }
+}
+
+data class AllTransactions(val transactions: List<OneTransaction>)
 
 data class OneTransaction(
-        val ver:Int,
-        val inputs:List<OneInput>,
-        val out:List<OneOut>,
-        val time:Long,
-        val hash:String)
+        val ver: Int,
+        val inputs: List<OneInput>,
+        val out: List<OneOut>,
+        val time: Long,
+        val hash: String)
 
 data class OneInput(
         val sequence: Long,
         val prev_out: PrevOut?,
-        val script:String)
+        val script: String)
 
 data class PrevOut(val addr: String?,
-              val value:Long)
+                   val value: Long)
 
 data class OneOut(
-        val addr_tag_link:String?,
-        val addr_tag:String?,
-        val addr:String?,
-        val value:Long)
+        val addr_tag_link: String?,
+        val addr_tag: String?,
+        val addr: String?,
+        val value: Long)

@@ -1,16 +1,15 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.addadress
 
 import android.app.Dialog
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatDialogFragment
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.lifecycle.ViewModelProviders
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import kotlinx.android.synthetic.main.add_address_dialog_layout.view.*
-
 
 class AddAddressDialog: AppCompatDialogFragment() {
 
