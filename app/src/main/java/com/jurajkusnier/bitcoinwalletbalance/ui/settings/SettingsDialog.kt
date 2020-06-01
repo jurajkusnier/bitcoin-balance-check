@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import dagger.android.support.DaggerAppCompatDialogFragment
@@ -18,7 +18,7 @@ class SettingsDialog : DaggerAppCompatDialogFragment() {
     private lateinit var settingsDialogComponent: SettingsDialogComponent
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        settingViewModel = ViewModelProviders.of(this, viewModelFactory).get(SettingViewModel::class.java)
+        settingViewModel = ViewModelProvider(this, viewModelFactory).get(SettingViewModel::class.java)
 
         val inflater = activity?.layoutInflater
         val view = inflater?.inflate(R.layout.settings_dialog_layout, null) ?: throw NullPointerException("Can't inflate layout")

@@ -4,12 +4,13 @@
     package="com.jurajkusnier.bitcoinwalletbalance">
 
     <application
-        android:usesCleartextTraffic="false"
+        tools:remove="android:usesCleartextTraffic"
         tools:node="merge">
         <activity
             android:name="com.jurajkusnier.bitcoinwalletbalance.ui.MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
+            tools:replace="screenOrientation"
             tools:node="merge" />
     </application>
 </manifest>

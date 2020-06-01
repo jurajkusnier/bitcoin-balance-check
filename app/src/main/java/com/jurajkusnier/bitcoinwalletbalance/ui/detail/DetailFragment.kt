@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
@@ -46,7 +46,7 @@ class DetailFragment : DaggerFragment(), AppBarLayout.OnOffsetChangedListener, E
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
 
         val walletID = getAddress() ?: return //TODO: maybe throw exception
         setupUI(walletID)
@@ -94,7 +94,7 @@ class DetailFragment : DaggerFragment(), AppBarLayout.OnOffsetChangedListener, E
         buttonCopyAddressToClipboard.setOnClickListener {
             val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText(getText(R.string.address), textWalletID.text)
-            clipboard.primaryClip = clip
+            clipboard.setPrimaryClip(clip)
             Toast.makeText(context, getString(R.string.address_copied), Toast.LENGTH_SHORT).show()
         }
     }

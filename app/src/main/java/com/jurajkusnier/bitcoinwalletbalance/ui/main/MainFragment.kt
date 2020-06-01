@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -60,7 +60,7 @@ abstract class MainFragment : DaggerFragment(), EditDialogInterface {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(getViewModelClass()) as MainViewModel
+        viewModel = ViewModelProvider(this, viewModelFactory).get(getViewModelClass()) as MainViewModel
         listAdapter = MainListAdapter(requireContext(), viewModel, this)
 
         viewModel.deletedAddress.observe(viewLifecycleOwner, Observer { deletedRecord ->
@@ -89,10 +89,12 @@ abstract class MainFragment : DaggerFragment(), EditDialogInterface {
     private fun getSpannableInfo(context: Context): SpannableString {
         val text = SpannableString(getString(R.string.first_instruction))
         val addIcon = ContextCompat.getDrawable(context, R.drawable.ic_add_white_24dp)
+                ?: return text
         val favIcon = ContextCompat.getDrawable(context, R.drawable.ic_favorite_white_24dp)
+                ?: return text
 
-        addIcon?.setBounds(0, 0, (addIcon.intrinsicWidth * 0.9f).toInt(), (addIcon.intrinsicHeight * 0.9f).toInt())
-        favIcon?.setBounds(0, 0, (favIcon.intrinsicWidth * 0.9f).toInt(), (favIcon.intrinsicHeight * 0.9f).toInt())
+        addIcon.setBounds(0, 0, (addIcon.intrinsicWidth * 0.9f).toInt(), (addIcon.intrinsicHeight * 0.9f).toInt())
+        favIcon.setBounds(0, 0, (favIcon.intrinsicWidth * 0.9f).toInt(), (favIcon.intrinsicHeight * 0.9f).toInt())
         val spanAdd = ImageSpan(addIcon, ImageSpan.ALIGN_BOTTOM)
         val spanFav = ImageSpan(favIcon, ImageSpan.ALIGN_BOTTOM)
         val pAdd = text.indexOf('+')

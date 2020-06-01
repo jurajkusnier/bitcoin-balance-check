@@ -142,6 +142,7 @@ class ParentFragment : Fragment() {
             }
         })
 
+        tabLayout.getTabAt(0)?.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabActive, null), PorterDuff.Mode.SRC_ATOP)
         tabLayout.getTabAt(1)?.icon?.setColorFilter(ResourcesCompat.getColor(resources, R.color.colorTabInactive, null), PorterDuff.Mode.SRC_ATOP)
     }
 

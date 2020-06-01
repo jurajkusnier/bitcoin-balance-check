@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import dagger.android.support.DaggerAppCompatDialogFragment
@@ -18,7 +18,7 @@ class EditDialog : DaggerAppCompatDialogFragment() {
     private lateinit var editDialogViewModel: EditDialogViewModel
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        editDialogViewModel = ViewModelProviders.of(this, viewModelFactory).get(EditDialogViewModel::class.java)
+        editDialogViewModel = ViewModelProvider(this, viewModelFactory).get(EditDialogViewModel::class.java)
 
         val view = View.inflate(context, R.layout.edit_dialog_layout, null)
 

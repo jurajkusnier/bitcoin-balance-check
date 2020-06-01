@@ -6,12 +6,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import kotlinx.android.synthetic.main.add_address_dialog_layout.view.*
 
-class AddAddressDialog: AppCompatDialogFragment() {
+class AddAddressDialog : AppCompatDialogFragment() {
 
     private lateinit var dialogViewModel: AddAddressDialogViewModel
 
@@ -20,16 +20,15 @@ class AddAddressDialog: AppCompatDialogFragment() {
     companion object {
         val TAG = AddAddressDialog::class.java.simpleName
 
-        fun newInstance():AddAddressDialog {
-            val dialog = AddAddressDialog()
-            return dialog
+        fun newInstance(): AddAddressDialog {
+            return AddAddressDialog()
         }
     }
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        dialogViewModel= ViewModelProviders.of(this).get(AddAddressDialogViewModel::class.java)
+        dialogViewModel = ViewModelProvider(this).get(AddAddressDialogViewModel::class.java)
 
         val builder = AlertDialog.Builder(context!!, R.style.AppCompatAlertDialogStyle)
 
@@ -59,7 +58,7 @@ class AddAddressDialog: AppCompatDialogFragment() {
             if (addressFromClipboard != null) {
                 _view?.editTextWalletAddress?.setText(addressFromClipboard)
             } else {
-                Toast.makeText(context,getString(R.string.clipboard_is_empty),Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.clipboard_is_empty), Toast.LENGTH_SHORT).show()
             }
         }
 

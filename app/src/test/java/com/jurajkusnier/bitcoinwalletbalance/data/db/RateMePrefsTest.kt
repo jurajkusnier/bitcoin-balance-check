@@ -77,7 +77,7 @@ class RateMePrefsTest {
     fun isTimeToShow_AfterTwoDays_True() {
 
         Mockito.`when`(sharedPreferences.getBoolean(anyString(), anyBoolean())).thenAnswer { it.getArgument(1) }
-        Mockito.`when`(sharedPreferences.getLong(anyString(), anyLong())).thenReturn( System.currentTimeMillis() - TWO_DAYS_IN_MS )
+        Mockito.`when`(sharedPreferences.getLong(anyString(), anyLong())).thenReturn( System.currentTimeMillis() - TWO_DAYS_IN_MS - 1000)
 
         val rateMePreferences = RateMePrefs(sharedPreferences)
 
