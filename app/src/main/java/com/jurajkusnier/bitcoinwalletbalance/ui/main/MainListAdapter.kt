@@ -1,20 +1,20 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.content.Context
-import android.support.transition.Fade
-import android.support.transition.Slide
-import android.support.transition.TransitionSet
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
-import android.support.v7.view.menu.MenuBuilder
-import android.support.v7.view.menu.MenuPopupHelper
-import android.support.v7.widget.PopupMenu
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.view.menu.MenuPopupHelper
+import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Fade
+import androidx.transition.Slide
+import androidx.transition.TransitionSet
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
 import com.jurajkusnier.bitcoinwalletbalance.ui.favourite.FavouriteViewModel
@@ -23,20 +23,18 @@ import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import kotlinx.android.synthetic.main.main_recycler_item.view.*
 
-
-class TaskDiffCallback : DiffUtil.ItemCallback<WalletRecord>() {
-    override fun areItemsTheSame(oldItem: WalletRecord?, newItem: WalletRecord?): Boolean {
-        return oldItem?.address == newItem?.address
+class TaskDiffCallback : DiffUtil.ItemCallback<WalletRecordEntity>() {
+    override fun areItemsTheSame(oldItem: WalletRecordEntity, newItem: WalletRecordEntity): Boolean {
+        return oldItem.address == newItem.address
     }
 
-    override fun areContentsTheSame(oldItem: WalletRecord?, newItem: WalletRecord?): Boolean {
+    override fun areContentsTheSame(oldItem: WalletRecordEntity, newItem: WalletRecordEntity): Boolean {
         return oldItem == newItem
     }
 }
 
-
 class MainListAdapter(context:Context, private val mainViewModel: MainViewModel, private val editDialogInterface: EditDialogInterface) :
-        ListAdapter<WalletRecord, MainListAdapter.ViewHolder>(TaskDiffCallback()) {
+        ListAdapter<WalletRecordEntity, MainListAdapter.ViewHolder>(TaskDiffCallback()) {
 
     val TAG = MainListAdapter::class.java.name
     val customDate = CustomDate(context)
@@ -64,7 +62,7 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel,
 
                 val exitFade = Fade()
                 exitFade.duration = transactionTime
-                previousFragment.exitTransition = exitFade
+                previousFragment?.exitTransition = exitFade
                 nextFragment.enterTransition = TransitionSet()
                         .addTransition(Fade(Fade.IN)
                             .setInterpolator { (it - 0.5f) * 2 })
@@ -91,15 +89,15 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel,
                             true
                         }
                         R.id.menu_unfavourite -> {
-                            mainViewModel.unfavouriteRecord(getItem(position))
+                            mainViewModel.unfavouriteRecord(getItem(position).address)
                             true
                         }
                         R.id.menu_favourite -> {
-                            mainViewModel.favouriteRecord(getItem(position))
+                            mainViewModel.favouriteRecord(getItem(position).address)
                             true
                         }
                         R.id.menu_delete -> {
-                            mainViewModel.deleteRecord(getItem(position))
+                            mainViewModel.deleteRecord(getItem(position).address)
                             true
                         }
                         else -> {
@@ -132,12 +130,12 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel,
 
     inner class ViewHolder(private val v: View) : RecyclerView.ViewHolder(v) {
 
-        fun bind(data: WalletRecord) {
+        fun bind(data: WalletRecordEntity) {
 
             v.visibility=View.VISIBLE
             v.textViewItemWalletId.text = data.address
             v.textViewItemBalance.text = sathoshiToBTCstring(data.finalBalance)
-            v.textViewItemDate.text = customDate.getLastUpdatedString(data.lastAccess)
+            v.textViewItemDate.text = customDate.getLastUpdatedString(data.lastUpdate)
 
             if (data.favourite) {
                 v.imageDefaultLogo.visibility = View.INVISIBLE
@@ -153,8 +151,6 @@ class MainListAdapter(context:Context, private val mainViewModel: MainViewModel,
             } else {
                 v.textViewItemWalletNickname.visibility = View.GONE
             }
-
         }
     }
-
 }

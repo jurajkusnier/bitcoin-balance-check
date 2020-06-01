@@ -2,6 +2,7 @@ package com.jurajkusnier.bitcoinwalletbalance.data.db
 
 import android.app.Application
 import android.content.SharedPreferences
+import com.jurajkusnier.bitcoinwalletbalance.utils.TimeConstants.Companion.TWO_DAYS_IN_MS
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -18,8 +19,6 @@ class RateMePrefsTest {
     lateinit var context:Application
     lateinit var editor:SharedPreferences.Editor
 
-    val TWO_DAYS = 1000 * 60 * 60 * 48 //2 days in ms
-
     @Before
     fun setupTests() {
         sharedPreferences = Mockito.mock(SharedPreferences::class.java)
@@ -28,7 +27,6 @@ class RateMePrefsTest {
 
         Mockito.`when`(sharedPreferences.edit()).thenReturn(editor)
         Mockito.`when`(sharedPreferences.getBoolean(anyString(), anyBoolean())).thenAnswer { it.getArgument(1) }
-
     }
 
 
@@ -69,8 +67,8 @@ class RateMePrefsTest {
         verify(editor,times(1) ).putLong(prefCaptor.capture(),timeCaptor.capture())
 
         val currentTime = System.currentTimeMillis()
-        val minValue = currentTime - TWO_DAYS + 1000 * 60 * 14
-        val maxValue = currentTime - TWO_DAYS + 1000 * 60 * 16
+        val minValue = currentTime - TWO_DAYS_IN_MS + 1000 * 60 * 14
+        val maxValue = currentTime - TWO_DAYS_IN_MS + 1000 * 60 * 16
 
         assertTrue("Initial time is out of range!", timeCaptor.value in (minValue)..(maxValue))
     }
@@ -79,7 +77,7 @@ class RateMePrefsTest {
     fun isTimeToShow_AfterTwoDays_True() {
 
         Mockito.`when`(sharedPreferences.getBoolean(anyString(), anyBoolean())).thenAnswer { it.getArgument(1) }
-        Mockito.`when`(sharedPreferences.getLong(anyString(), anyLong())).thenReturn( System.currentTimeMillis() - TWO_DAYS )
+        Mockito.`when`(sharedPreferences.getLong(anyString(), anyLong())).thenReturn( System.currentTimeMillis() - TWO_DAYS_IN_MS - 1000)
 
         val rateMePreferences = RateMePrefs(sharedPreferences)
 

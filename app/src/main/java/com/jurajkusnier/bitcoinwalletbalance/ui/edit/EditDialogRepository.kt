@@ -3,7 +3,6 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.edit
 import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.data.db.AppDatabase
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -16,7 +15,7 @@ class EditDialogRepository @Inject constructor(private val appDatabase: AppDatab
             appDatabase.walletRecordDao().setNickName(address,nickname)
         }
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .doOnError { Log.e(TAG, Log.getStackTraceString(it)) }
                 .subscribe ()
     }

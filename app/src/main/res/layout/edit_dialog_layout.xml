@@ -37,7 +37,7 @@
             android:textSize="12sp"
             android:layout_marginTop="20dp" />
 
-    <android.support.v7.widget.AppCompatEditText
+    <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/editTextWalletNickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

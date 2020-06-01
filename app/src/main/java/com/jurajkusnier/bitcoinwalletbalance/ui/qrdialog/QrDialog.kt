@@ -1,10 +1,11 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.qrdialog
 
 import android.app.Dialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import dagger.android.support.DaggerAppCompatDialogFragment
@@ -37,7 +38,7 @@ class QrDialog: DaggerAppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        qrViewModel = ViewModelProviders.of(this, viewModelFactory).get(QrViewModel::class.java)
+        qrViewModel = ViewModelProvider(this, viewModelFactory).get(QrViewModel::class.java)
 
         val walletID = arguments?.getString(WALLET_ID) ?: throw Exception("Unknown wallet ID in QR Dialog")
         qrViewModel.generateQrCode(walletID)

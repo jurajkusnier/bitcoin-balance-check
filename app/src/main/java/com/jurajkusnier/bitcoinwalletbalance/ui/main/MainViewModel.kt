@@ -1,39 +1,47 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
 import com.jurajkusnier.bitcoinwalletbalance.utils.SingleLiveEvent
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 
-abstract class MainViewModel constructor(private val mainRepository: MainRepository): ViewModel() {
+abstract class MainViewModel constructor(private val mainRepository: MainRepository) : ViewModel() {
+
 
     open val TAG = MainViewModel::class.java.simpleName
 
-    val deletedItem = SingleLiveEvent<WalletRecord>()
+    val deletedAddress = SingleLiveEvent<String>()
 
-    protected val _data: MutableLiveData<List<WalletRecord>> = MutableLiveData()
-    val data:LiveData<List<WalletRecord>>
+    protected val compositeDisposable = CompositeDisposable()
+    protected val _data: MutableLiveData<List<WalletRecordEntity>> = MutableLiveData()
+    val data: LiveData<List<WalletRecordEntity>>
         get() = _data
 
-    fun deleteRecord(record: WalletRecord) {
-        deletedItem.value = record
-        mainRepository.deleteRecord(record)
+    fun deleteRecord(address: String) {
+        deletedAddress.value = address
+        mainRepository.deleteRecord(address).subscribe().addTo(compositeDisposable)
     }
 
-    fun favouriteRecord(record: WalletRecord) {
-        mainRepository.favouriteRecord(record.address)
+    fun recoverDeletedRecord(address: String) {
+        mainRepository.recoverDeletedRecord(address).subscribe().addTo(compositeDisposable)
     }
 
-    open fun unfavouriteRecord(record: WalletRecord) {
-        mainRepository.unfavouriteRecord(record.address)
+    fun favouriteRecord(address: String) {
+        mainRepository.favouriteRecord(address)
     }
 
-    fun addRecord(record: WalletRecord) {
-        mainRepository.saveRecordToHistory(record)
+    open fun unfavouriteRecord(address: String) {
+        mainRepository.unfavouriteRecord(address)
     }
 
-    fun editRecord(record: WalletRecord) {
+    fun addRecord(recordEntity: WalletRecordEntity) {
+        mainRepository.saveRecordToHistory(recordEntity)
+    }
+
+    fun editRecord(recordEntity: WalletRecordEntity) {
 
     }
 }

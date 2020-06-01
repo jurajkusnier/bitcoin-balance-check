@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinwalletbalance.data.db
+package com.jurajkusnier.bitcoinwalletbalance.di
 
 import android.app.Application
 import android.content.SharedPreferences
@@ -8,8 +8,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class PrefsModule {
-
+class SharedPreferencesModule {
     @Provides
     @Singleton
     fun provideSharedPrefs(application: Application): SharedPreferences {

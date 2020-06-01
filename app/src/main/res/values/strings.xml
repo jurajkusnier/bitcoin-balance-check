@@ -6,7 +6,7 @@
     <string name="app_name">&appname;</string>
     <string name="no_search_results">No search results found</string>
     <string name="network_connection_error">Network Connection Error</string>
-    <string name="offline_error">You are offline</string>
+    <string name="offline_error">No internet connection</string>
     <string name="default_zero_BTC">0.000000000 BTC</string>
     <string name="default_zero_USD">0 USD</string>
     <string name="address">Address</string>
@@ -66,4 +66,7 @@
     <string name="rate_title">Do you like &appname;?</string>
     <string name="rate_text">Please take a minute to rate this app. Thank you for your support!</string>
     <string name="first_instruction">"Use + to add new Bitcoin address\nand  *  to save it to Favorite"</string>
+    <string name="currency">Currency</string>
+    <string name="BTC_to_currency">1 BTC = %1$.2f %2$s</string>
+    <string name="btc_price_in_fiat">%1$.2f %2$s</string>
 </resources>

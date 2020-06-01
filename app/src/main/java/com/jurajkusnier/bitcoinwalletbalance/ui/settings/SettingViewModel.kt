@@ -1,49 +1,100 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.settings
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
-import com.jurajkusnier.bitcoinwalletbalance.utils.format
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.jurajkusnier.bitcoinwalletbalance.data.model.CurrencyCode
+import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRates
+import com.jurajkusnier.bitcoinwalletbalance.data.model.RepositoryResponse
+import com.jurajkusnier.bitcoinwalletbalance.exchangerates.ExchangeRatesRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class SettingViewModel @Inject constructor(private val settingRepository: SettingRepository, private val customDate: CustomDate) :ViewModel() {
+class SettingViewModel @Inject constructor(
+        private val exchangeRatesRepository: ExchangeRatesRepository) : ViewModel() {
 
-    val TAG = SettingViewModel::class.java.simpleName
+    private val disposables = CompositeDisposable()
 
-    data class ExchangeDetails(val exchangeRate: String,val lastUpdate:String)
+    private val mutableCurrencyViewState = MutableLiveData<CurrencyViewState>()
+    val currencyViewState: LiveData<CurrencyViewState>
+        get() = mutableCurrencyViewState
 
-    enum class LoadingState {DONE, LOADING, ERROR}
+    fun selectCurrencyCode(currencyCode: CurrencyCode) {
+        if (currencyViewState.value?.currencyCode == currencyCode) return
+        mutableCurrencyViewState.value = currencyViewState.value?.copy(currencyCode = currencyCode)
+    }
 
-    private val _loadingState = MutableLiveData<LoadingState>()
-    val loadingState:LiveData<LoadingState>
-        get() = _loadingState
+    fun setCurrencyCode() = currencyViewState.value?.currencyCode?.let {
+        exchangeRatesRepository.setCurrencyCode(it)
+    }
 
-    private val _currencyRate = MutableLiveData<ExchangeDetails>()
-    val currencyRate:LiveData<ExchangeDetails>
-        get() = _currencyRate
+    private fun updateViewState(repositoryResponse: RepositoryResponse<ExchangeRates>?) {
+        if (repositoryResponse == null) {
+            mutableCurrencyViewState.value = currencyViewState.value?.copy(
+                    connectionError = false,
+                    loading = true)
+                    ?: CurrencyViewState(null, null, false, true)
+            return
+        }
 
-    fun changeCurrency(id:Int) = settingRepository.conversionPrefs.changeCurrency(id)
+        mutableCurrencyViewState.value = currencyViewState.value?.copy(
+                data = repositoryResponse.value ?: currencyViewState.value?.data,
+                connectionError = if (repositoryResponse.source == RepositoryResponse.Source.API) {
+                    repositoryResponse.value == null || repositoryResponse.value.values.isEmpty()
+                } else {
+                    currencyViewState.value?.connectionError ?: false
+                },
+                loading = if (repositoryResponse.source == RepositoryResponse.Source.API || repositoryResponse.value?.values?.isNotEmpty() == true) {
+                    false
+                } else {
+                    currencyViewState.value?.loading ?: true
+                }
+        )
+    }
 
-    fun getCurrencyId():Int = settingRepository.conversionPrefs.getCurrencyIndex()
+    init {
+        updateViewState(null)
 
-    fun changeCurrencyPreview(newCurrencyCode:String? = null) {
-        val oldCurrencyCode = newCurrencyCode?:settingRepository.conversionPrefs.getCurrencyCode()
+        exchangeRatesRepository.getCurrencyCode()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = {
+                    mutableCurrencyViewState.value = currencyViewState.value?.copy(currencyCode = it)
+                }, onError = {
+                    it.printStackTrace()
+                })
+                .addTo(disposables)
 
-        _loadingState.value = LoadingState.LOADING
+        exchangeRatesRepository.getExchangeRates()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                        onNext = {
+                            updateViewState(it)
+                        },
+                        onError = {
+                            it.printStackTrace()
+                            mutableCurrencyViewState.postValue(currencyViewState.value?.copy(connectionError = true))
+                        }
+                ).addTo(disposables)
+    }
 
-        settingRepository.getBitcoinPrice(oldCurrencyCode, object : SettingRepository.PriceLoaderCallback {
-            override fun setResults(currencyRate: Float, currencyCode: String, lastUpdate: Long) {
-                _currencyRate.postValue (ExchangeDetails("1 BTC = ${currencyRate.format(2)} $currencyCode",customDate.getLastUpdatedString(lastUpdate)))
-            }
+    override fun onCleared() {
+        super.onCleared()
+        disposables.clear()
+    }
 
-            override fun loadingDone() {
-                _loadingState.postValue (LoadingState.DONE)
-            }
-
-            override fun loadingFailed() {
-                _loadingState.postValue (LoadingState.ERROR)
-            }
-        })
+    companion object {
+        const val TAG = "SettingViewModel"
     }
 }
+
+data class CurrencyViewState(
+        val currencyCode: CurrencyCode?,
+        val data: ExchangeRates?,
+        val connectionError: Boolean,
+        val loading: Boolean)

@@ -4,7 +4,7 @@ import android.content.Context
 import com.jurajkusnier.bitcoinwalletbalance.di.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
-import android.support.multidex.MultiDex
+import androidx.multidex.MultiDex
 
 class App: DaggerApplication() {
 

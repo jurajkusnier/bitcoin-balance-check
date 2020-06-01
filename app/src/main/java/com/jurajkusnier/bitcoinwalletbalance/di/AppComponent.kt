@@ -2,9 +2,7 @@ package com.jurajkusnier.bitcoinwalletbalance.di
 
 import android.app.Application
 import com.jurajkusnier.bitcoinwalletbalance.App
-
 import javax.inject.Singleton
-
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector

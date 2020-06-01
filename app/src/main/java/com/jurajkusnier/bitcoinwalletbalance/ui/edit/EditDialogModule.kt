@@ -1,6 +1,6 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.edit
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelKey
 import dagger.Binds
 import dagger.Module

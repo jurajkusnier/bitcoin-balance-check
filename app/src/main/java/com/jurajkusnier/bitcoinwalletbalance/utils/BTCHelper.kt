@@ -6,9 +6,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-/**
- * Returns `false` is address can't be a Bitcoin address, otherwise return `true`
- */
 fun isBitcoinAddressValid(address:String):Boolean {
     //TODO: use checksum to validate addresses
     return address.matches("^[1-9A-HJ-NP-Za-z]+$".toRegex())
@@ -34,12 +31,12 @@ fun sathoshiToBTCstring(s:Long):String {
 
 class CustomDate @Inject constructor(context: Context) {
 
-    val dateFormat = context.getString(R.string.date_format)
-    val aFewSecondsAgo = context.getString(R.string.a_few_seconds_ago)
-    val res = context.resources
-    val lastUpdated = context.getString(R.string.last_updated)
-    val lastUpdatedOn = context.getString(R.string.last_updated_on)
-    val lastUpdatedDateFormat = context.getString(R.string.last_updated_time_format)
+    private val dateFormat = context.getString(R.string.date_format)
+    private val aFewSecondsAgo = context.getString(R.string.a_few_seconds_ago)
+    private val res = context.resources
+    private val lastUpdated = context.getString(R.string.last_updated)
+    private val lastUpdatedOn = context.getString(R.string.last_updated_on)
+    private val lastUpdatedDateFormat = context.getString(R.string.last_updated_time_format)
 
     fun getDate(time: Long): String {
 

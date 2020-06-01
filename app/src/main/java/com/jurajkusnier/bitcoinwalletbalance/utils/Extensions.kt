@@ -1,11 +1,11 @@
 package com.jurajkusnier.bitcoinwalletbalance.utils
 
 import android.content.Context
-import android.support.annotation.LayoutRes
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import kotlin.math.roundToInt
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {

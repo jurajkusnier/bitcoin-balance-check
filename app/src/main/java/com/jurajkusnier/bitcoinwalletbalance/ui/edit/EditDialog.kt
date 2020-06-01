@@ -1,72 +1,56 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.edit
 
 import android.app.Dialog
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
 import dagger.android.support.DaggerAppCompatDialogFragment
 import kotlinx.android.synthetic.main.edit_dialog_layout.view.*
 import javax.inject.Inject
 
-class EditDialog: DaggerAppCompatDialogFragment() {
+class EditDialog : DaggerAppCompatDialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var editDialogViewModel: EditDialogViewModel
 
-    var _view: View? = null
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        editDialogViewModel = ViewModelProvider(this, viewModelFactory).get(EditDialogViewModel::class.java)
+
+        val view = View.inflate(context, R.layout.edit_dialog_layout, null)
+
+        view.textWalletAddress.text = arguments?.getString(BUNDLE_ADDRESS)
+        view.editTextWalletNickname.setText(arguments?.getString(BUNDLE_NICKNAME))
+
+        return AlertDialog.Builder(requireContext(), R.style.AppCompatAlertDialogStyle)
+                .setTitle(getString(R.string.edit))
+                .setView(view)
+                .setNegativeButton(getString(R.string.close)) { _, _ -> }
+                .setPositiveButton(getString(R.string.save)) { _, _ ->
+                    arguments?.getString(BUNDLE_ADDRESS)?.let {
+                        val newNickname = view.editTextWalletNickname.text.toString()
+                        editDialogViewModel.setNickname(it, newNickname)
+                    }
+                }.create()
+    }
 
     companion object {
-        val TAG = EditDialog::class.java.simpleName
-        private val BUNDLE_ADDRESS = "address"
-        private val BUNDLE_NICKNAME = "nickname"
+        const val TAG = "EditDialog"
+        private const val BUNDLE_ADDRESS = "address"
+        private const val BUNDLE_NICKNAME = "nickname"
 
-        fun newInstance(address:String,nickname:String):EditDialog {
-
-            val dialog = EditDialog()
-
-            val args = Bundle()
-            args.putString(BUNDLE_ADDRESS,address)
-            args.putString(BUNDLE_NICKNAME,nickname)
-            dialog.arguments = args
-
-            return dialog
+        fun newInstance(parameters: Parameters): EditDialog {
+            return EditDialog().apply {
+                arguments = Bundle().apply {
+                    putString(BUNDLE_ADDRESS, parameters.address)
+                    putString(BUNDLE_NICKNAME, parameters.nickname)
+                }
+            }
         }
     }
 
-    var address:String? = null
-    var nickname:String? = null
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        editDialogViewModel = ViewModelProviders.of(this, viewModelFactory).get(EditDialogViewModel::class.java)
-
-        val builder = AlertDialog.Builder(context!!, R.style.AppCompatAlertDialogStyle)
-        // Get the layout inflater
-        val inflater = activity?.layoutInflater
-        _view = inflater?.inflate(R.layout.edit_dialog_layout, null)
-        builder.setTitle(getString(R.string.edit))
-        builder.setView(_view)
-                // Add action buttons
-                .setNegativeButton(getString(R.string.close), { _, _ ->
-
-                })
-                .setPositiveButton(getString(R.string.save), { _, _ ->
-                    address?.let {
-                        val newNickname = _view?.editTextWalletNickname?.text.toString()
-                        editDialogViewModel.setNickname(it, newNickname)
-                    }
-                })
-
-        address = arguments?.getString(BUNDLE_ADDRESS)
-        nickname = arguments?.getString(BUNDLE_NICKNAME)
-
-        _view?.textWalletAddress?.text = address
-        _view?.editTextWalletNickname?.setText(nickname)
-
-        return builder.create()
-    }
+    data class Parameters(val address: String, val nickname: String)
 }
