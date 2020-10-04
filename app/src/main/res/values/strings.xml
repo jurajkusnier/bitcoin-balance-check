@@ -1,3 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [
+    <!ENTITY appname "Wealth Check">
+    ]>
 <resources>
-    <string name="app_name">Bitcoin Ballance Check</string>
+    <string name="app_name">&appname;</string>
+    <string name="no_search_results">No search results found</string>
+    <string name="network_connection_error">Network Connection Error</string>
+    <string name="offline_error">No internet connection</string>
+    <string name="default_zero_BTC">0.000000000 BTC</string>
+    <string name="default_zero_USD">0 USD</string>
+    <string name="address">Address</string>
+    <string name="total_received">Total Received</string>
+    <string name="total_sent">Total Sent</string>
+    <string name="offline_data">Offline Data</string>
+    <string name="last_transactions">Last Transactions</string>
+    <string name="no_transactions_found">No transactions found</string>
+    <string name="placeholder_address">14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m</string>
+    <string name="transaction_id">Transaction ID</string>
+    <string name="transaction_plus">+ %s</string>
+    <string name="transaction_minus">- %s</string>
+    <string name="date_format">EEE, d MMM yyyy HH:mm:ss</string>
+    <string name="a_few_seconds_ago">a few seconds ago</string>
+    <string name="scan_qr_code">Scan a QR Code</string>
+    <string name="bitcoin_addr_prefix">bitcoin:</string>
+    <string name="favourites">Favorites</string>
+    <string name="favourite">Favorite</string>
+    <string name="unfavourite">Unfavorite</string>
+    <string name="history">History</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="favourites_list_is_empty">Favorites list is empty</string>
+    <string name="history_is_empty">History is empty</string>
+    <string name="address_favourited">Address has been favorited</string>
+    <string name="address_unfavourited">Address has been unfavorited</string>
+    <string name="undo">Undo</string>
+    <string name="address_deleted">Address has been deleted from history</string>
+    <string name="refresh">Refresh</string>
+    <string name="settings">Settings</string>
+    <string name="close">Close</string>
+    <string name="save">Save</string>
+    <string name="last_updated">Last updated %s</string>
+    <string name="last_updated_on">Last updated on %s</string>
+    <string name="last_updated_time_format">MMM d, yyyy</string>
+    <string name="edit_dialog_text">Name your favorite wallet to distinguish it from others</string>
+    <string name="nickname">Nickname</string>
+    <string name="my_favourited_wallet">My Favorited Wallet</string>
+    <string name="add_dialog_text">Type or paste your Bitcoin address</string>
+    <string name="add_address">Add Address</string>
+    <string name="add">Add</string>
+    <string name="enter_your_address">Enter your address</string>
+    <string name="clipboard_is_empty">Clipboard is empty!</string>
+    <string name="invalid_bitcoin_address">Bitcoin Address is Invalid!</string>
+    <string name="address_copied">Address has been copied to clipboard</string>
+    <plurals name="x_min_ago">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="x_h_ago">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <string name="rate_now">Rate Now</string>
+    <string name="rate_never">Never</string>
+    <string name="rate_later">Later</string>
+    <string name="rate_title">Do you like &appname;?</string>
+    <string name="rate_text">Please take a minute to rate this app. Thank you for your support!</string>
+    <string name="first_instruction">"Use ➕ to add new Bitcoin address\nand ♥ to save it to Favorite"</string>
+    <string name="currency">Currency</string>
+    <string name="BTC_to_currency">1 BTC = %1$.2f %2$s</string>
+    <string name="btc_price_in_fiat">%1$.2f %2$s</string>
 </resources>
