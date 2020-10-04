@@ -44,12 +44,12 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:icon="@drawable/ic_history_white_24dp"
+                android:icon="@drawable/ic_history_24dp"
                 android:text="@string/history" />
 
         </com.google.android.material.tabs.TabLayout>
 
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -62,7 +62,7 @@
         android:id="@+id/fabBackdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#60000000"
+        android:background="@color/black_66"
         android:clickable="true"
         android:focusable="true"
         android:visibility="invisible" />
