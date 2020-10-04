@@ -1,8 +1,8 @@
-package com.jurajkusnier.bitcoinballancecheck.ui.main
+package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.view.View
 import android.view.animation.AnimationUtils
-import com.jurajkusnier.bitcoinballancecheck.R
+import com.jurajkusnier.bitcoinwalletbalance.R
 import kotlinx.android.synthetic.main.main_fragment.view.*
 
 class FabComponent(private val view: View, val onAddManual: () -> Unit, val onAddQr: () -> Unit) {

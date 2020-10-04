@@ -1,9 +1,11 @@
-package com.jurajkusnier.bitcoinballancecheck
+package com.jurajkusnier.bitcoinwalletbalance
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.jurajkusnier.bitcoinballancecheck.ui.main.MainFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,12 +1,13 @@
-package com.jurajkusnier.bitcoinballancecheck.ui.main
+package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.jurajkusnier.bitcoinballancecheck.R
+import com.jurajkusnier.bitcoinwalletbalance.R
+import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
+import kotlinx.android.synthetic.main.main_fragment.*
 
 class MainFragment : Fragment() {
 
@@ -31,7 +32,7 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
+        (activity as? AppCompatActivity)?.setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
     }
 
@@ -41,6 +42,18 @@ class MainFragment : Fragment() {
 
     private fun openAddAddressCamera() {
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_fragment, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_currency) {
+            CurrencyBottomSheetFragment.show(childFragmentManager)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

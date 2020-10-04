@@ -1,11 +1,11 @@
-package com.jurajkusnier.bitcoinballancecheck.ui.main
+package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.jurajkusnier.bitcoinballancecheck.R
+import com.jurajkusnier.bitcoinwalletbalance.R
 
 class FavouriteFragment : Fragment() {
 

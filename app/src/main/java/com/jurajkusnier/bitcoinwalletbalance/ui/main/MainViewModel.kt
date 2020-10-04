@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinballancecheck.ui.main
+package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import androidx.lifecycle.ViewModel
 

@@ -1,10 +1,10 @@
-package com.jurajkusnier.bitcoinballancecheck.ui.main
+package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.jurajkusnier.bitcoinballancecheck.R
+import com.jurajkusnier.bitcoinwalletbalance.R
 import kotlinx.android.synthetic.main.main_fragment.view.*
 
 class ViewPagerComponent(

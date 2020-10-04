@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinballancecheck
+package com.jurajkusnier.bitcoinwalletbalance
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

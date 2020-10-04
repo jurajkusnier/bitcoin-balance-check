@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinballancecheck
+package com.jurajkusnier.bitcoinwalletbalance
 
 import org.junit.Test
 
