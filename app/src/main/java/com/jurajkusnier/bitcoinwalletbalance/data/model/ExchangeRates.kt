@@ -4,11 +4,7 @@ import java.util.*
 
 typealias CurrencyCode = String
 
-data class ExchangeRates(val lastUpdate: Date, val values: Map<CurrencyCode, ExchangeRate>) {
-    companion object {
-        val empty = ExchangeRates(Date(0), mapOf())
-    }
-}
+data class ExchangeRates(val lastUpdate: Date, val values: Map<CurrencyCode, ExchangeRate>)
 
 fun Map<CurrencyCode, TickerDto>.toExchangeRates(date: Date): ExchangeRates {
     val values = mutableMapOf<CurrencyCode, ExchangeRate>()

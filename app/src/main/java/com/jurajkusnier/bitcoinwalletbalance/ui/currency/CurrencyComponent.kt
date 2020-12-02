@@ -17,6 +17,6 @@ class CurrencyComponent(private val view: View, private val onCurrencyCodeSelect
     }
 
     fun bind(currencyListItems: List<CurrencyItem>) {
-        (view.currencyRecyclerView.adapter as CurrencyAdapter).setListItems(currencyListItems)
+        (view.currencyRecyclerView.adapter as CurrencyAdapter).submitList(currencyListItems)
     }
 }

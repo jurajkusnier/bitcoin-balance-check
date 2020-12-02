@@ -6,6 +6,6 @@
     <color name="darkGrey">#444</color>
     <color name="red">#F33C3C</color>
     <color name="black">#FF000000</color>
-    <color name="black_66">#66000000</color>
+    <color name="black_33">#33000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

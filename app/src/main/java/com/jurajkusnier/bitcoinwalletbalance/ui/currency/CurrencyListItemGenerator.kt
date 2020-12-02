@@ -6,57 +6,72 @@ import com.jurajkusnier.bitcoinwalletbalance.data.model.CurrencyCode
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRateWithCurrencyCode
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRates
 import java.util.*
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class CurrencyListItemGenerator {
 
-    private var exchangeRates: ExchangeRates? = null
-    private var currentExchangeRate: CurrencyCode? = null
     private val mutableCurrencyListItems = MutableLiveData<List<CurrencyItem>>()
-
+    var exchangeRates: ExchangeRates? by UpdateDelegate()
+    var currentExchangeRate: CurrencyCode? by UpdateDelegate()
     val currencyListItems: LiveData<List<CurrencyItem>>
         get() = mutableCurrencyListItems
 
-    fun setExchangeRates(value: ExchangeRates?) {
-        if (value == null) return
-        exchangeRates = value
-        updateCurrencyItemList()
-    }
-
-    fun setCurrentExchangeRate(value: CurrencyCode) {
-        currentExchangeRate = value
+    init {
         updateCurrencyItemList()
     }
 
     private fun updateCurrencyItemList() {
         exchangeRates?.let {
-            mutableCurrencyListItems.value = getCurrencyItems(it)
+            mutableCurrencyListItems.value = generateCurrencyItems(it)
         } ?: run {
-            mutableCurrencyListItems.value = getLoadingItems()
+            mutableCurrencyListItems.value = generateLoadingItems()
         }
     }
 
-    private fun getCurrencyItems(rates: ExchangeRates): List<CurrencyItem> {
+    private fun generateCurrencyItems(rates: ExchangeRates): List<CurrencyItem> {
         return rates.values.map { item ->
-            CurrencyItem.Currency(ExchangeRateWithCurrencyCode(item.value, item.key), item.key == currentExchangeRate)
+            CurrencyItem.Currency(
+                ExchangeRateWithCurrencyCode(item.value, item.key),
+                item.key == currentExchangeRate
+            )
         }.plus(CurrencyItem.LastUpdate(rates.lastUpdate))
     }
 
-    private fun getLoadingItems(): List<CurrencyItem> {
+    private fun generateLoadingItems(): List<CurrencyItem> {
         return List(LOADING_ITEMS_COUNT) { CurrencyItem.Loading }
-    }
-
-    init {
-        updateCurrencyItemList()
     }
 
     companion object {
         private const val LOADING_ITEMS_COUNT = 10
     }
 
+    class UpdateDelegate<T> : ReadWriteProperty<CurrencyListItemGenerator?, T?> {
+        var value: T? = null
+
+        override fun setValue(
+            thisRef: CurrencyListItemGenerator?,
+            property: KProperty<*>,
+            value: T?
+        ) {
+            if (value != null) {
+                this.value = value
+            }
+            thisRef?.updateCurrencyItemList()
+        }
+
+        override fun getValue(thisRef: CurrencyListItemGenerator?, property: KProperty<*>): T? {
+            return this.value
+        }
+    }
 }
 
 sealed class CurrencyItem {
-    data class Currency(val exchangeRateWithCurrencyCode: ExchangeRateWithCurrencyCode, val isSelected: Boolean) : CurrencyItem()
+    data class Currency(
+        val exchangeRateWithCurrencyCode: ExchangeRateWithCurrencyCode,
+        val isSelected: Boolean
+    ) : CurrencyItem()
+
     object Loading : CurrencyItem()
     data class LastUpdate(val date: Date) : CurrencyItem()
 }

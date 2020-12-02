@@ -3,47 +3,15 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.currency
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.model.CurrencyCode
 import kotlinx.android.synthetic.main.currency_list_footer.view.*
 import kotlinx.android.synthetic.main.currency_list_item.view.*
 
-class CurrencyItemDiffCallback : DiffUtil.ItemCallback<CurrencyItem>() {
-
-    override fun areItemsTheSame(oldItem: CurrencyItem, newItem: CurrencyItem): Boolean {
-        if (oldItem::class != newItem::class) return false
-        return when (oldItem) {
-            is CurrencyItem.Currency -> areCurrencyItemsTheSame(oldItem, newItem as CurrencyItem.Currency)
-            CurrencyItem.Loading -> true
-            is CurrencyItem.LastUpdate -> true
-        }
-    }
-
-    override fun areContentsTheSame(oldItem: CurrencyItem, newItem: CurrencyItem): Boolean {
-        if (oldItem::class != newItem::class) return false
-        return when (oldItem) {
-            is CurrencyItem.Currency -> oldItem == newItem as CurrencyItem.Currency
-            CurrencyItem.Loading -> true
-            is CurrencyItem.LastUpdate -> oldItem == newItem as CurrencyItem.LastUpdate
-        }
-    }
-
-    private fun areCurrencyItemsTheSame(oldItem: CurrencyItem.Currency, newItem: CurrencyItem.Currency): Boolean {
-        return oldItem.exchangeRateWithCurrencyCode.currencyCode == newItem.exchangeRateWithCurrencyCode.currencyCode
-    }
-}
-
-class CurrencyAdapter(private val itemSelected: (CurrencyCode) -> Unit) : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
-
-    private val diffCallback = CurrencyItemDiffCallback()
-    private val differ: AsyncListDiffer<CurrencyItem> = AsyncListDiffer(this, diffCallback)
-
-    fun setListItems(listItems: List<CurrencyItem>) {
-        differ.submitList(listItems)
-    }
+class CurrencyAdapter(private val itemSelected: (CurrencyCode) -> Unit) : ListAdapter<CurrencyItem, CurrencyAdapter.ViewHolder>(ITEM_COMPARATOR) {
 
     sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         class LoadingViewHolder(view: View) : ViewHolder(view)
@@ -102,25 +70,36 @@ class CurrencyAdapter(private val itemSelected: (CurrencyCode) -> Unit) : Recycl
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
-            is ViewHolder.ItemViewHolder -> holder.bind(differ.currentList[position] as CurrencyItem.Currency)
-            is ViewHolder.FooterViewHolder -> holder.bind(differ.currentList[position] as CurrencyItem.LastUpdate)
+            is ViewHolder.ItemViewHolder -> holder.bind(getItem(position) as CurrencyItem.Currency)
+            is ViewHolder.FooterViewHolder -> holder.bind(getItem(position) as CurrencyItem.LastUpdate)
             is ViewHolder.LoadingViewHolder -> {
             }
         }
     }
 
-    override fun getItemViewType(position: Int) = when (differ.currentList[position]) {
+    override fun getItemViewType(position: Int) = when (getItem(position)) {
         is CurrencyItem.Loading -> VIEW_TYPE_LOADING_SKELETON
         is CurrencyItem.Currency -> VIEW_TYPE_ITEM
         is CurrencyItem.LastUpdate -> VIEW_TYPE_FOOTER
     }
 
-    override fun getItemCount(): Int = differ.currentList.size
-
     companion object {
         const val VIEW_TYPE_LOADING_SKELETON = 0
         const val VIEW_TYPE_ITEM = 1
         const val VIEW_TYPE_FOOTER = 2
+
+        private val ITEM_COMPARATOR = object : DiffUtil.ItemCallback<CurrencyItem>() {
+            override fun areItemsTheSame(old: CurrencyItem, new: CurrencyItem): Boolean {
+                if (old is CurrencyItem.Currency && new is CurrencyItem.Currency) {
+                    return old.exchangeRateWithCurrencyCode.currencyCode == new.exchangeRateWithCurrencyCode.currencyCode
+                }
+                return old.javaClass == new.javaClass
+            }
+
+            override fun areContentsTheSame(old: CurrencyItem, new: CurrencyItem): Boolean {
+                return old == new
+            }
+        }
     }
 
 }

@@ -19,8 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:fitsSystemWindows="true"
-            app:layout_constraintTop_toTopOf="parent"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
@@ -62,7 +61,7 @@
         android:id="@+id/fabBackdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black_66"
+        android:background="@color/black_33"
         android:clickable="true"
         android:focusable="true"
         android:visibility="invisible" />

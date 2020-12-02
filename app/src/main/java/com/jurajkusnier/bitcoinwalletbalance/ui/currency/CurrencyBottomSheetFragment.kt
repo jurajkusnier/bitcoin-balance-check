@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jurajkusnier.bitcoinwalletbalance.R
@@ -26,10 +25,9 @@ class CurrencyBottomSheetFragment : BottomSheetDialogFragment() {
         val view = inflater.inflate(R.layout.currency_bottomsheet_layout, null)
         currencyComponent = CurrencyComponent(view, viewModel::setCurrencyCode)
 
-        viewModel.getCurrencyListItems()
-            .observe(viewLifecycleOwner, Observer { list ->
-                currencyComponent.bind(list)
-            })
+        viewModel.getCurrencyListItems().observe(viewLifecycleOwner, { list ->
+            currencyComponent.bind(list)
+        })
 
         view.bottomSheetToolbar.setNavigationOnClickListener {
             dismiss()
