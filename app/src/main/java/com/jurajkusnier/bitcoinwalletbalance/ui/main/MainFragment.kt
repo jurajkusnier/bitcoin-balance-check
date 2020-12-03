@@ -1,21 +1,26 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.jurajkusnier.bitcoinwalletbalance.R
+import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_fragment.*
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 
     companion object {
+        private val TAG = "MainFragment"
         fun newInstance() = MainFragment()
     }
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels({ requireActivity() })
     private lateinit var fabComponent: FabComponent
     private lateinit var viewPagerComponent: ViewPagerComponent
 
@@ -26,18 +31,20 @@ class MainFragment : Fragment() {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
         fabComponent = FabComponent(view, this::openAddAddressDialog, this::openAddAddressCamera)
         viewPagerComponent = ViewPagerComponent(view, this)
+        viewModel.action.observe(viewLifecycleOwner, {
+            Log.d(TAG, it.toString())
+        })
         return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         (activity as? AppCompatActivity)?.setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
     }
 
     private fun openAddAddressDialog() {
-
+        AddAddressDialog.show(childFragmentManager)
     }
 
     private fun openAddAddressCamera() {
