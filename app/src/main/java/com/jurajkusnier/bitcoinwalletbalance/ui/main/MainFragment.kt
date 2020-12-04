@@ -1,7 +1,6 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -9,32 +8,32 @@ import androidx.fragment.app.viewModels
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_fragment.*
 
 @AndroidEntryPoint
-class MainFragment : Fragment() {
-
-    companion object {
-        private val TAG = "MainFragment"
-        fun newInstance() = MainFragment()
-    }
+class MainFragment : Fragment(R.layout.main_fragment) {
 
     private val viewModel: MainViewModel by viewModels({ requireActivity() })
     private lateinit var fabComponent: FabComponent
     private lateinit var viewPagerComponent: ViewPagerComponent
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val view = inflater.inflate(R.layout.main_fragment, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         fabComponent = FabComponent(view, this::openAddAddressDialog, this::openAddAddressCamera)
         viewPagerComponent = ViewPagerComponent(view, this)
         viewModel.action.observe(viewLifecycleOwner, {
-            Log.d(TAG, it.toString())
+            if (it is Actions.OpenDetails) {
+                openDetails(it.address)
+            }
         })
-        return view
+    }
+
+    private fun openDetails(address: String) {
+        activity?.supportFragmentManager?.let {
+            DetailFragment.open(it, address)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -61,6 +60,11 @@ class MainFragment : Fragment() {
             CurrencyBottomSheetFragment.show(childFragmentManager)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        private const val TAG = "MainFragment"
+        fun newInstance() = MainFragment()
     }
 
 }

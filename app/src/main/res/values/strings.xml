@@ -15,7 +15,6 @@
     <string name="offline_data">Offline Data</string>
     <string name="last_transactions">Last Transactions</string>
     <string name="no_transactions_found">No transactions found</string>
-    <string name="placeholder_address">14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m</string>
     <string name="transaction_id">Transaction ID</string>
     <string name="transaction_plus">+ %s</string>
     <string name="transaction_minus">- %s</string>

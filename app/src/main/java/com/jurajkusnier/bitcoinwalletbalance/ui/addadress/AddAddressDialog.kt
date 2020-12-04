@@ -42,6 +42,7 @@ class AddAddressDialog : AppCompatDialogFragment() {
             .setPositiveButton(getString(R.string.add)) { _, _ ->
                 val bitcoinAddress = view?.editTextWalletAddress?.text.toString()
                 if (bitcoinAddress.isNotBlank()) {
+                    dismiss()
                     mainViewModel.openDetails(bitcoinAddress)
                 }
             }

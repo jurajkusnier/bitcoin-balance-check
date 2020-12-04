@@ -23,10 +23,5 @@
               android:icon="@drawable/ic_refresh_white_24dp"
               android:enabled="false"
               app:showAsAction="never" />
-        <item android:id="@+id/menu_currency"
-              android:orderInCategory="200"
-              android:title="@string/settings"
-              android:icon="@drawable/ic_settings_white_24dp"
-              app:showAsAction="never" />
     </group>
 </menu>

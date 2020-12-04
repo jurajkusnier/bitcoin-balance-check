@@ -7,5 +7,6 @@
     <color name="red">#F33C3C</color>
     <color name="black">#FF000000</color>
     <color name="black_33">#33000000</color>
+    <color name="white_a0">#A0FFFFFF</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

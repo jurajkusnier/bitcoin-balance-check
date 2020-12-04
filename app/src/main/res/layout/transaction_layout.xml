@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?android:selectableItemBackground"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/textViewTransactionDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="Wed, 4 Jul 2001 12:08:56 "
+
+            />
+
+        <TextView
+            android:id="@+id/textViewTransactionCrypto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="+ 0.0026 BTC" />
+
+        <TextView
+            android:id="@+id/textViewTransactionIDLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/transaction_id"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/textViewTransactionID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            tools:text="84a4764f5a646156698b5adc16eeb0595095f2a7446a3f1f91b69e8a32e9d7fb" />
+    </LinearLayout>
+</RelativeLayout>
