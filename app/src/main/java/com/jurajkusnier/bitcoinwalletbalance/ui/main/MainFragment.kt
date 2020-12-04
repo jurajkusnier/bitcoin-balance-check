@@ -5,6 +5,7 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.jurajkusnier.bitcoinwalletbalance.MainActivity
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
@@ -31,9 +32,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     private fun openDetails(address: String) {
-        activity?.supportFragmentManager?.let {
-            DetailFragment.open(it, address)
-        }
+        (activity as? MainActivity)?.openDetails(address)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

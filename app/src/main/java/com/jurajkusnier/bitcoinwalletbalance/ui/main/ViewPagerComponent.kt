@@ -39,10 +39,10 @@ class ViewPagerComponent(
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> {
-                    FavouriteFragment.newInstance()
+                    FavouriteFragment()
                 }
                 else -> {
-                    HistoryFragment.newInstance()
+                    HistoryFragment()
                 }
             }
         }

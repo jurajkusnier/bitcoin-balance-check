@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AppDatabaseDao {
 
+    @Query("SELECT * FROM WalletRecord WHERE showInHistory = 1 order by lastAccess desc")
+    fun getAll(): Flow<List<WalletRecordEntity>>
+
 //    @Query("SELECT * FROM WalletRecord WHERE showInHistory = 1 order by lastAccess desc")
 //    fun getHistory(): Flow<List<WalletRecordEntity>>
 //

@@ -16,5 +16,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimarySurface">@color/darkGrey</item>
         <item name="colorError">@color/red</item>
+        <item name="colorOnSurface">@color/black_a0</item>
+        <item name="android:textColorPrimary">@color/black_a0</item>
     </style>
 </resources>
