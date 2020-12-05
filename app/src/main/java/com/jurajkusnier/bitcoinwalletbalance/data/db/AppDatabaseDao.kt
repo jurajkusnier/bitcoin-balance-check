@@ -9,17 +9,8 @@ interface AppDatabaseDao {
     @Query("SELECT * FROM WalletRecord WHERE showInHistory = 1 order by lastAccess desc")
     fun getAll(): Flow<List<WalletRecordEntity>>
 
-//    @Query("SELECT * FROM WalletRecord WHERE showInHistory = 1 order by lastAccess desc")
-//    fun getHistory(): Flow<List<WalletRecordEntity>>
-//
-//    @Query("SELECT * FROM WalletRecord WHERE favourite = 1 order by lastAccess desc")
-//    fun getFavorites(): Flow<List<WalletRecordEntity>>
-
     @Query("SELECT * FROM WalletRecord WHERE address = :address LIMIT 1")
     fun getWalletRecordFlow(address: String): Flow<WalletRecordEntity?>
-
-//    @Query("SELECT lastUpdate FROM WalletRecord WHERE address = :address LIMIT 1")
-//    suspend fun getUpdateTime(address: String): UpdateTime?
 
     @Query("SELECT * FROM WalletRecord WHERE address = :address LIMIT 1")
     suspend fun getWalletRecord(address: String): WalletRecordEntity?
@@ -57,15 +48,12 @@ interface AppDatabaseDao {
     @Query("UPDATE WalletRecord SET favourite = 0 WHERE address = :address")
     suspend fun unfavouriteRecord(address: String)
 
-    //    @Query("UPDATE WalletRecord SET nickname = :nickname WHERE address = :address")
-//    fun setNickName(address: String, nickname: String)
-//
-//    @Delete
-//    fun deleteWalletRecord(walletRecordEntity: WalletRecordEntity)
-//
+    @Query("UPDATE WalletRecord SET nickname = :nickname WHERE address = :address")
+    suspend fun setNickName(address: String, nickname: String)
+
     @Query("UPDATE WalletRecord SET showInHistory = 0 WHERE address = :address")
     suspend fun removeRecordFromHistory(address: String)
-//
+
     @Query("UPDATE WalletRecord SET showInHistory = 1 WHERE address = :address")
     suspend fun returnRecordToHistory(address: String)
 

@@ -47,7 +47,8 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
         setupView(view)
         detailInfoComponent = DetailInfoComponent(view, getAddress())
         errorComponent = ErrorComponent(view, viewLifecycleOwner)
-        transactionsComponent = TransactionsComponent(view, TransactionListAdapter(getAddress(), requireContext()))
+        transactionsComponent =
+            TransactionsComponent(view, TransactionListAdapter(getAddress(), requireContext()))
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -62,8 +63,10 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
             transactionsComponent.bind(it)
         })
 
-        viewModel.showEditDialog.observe(viewLifecycleOwner, {
-            EditDialog.show(childFragmentManager, it)
+        viewModel.action.observe(viewLifecycleOwner, {
+            if (it is Actions.ShowEditDialog) {
+                EditDialog.show(childFragmentManager, it.parameters)
+            }
         })
     }
 
@@ -76,7 +79,6 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
         setupToolbar(view)
         setupRecyclerView(view)
         setupSwipeToRefresh(view)
-        setSquareDetailCardView(view)
         setupClipboardButton(view)
     }
 
@@ -95,9 +97,6 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
         }
     }
 
-    private fun setSquareDetailCardView(view: View) {
-//        view.detailCardView.minimumHeight = resources.displayMetrics.heightPixels
-    }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
         if (appBarLayout == null) return

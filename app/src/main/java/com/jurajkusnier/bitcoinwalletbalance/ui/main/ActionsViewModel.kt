@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.utils.SingleLiveEvent
 import kotlinx.coroutines.launch
 
@@ -47,10 +48,20 @@ class ActionsViewModel @ViewModelInject constructor(private val repository: Main
         }
     }
 
+    fun showEditDialog(item: WalletRecordEntity) {
+        action.value = Actions.ShowEditDialog(
+            EditDialog.Parameters(
+                address = item.address,
+                nickname = item.nickname
+            )
+        )
+    }
+
     sealed class Actions() {
         data class ItemDeleted(val address: String) : Actions()
         data class ItemFavourited(val address: String) : Actions()
         data class ItemUnfavourited(val address: String) : Actions()
+        data class ShowEditDialog(val parameters: EditDialog.Parameters) : Actions()
     }
 
 }

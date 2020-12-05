@@ -27,7 +27,7 @@ class DetailViewModel @ViewModelInject constructor(
     val walledDetailsViewState: LiveData<WalledDetailsViewState>
         get() = mutableWalledDetailsViewState
 
-    val showEditDialog = SingleLiveEvent<EditDialog.Parameters>()
+    val action = SingleLiveEvent<Actions>()
     private val address = savedStateHandle.get<String>(DetailFragment.WALLET_ID) ?: throw Exception(
         "Address not present"
     )
@@ -85,14 +85,19 @@ class DetailViewModel @ViewModelInject constructor(
     }
 
     fun showEditDialog() {
-//        showEditDialog.value = EditDialog.Parameters(
-//                address = walledDetailsViewState.value?.wallet?.address ?: return,
-//                nickname = walledDetailsViewState.value?.wallet?.nickname ?: return)
+        action.value = Actions.ShowEditDialog(EditDialog.Parameters(
+                address = walledDetailsViewState.value?.wallet?.address ?: return,
+                nickname = walledDetailsViewState.value?.wallet?.nickname ?: return))
     }
 
     companion object {
         const val TAG = "DetailViewModel"
     }
+
+}
+
+sealed class Actions {
+    data class ShowEditDialog(val parameters: EditDialog.Parameters): Actions()
 }
 
 data class WalledDetailsViewState(

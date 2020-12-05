@@ -13,6 +13,7 @@ import com.jurajkusnier.bitcoinwalletbalance.MainActivity
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_fragment.*
 
@@ -48,6 +49,9 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 is ActionsViewModel.Actions.ItemDeleted -> showUndoSnackbar(getString(R.string.address_deleted)) {
                     actionsViewModel.recoverItem(it.address)
                 }
+                is ActionsViewModel.Actions.ShowEditDialog -> {
+                    EditDialog.show(childFragmentManager, it.parameters)
+                }
                 is ActionsViewModel.Actions.ItemUnfavourited -> {
                 }
                 is ActionsViewModel.Actions.ItemFavourited -> {
@@ -58,11 +62,9 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     private fun showUndoSnackbar(undoText: String, action: () -> Unit) {
         view?.let {
-            Snackbar.make(it, undoText, Snackbar.LENGTH_LONG).apply {
-                setAction(getString(R.string.undo)) { action() }
-//                view.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.colorSnackbar, null))
-                show()
-            }
+            Snackbar.make(it, undoText, Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.undo)) { action() }
+                .show()
         }
     }
 

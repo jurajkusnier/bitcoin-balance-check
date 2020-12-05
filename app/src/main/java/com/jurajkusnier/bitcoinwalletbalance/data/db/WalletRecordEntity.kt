@@ -65,9 +65,6 @@ data class WalletRecord(
     val transactions: List<OneTransaction>
 )
 
-
-data class OptionalWalletRecord(val isLoading: Boolean, val value: WalletRecord?)
-
 sealed class WalletRecordAction {
     object LoadingStart : WalletRecordAction()
     data class LoadingEnd(val success: Boolean) : WalletRecordAction()

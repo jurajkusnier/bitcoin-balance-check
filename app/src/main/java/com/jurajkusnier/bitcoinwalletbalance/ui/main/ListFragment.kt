@@ -29,7 +29,7 @@ abstract class ListFragment : Fragment(R.layout.main_list_fragment) {
             }
 
             override fun onEdit(item: WalletRecordEntity) {
-                TODO("Not yet implemented")
+                actionsViewModel.showEditDialog(item)
             }
 
             override fun onToggleFavourite(item: WalletRecordEntity) {
