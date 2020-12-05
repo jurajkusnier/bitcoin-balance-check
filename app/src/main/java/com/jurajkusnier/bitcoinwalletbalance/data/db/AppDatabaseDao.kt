@@ -66,7 +66,7 @@ interface AppDatabaseDao {
     @Query("UPDATE WalletRecord SET showInHistory = 0 WHERE address = :address")
     suspend fun removeRecordFromHistory(address: String)
 //
-//    @Query("UPDATE WalletRecord SET showInHistory = 1 WHERE address = :address")
-//    fun returnRecordToHistory(address: String) : Completable
+    @Query("UPDATE WalletRecord SET showInHistory = 1 WHERE address = :address")
+    suspend fun returnRecordToHistory(address: String)
 
 }

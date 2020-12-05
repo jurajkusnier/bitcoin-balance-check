@@ -15,10 +15,6 @@ class DetailRepository @Inject constructor(
     private val fileCacheService: FileCacheService
 ) {
 
-    suspend fun favouriteRecord(walletID: String) = databaseDao.favouriteRecord(walletID)
-
-    suspend fun unfavouriteRecord(walletID: String) = databaseDao.unfavouriteRecord(walletID)
-
     suspend fun getWalletDetailsFlow(address: String) = flow {
         databaseDao.updateWalletRecordAccessTime(address)
         databaseDao.getWalletRecordFlow(address).collect {
