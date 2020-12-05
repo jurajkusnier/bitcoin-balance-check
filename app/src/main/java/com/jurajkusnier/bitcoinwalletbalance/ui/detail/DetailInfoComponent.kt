@@ -3,10 +3,17 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 import android.content.Context
 import android.view.View
 import com.jurajkusnier.bitcoinwalletbalance.R
+import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import kotlinx.android.synthetic.main.detail_fragment.view.*
 
-class DetailInfoComponent(private val view: View) {
+class DetailInfoComponent(private val view: View, address: String) {
+
+    private val customDate = CustomDate(view.context)
+
+    init {
+        view.textWalletID.text = address
+    }
 
     fun bind(state: WalledDetailsViewState) {
         val btcString = sathoshiToBTCstring(state.wallet?.finalBalance ?: 0)
@@ -16,6 +23,7 @@ class DetailInfoComponent(private val view: View) {
             textTotalReceived.text = sathoshiToBTCstring(state.wallet?.totalReceived ?: 0)
             textTotalSent.text = sathoshiToBTCstring(state.wallet?.totalSent ?: 0)
             textFinalBalanceMoney.text = getFormattedFiat(view.context, state)
+            textInfo.text = customDate.getLastUpdatedString(state.wallet?.lastUpdate ?: 0)
         }
     }
 

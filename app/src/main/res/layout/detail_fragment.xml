@@ -148,8 +148,7 @@
                             android:textAlignment="center"
                             android:textColor="@color/white_a0"
                             android:textSize="15sp"
-                            android:textStyle="italic"
-                            android:visibility="gone" />
+                            android:textStyle="italic" />
 
                         <View
                             android:id="@+id/view"

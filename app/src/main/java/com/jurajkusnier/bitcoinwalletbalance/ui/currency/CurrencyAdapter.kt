@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.model.CurrencyCode
+import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
 import kotlinx.android.synthetic.main.currency_list_footer.view.*
 import kotlinx.android.synthetic.main.currency_list_item.view.*
 
@@ -31,14 +32,10 @@ class CurrencyAdapter(private val itemSelected: (CurrencyCode) -> Unit) : ListAd
         }
 
         class FooterViewHolder(private val view: View) : ViewHolder(view) {
-            private val customDate = "TODO"// CustomDate(view.context)
+            private val customDate = CustomDate(view.context)
 
             fun bind(item: CurrencyItem.LastUpdate) {
-                view.textViewLastUpdated.text = if (item.date.time == 0L) {
-                    ""
-                } else {
-                    customDate//.getLastUpdatedString(item.date.time)
-                }
+                view.textViewLastUpdated.text = customDate.getLastUpdatedString(item.date.time)
             }
         }
     }
