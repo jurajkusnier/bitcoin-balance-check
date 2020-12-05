@@ -16,7 +16,7 @@ data class WalletDetailsDTO(
     val txs: List<OneTransaction>
 ) {
 
-    fun toWalletDetails(address: String, timestamp: Long): WalletRecord {
+    fun toWalletRecord(address: String, timestamp: Long = System.currentTimeMillis()): WalletRecord {
         return WalletRecord(
             address = address,
             lastAccess = timestamp,

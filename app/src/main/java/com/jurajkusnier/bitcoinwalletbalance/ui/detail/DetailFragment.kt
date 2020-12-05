@@ -21,7 +21,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.jurajkusnier.bitcoinwalletbalance.R
+import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.main.ActionsViewModel
 import com.jurajkusnier.bitcoinwalletbalance.utils.convertDpToPixel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.detail_fragment.*
@@ -32,6 +34,7 @@ import kotlin.math.abs
 class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffsetChangedListener {
 
     private val viewModel: DetailViewModel by viewModels()
+    private val actionsViewModel: ActionsViewModel by viewModels({ requireActivity() })
     private lateinit var detailInfoComponent: DetailInfoComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +51,6 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.load(getAddress())
         viewModel.walledDetailsViewState.observe(viewLifecycleOwner, {
             activity?.invalidateOptionsMenu()
             detailInfoComponent.bind(it)
@@ -60,9 +62,7 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
                 textInfo.visibility = View.GONE
             }
             when (it.error) {
-                WalledDetailsViewState.ErrorCode.UNKNOWN -> showErrorSnackbar(getString(R.string.network_connection_error))
-                WalledDetailsViewState.ErrorCode.OFFLINE -> showErrorSnackbar(getString(R.string.offline_error))
-                WalledDetailsViewState.ErrorCode.INVALID_ADDRESS -> showErrorSnackbar(getString(R.string.invalid_bitcoin_address))
+                WalledDetailsViewState.ErrorCode.UNKNOWN -> showErrorSnackbar(getString(R.string.unknown_error))
                 null -> hideErrorSnackbar()
             }
             updateTransactionListView(it)
@@ -197,12 +197,11 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
             //TODO: load position automatically from layout (imgDetailsBitcoin)
             setProgressViewOffset(false, 0, requireContext().convertDpToPixel(58.5f))
             setOnRefreshListener {
-                viewModel.load(address, true)
+                viewModel.refresh()
             }
         }
     }
 
-    
 
     fun showEditDialog(address: String, nickname: String) {
 //        EditDialog.newInstance(EditDialog.Parameters(address, nickname)).show(fragmentManager!!, EditDialog.TAG)
@@ -227,17 +226,21 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_refresh -> {
-                viewModel.load(getAddress(), true)
+                viewModel.refresh()
                 true
             }
             R.id.menu_favourite -> {
-                viewModel.favouriteRecord()
+                viewModel.walledDetailsViewState.value?.wallet?.let {
+                    actionsViewModel.toggleFavourite(WalletRecordEntity.fromWalletRecord(it))
+                }
                 Toast.makeText(context, getString(R.string.address_favourited), Toast.LENGTH_SHORT)
                     .show()
                 true
             }
             R.id.menu_unfavourite -> {
-                viewModel.unfavouriteRecord()
+                viewModel.walledDetailsViewState.value?.wallet?.let {
+                    actionsViewModel.toggleFavourite(WalletRecordEntity.fromWalletRecord(it))
+                }
                 Toast.makeText(
                     context,
                     getString(R.string.address_unfavourited),

@@ -2,15 +2,11 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
 import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApiService
-import com.jurajkusnier.bitcoinwalletbalance.data.db.AppDatabaseDao
-import com.jurajkusnier.bitcoinwalletbalance.data.db.OptionalWalletRecord
-import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
+import com.jurajkusnier.bitcoinwalletbalance.data.db.*
 import com.jurajkusnier.bitcoinwalletbalance.data.filesystem.FileCacheService
 import com.jurajkusnier.bitcoinwalletbalance.data.model.AllTransactions
-import com.jurajkusnier.bitcoinwalletbalance.utils.TimeConstants.Companion.FIFTEEN_MINUTES_IN_MS
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DetailRepository @Inject constructor(
@@ -23,47 +19,73 @@ class DetailRepository @Inject constructor(
 
     suspend fun unfavouriteRecord(walletID: String) = databaseDao.unfavouriteRecord(walletID)
 
-    suspend fun getWalletDetails(address: String, forceRefresh: Boolean) = flow {
-        val lastUpdate = getLastUpdated(address)
-        if (lastUpdate == null || lastUpdate.isOlderThan(FIFTEEN_MINUTES_IN_MS) || forceRefresh) {
-            emit(getWalletDetailFromApi(address))
-        } else {
-            getCachedDetails(address).collect {
-                emit(it)
+    suspend fun getWalletDetailsFlow(address: String) = flow {
+        databaseDao.updateWalletRecordAccessTime(address)
+        databaseDao.getWalletRecordFlow(address).collect {
+            Log.d(
+                "=TEST=",
+                "getWalletDetailsFlow($address).address = ${it?.address} lastUpdate = ${it?.lastUpdate}"
+            )
+            if (it != null) {
+                val transactions = fileCacheService.getTransactionsFromFile(address)?.transactions
+                emit(WalletRecordAction.ItemUpdated(it.toWalletRecord(transactions)))
+            }
+
+            if (it == null || it.isOld()) {
+                if (it == null) emit(WalletRecordAction.LoadingStart)
+                val walletRecord = getWalletDetailsFromApi(address)
+                if (it == null) emit(WalletRecordAction.LoadingEnd(walletRecord != null))
+                if (walletRecord != null) {
+                    if (it == null) {
+                        insertNewWalletRecord(walletRecord)
+                    } else {
+                        updateWalletRecord(walletRecord)
+                    }
+                }
             }
         }
     }
 
-    private fun getCachedDetails(address: String) =
-        databaseDao.getWalletRecord(address).map {
-            val transactions = fileCacheService.getTransactionsFromFile(address)
-            OptionalWalletRecord(
-                false,
-                value = it?.toWalletRecord(transactions?.transactions)
-            )
+    suspend fun reload(address: String, walletRecord: WalletRecord?): ReloadResult {
+        val apiWalletRecord = getWalletDetailsFromApi(address) ?: return ReloadResult.Failed
+        if (walletRecord != null) {
+            updateWalletRecord(apiWalletRecord)
+        } else {
+            insertNewWalletRecord(apiWalletRecord)
         }
-
-    private suspend fun getWalletDetailFromApi(address: String): OptionalWalletRecord {
-        Log.d("TEST", "getWalletDetailFromApi(address)")
-        return try {
-            val walletDetailsDTO = blockchainApi.getDetails(address)
-            Log.d("TEST", "getWalletDetailFromApi(address) = $walletDetailsDTO")
-            val walletRecord = walletDetailsDTO.toWalletDetails(address, System.currentTimeMillis())
-            val optionalWalletRecord = OptionalWalletRecord(false, walletRecord)
-            databaseDao.insertOrUpdateWalletRecord(WalletRecordEntity.fromWalletRecord(walletRecord))
-            fileCacheService.setTransactionsToFile(
-                walletRecord.address,
-                AllTransactions(walletRecord.transactions)
-            )
-            optionalWalletRecord
-        } catch (exception: Exception) {
-            Log.e("TEST", "getWalletDetailFromApi(address) Exception")
-            exception.printStackTrace()
-            OptionalWalletRecord(false, null)
-        }
+        return ReloadResult.Success
     }
 
-    private fun updateWalletRecordAccessTime(address: String) = databaseDao.updateWalletRecord(address)
+    private suspend fun getWalletDetailsFromApi(address: String): WalletRecord? = try {
+        Log.d("=TEST=", "getWalletDetailsFromApi($address)")
+        blockchainApi.getDetails(address).toWalletRecord(address)
+    } catch (exception: Exception) {
+        null
+    }
 
-    private suspend fun getLastUpdated(address: String) = databaseDao.getUpdateTime(address)
+    private suspend fun insertNewWalletRecord(walletRecord: WalletRecord) {
+        Log.d("=TEST=", "insertNewWalletRecord(${walletRecord.address})")
+        databaseDao.addWalletRecord(WalletRecordEntity.fromWalletRecord(walletRecord))
+        fileCacheService.setTransactionsToFile(
+            walletRecord.address,
+            AllTransactions(walletRecord.transactions)
+        )
+    }
+
+    private suspend fun updateWalletRecord(walletRecord: WalletRecord) {
+        Log.d(
+            "=TEST=",
+            "updateWalletRecord(${walletRecord.address}) latUpdate = ${walletRecord.lastUpdate}"
+        )
+        databaseDao.updateWalletRecord(WalletRecordEntity.fromWalletRecord(walletRecord))
+        fileCacheService.setTransactionsToFile(
+            walletRecord.address,
+            AllTransactions(walletRecord.transactions)
+        )
+    }
+
+    enum class ReloadResult {
+        Success, Failed
+    }
+
 }

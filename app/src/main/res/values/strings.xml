@@ -6,6 +6,7 @@
     <string name="app_name">&appname;</string>
     <string name="no_search_results">No search results found</string>
     <string name="network_connection_error">Network Connection Error</string>
+    <string name="unknown_error">Something went wrong please check your internet connection and try again!</string>
     <string name="offline_error">No internet connection</string>
     <string name="default_zero_BTC">0.000000000 BTC</string>
     <string name="default_zero_USD">0 USD</string>

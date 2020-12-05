@@ -9,7 +9,7 @@ import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class ListViewModel @ViewModelInject constructor(private val repository: ListRepository) :
+class ListViewModel @ViewModelInject constructor(private val repository: MainRepository) :
     ViewModel() {
 
     private val _items = MutableLiveData<List<WalletRecordEntity>>()

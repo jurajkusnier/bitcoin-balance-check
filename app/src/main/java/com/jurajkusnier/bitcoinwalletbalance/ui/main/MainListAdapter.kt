@@ -68,10 +68,10 @@ class MainListAdapter(private val callback: ListAdapterActions) :
                 setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
                         R.id.menu_edit -> {
-                            callback.onEdit(item.address)
+                            callback.onEdit(item)
                         }
                         R.id.menu_unfavourite, R.id.menu_favourite -> {
-                            callback.onToggleFavourite(item.address)
+                            callback.onToggleFavourite(item)
                         }
                         R.id.menu_delete -> {
                             callback.onDelete(item.address)
