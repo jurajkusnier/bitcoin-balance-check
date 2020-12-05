@@ -22,6 +22,7 @@ import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.ActionsViewModel
+import com.jurajkusnier.bitcoinwalletbalance.ui.qrdialog.QrDialog
 import com.jurajkusnier.bitcoinwalletbalance.utils.convertDpToPixel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.detail_fragment.*
@@ -93,7 +94,7 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
 
     private fun setupQrCode(view: View) {
         view.imageViewQrCode.setOnClickListener {
-//            QrDialog.newInstance(address).show(requireActivity().supportFragmentManager, QrDialog.TAG)
+            QrDialog.show(childFragmentManager, getAddress())
         }
     }
 

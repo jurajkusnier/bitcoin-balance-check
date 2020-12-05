@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE resources [
-    <!ENTITY appname "Wealth Check">
-    ]>
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY appname "Wealth Check">]>
 <resources>
     <string name="app_name">&appname;</string>
     <string name="no_search_results">No search results found</string>
@@ -22,7 +19,7 @@
     <string name="date_format">EEE, d MMM yyyy HH:mm:ss</string>
     <string name="a_few_seconds_ago">a few seconds ago</string>
     <string name="scan_qr_code">Scan a QR Code</string>
-    <string name="bitcoin_addr_prefix">bitcoin:</string>
+    <string name="bitcoin_addr_prefix" translatable="false">bitcoin:</string>
     <string name="favourites">Favorites</string>
     <string name="favourite">Favorite</string>
     <string name="unfavourite">Unfavorite</string>

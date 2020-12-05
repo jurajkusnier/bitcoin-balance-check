@@ -2,6 +2,7 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
 import android.content.Context
 import androidx.room.Room
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.jurajkusnier.bitcoinwalletbalance.data.db.AppDatabase
 import com.jurajkusnier.bitcoinwalletbalance.data.db.AppDatabaseDao
 import dagger.Module
@@ -27,4 +28,7 @@ object DetailModule {
 
     @Provides
     fun provideAppDatabaseDao(appDatabase: AppDatabase): AppDatabaseDao = appDatabase.getDao()
+
+    @Provides
+    fun provideBarcodeEncoder() = BarcodeEncoder()
 }

@@ -1,6 +1,8 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -9,10 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
+import com.google.zxing.integration.android.IntentIntegrator
 import com.jurajkusnier.bitcoinwalletbalance.MainActivity
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_fragment.*
@@ -60,6 +64,25 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         })
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result?.contents != null) {
+
+                var bitcoinAddress = result.contents
+                val bitcoinAddressPrefix = getString(R.string.bitcoin_addr_prefix)
+
+                if (bitcoinAddress.startsWith(bitcoinAddressPrefix, true)) {
+                    bitcoinAddress = bitcoinAddress.substring(bitcoinAddressPrefix.length)
+                }
+
+                (activity as? MainActivity)?.openDetails(bitcoinAddress)
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
     private fun showUndoSnackbar(undoText: String, action: () -> Unit) {
         view?.let {
             Snackbar.make(it, undoText, Snackbar.LENGTH_LONG)
@@ -73,7 +96,12 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     private fun openAddAddressCamera() {
-
+        IntentIntegrator.forSupportFragment(this)
+            .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+            .setPrompt(getString(R.string.scan_qr_code))
+            .setCameraId(0)
+            .setBeepEnabled(false)
+            .initiateScan()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.jurajkusnier.bitcoinballancecheck"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -69,6 +69,9 @@ dependencies {
     implementation 'androidx.room:room-ktx:2.2.5'
     implementation 'androidx.room:room-runtime:2.2.5'
     kapt 'androidx.room:room-compiler:2.2.5'
+
+    //Barcode scanner
+    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
