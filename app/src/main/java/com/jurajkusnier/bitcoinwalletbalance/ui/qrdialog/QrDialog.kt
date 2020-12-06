@@ -1,61 +1,54 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.qrdialog
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
+import android.view.View
+import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
-import dagger.android.support.DaggerAppCompatDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.qr_dialog_layout.view.*
-import javax.inject.Inject
 
-class QrDialog: DaggerAppCompatDialogFragment() {
+@AndroidEntryPoint
+class QrDialog : AppCompatDialogFragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private lateinit var qrViewModel:QrViewModel
-
-
-    companion object {
-        private val WALLET_ID = "WALLET_ID"
-        val TAG = QrDialog::class.java.simpleName
-
-        fun newInstance(walletId: String):QrDialog {
-            val dialog = QrDialog()
-            val bundle = Bundle()
-
-            bundle.putString(WALLET_ID,walletId)
-            dialog.arguments = bundle
-
-            return dialog
-        }
-    }
-
+    private val viewModel: QrViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val view = View.inflate(context, R.layout.qr_dialog_layout, null)
+        val walletID =
+            arguments?.getString(WALLET_ID) ?: throw Exception("Unknown wallet ID in QR Dialog")
 
-        qrViewModel = ViewModelProvider(this, viewModelFactory).get(QrViewModel::class.java)
+        view.textViewBitcoinAddress.text = walletID
 
-        val walletID = arguments?.getString(WALLET_ID) ?: throw Exception("Unknown wallet ID in QR Dialog")
-        qrViewModel.generateQrCode(walletID)
-
-        val inflater = activity?.layoutInflater
-        val dialogView = inflater?.inflate(R.layout.qr_dialog_layout, null)
-
-        dialogView?.textViewBitcoinAddress?.text = walletID
-
-        qrViewModel.barcodeBitmap.observe(this, Observer {
-            dialogView?.imageViewQrCodeDetail?.setImageBitmap(it)
+        viewModel.barcodeBitmap.observe(this, Observer {
+            view.imageViewQrCodeDetail.setImageBitmap(it)
         })
 
-        return AlertDialog.Builder(context!!, R.style.AppCompatQrDialogStyle)
-                .setView(dialogView)
-                .setPositiveButton(R.string.close) { _, _ -> }
-                .create()
+        return MaterialAlertDialogBuilder(requireContext())
+            .setView(view)
+            .setBackground(ColorDrawable(Color.WHITE))
+            .setPositiveButton(R.string.close) { _, _ -> }
+            .create()
+    }
+
+    companion object {
+        const val WALLET_ID = "WALLET_ID"
+        private const val TAG = "QrDialog"
+
+        fun show(fragmentManager: FragmentManager, address: String) {
+            QrDialog().apply {
+                arguments = Bundle().apply {
+                    putString(WALLET_ID, address)
+                }
+                show(fragmentManager, TAG)
+            }
+        }
     }
 
 

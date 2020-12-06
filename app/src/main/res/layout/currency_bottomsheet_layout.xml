@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialogSettings"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/bottomSheetAppBar"
+        style="?attr/appBarLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:fitsSystemWindows="true"
+        android:visibility="visible"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/bottomSheetToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@null"
+            android:elevation="0dp"
+            android:fitsSystemWindows="true"
+            app:navigationIcon="@drawable/ic_close_24px"
+            app:title="@string/currency" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+   <androidx.recyclerview.widget.RecyclerView
+       tools:listitem="@layout/currency_list_item"
+       tools:itemCount="10"
+       app:layout_behavior="@string/appbar_scrolling_view_behavior"
+       android:id="@+id/currencyRecyclerView"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/liearLayout"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currencyRecyclerView">
+
+        <TextView
+            android:id="@+id/textViewBTCtoUSD"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="1 BTC = 16276.4 USD" />
+
+        <TextView
+            android:id="@+id/textViewBTCtoUSDupdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            tools:text="Last update Wed, 4 Jul 2001 12:08:56 " />
+
+        <TextView
+            android:id="@+id/textViewExchangeError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:textAlignment="center"
+            android:textColor="?colorAccent"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:text="@string/network_connection_error" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressLoaderSettings"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="25dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+</LinearLayout>

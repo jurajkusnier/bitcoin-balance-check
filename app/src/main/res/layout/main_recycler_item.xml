@@ -1,99 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayoutOneItem"
-        android:foreground="?android:selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true" >
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemCardView"
+    style="@style/CardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <ImageView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageDefaultLogo"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:padding="10dp"
-            app:srcCompat="@drawable/ic_bitcoin_logo"
-            android:id="@+id/imageDefaultLogo"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-    />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorOnSurface"
+            app:srcCompat="@drawable/ic_bitcoin_logo" />
 
-    <ImageView
+        <ImageView
+            android:id="@+id/imageFavouritedLogo"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:padding="18dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_favorite_shadow_24dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/imageFavouritedLogo"
-    />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorOnSurface"
+            app:srcCompat="@drawable/ic_favorite_shadow_24dp" />
 
-    <ImageView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/imageViewItemMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            style="@style/MenuButton"
+            android:layout_margin="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:srcCompat="@drawable/ic_more_vert_white_24dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-            android:text="@string/nickname"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:visibility="visible"
-            android:paddingTop="10dp"
-            android:layout_width="0dp"
-            android:textSize="16sp"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewItemWalletNickname"
-            app:layout_constraintStart_toEndOf="@id/imageDefaultLogo"
-            app:layout_constraintEnd_toStartOf="@id/imageViewItemMenu"
-    />
-
-    <TextView
-            android:text="@string/placeholder_address"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:paddingTop="10dp"
-
+        <TextView
+            android:id="@+id/primaryTextView"
+            style="@style/TextAppearance.WealthCheck.Subtitle1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/textViewItemWalletId"
-            app:layout_constraintTop_toBottomOf="@id/textViewItemWalletNickname"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@id/secondaryTextView"
+            app:layout_constraintEnd_toStartOf="@id/imageViewItemMenu"
             app:layout_constraintStart_toEndOf="@id/imageDefaultLogo"
-            app:layout_constraintEnd_toStartOf="@id/imageViewItemMenu"
-    />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m" />
 
-    <TextView
-            android:text="0.093641372 BTC"
-
+        <TextView
+            android:id="@+id/secondaryTextView"
+            style="@style/TextAppearance.WealthCheck.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textViewItemBalance"
-            app:layout_constraintStart_toStartOf="@id/textViewItemWalletId"
-            app:layout_constraintTop_toBottomOf="@id/textViewItemWalletId"
-    />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/primaryTextView"
+            app:layout_constraintTop_toBottomOf="@id/primaryTextView"
+            tools:text="0.093641372 BTC" />
 
-    <TextView
-            android:text="Wed, 4 Jul 2001 12:08:56 "
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:visibility="visible"
-            android:id="@+id/textViewItemDate"
-            app:layout_constraintTop_toBottomOf="@id/textViewItemBalance"
-            app:layout_constraintEnd_toStartOf="@id/imageViewItemMenu"
-            android:paddingBottom="5dp"
-    />
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

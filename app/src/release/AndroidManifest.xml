@@ -3,12 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.jurajkusnier.bitcoinwalletbalance">
 
-    <application
-        tools:remove="android:usesCleartextTraffic"
-        tools:node="merge">
+    <application>
         <activity
-            android:name="com.jurajkusnier.bitcoinwalletbalance.ui.MainActivity"
-            android:configChanges="orientation|keyboardHidden"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation"
             tools:node="merge" />

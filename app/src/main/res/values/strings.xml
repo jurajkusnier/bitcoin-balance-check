@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE resources [
-        <!ENTITY appname "Wealth Check">
-        ]>
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY appname "Wealth Check">]>
 <resources>
     <string name="app_name">&appname;</string>
     <string name="no_search_results">No search results found</string>
     <string name="network_connection_error">Network Connection Error</string>
+    <string name="unknown_error">Something went wrong please check your internet connection and try again!</string>
     <string name="offline_error">No internet connection</string>
     <string name="default_zero_BTC">0.000000000 BTC</string>
     <string name="default_zero_USD">0 USD</string>
@@ -15,14 +13,13 @@
     <string name="offline_data">Offline Data</string>
     <string name="last_transactions">Last Transactions</string>
     <string name="no_transactions_found">No transactions found</string>
-    <string name="placeholder_address">14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m</string>
     <string name="transaction_id">Transaction ID</string>
     <string name="transaction_plus">+ %s</string>
     <string name="transaction_minus">- %s</string>
     <string name="date_format">EEE, d MMM yyyy HH:mm:ss</string>
     <string name="a_few_seconds_ago">a few seconds ago</string>
     <string name="scan_qr_code">Scan a QR Code</string>
-    <string name="bitcoin_addr_prefix">bitcoin:</string>
+    <string name="bitcoin_addr_prefix" translatable="false">bitcoin:</string>
     <string name="favourites">Favorites</string>
     <string name="favourite">Favorite</string>
     <string name="unfavourite">Unfavorite</string>
@@ -65,7 +62,7 @@
     <string name="rate_later">Later</string>
     <string name="rate_title">Do you like &appname;?</string>
     <string name="rate_text">Please take a minute to rate this app. Thank you for your support!</string>
-    <string name="first_instruction">"Use + to add new Bitcoin address\nand  *  to save it to Favorite"</string>
+    <string name="first_instruction">"Use ➕ to add new Bitcoin address\nand ♥ to save it to Favorite"</string>
     <string name="currency">Currency</string>
     <string name="BTC_to_currency">1 BTC = %1$.2f %2$s</string>
     <string name="btc_price_in_fiat">%1$.2f %2$s</string>

@@ -14,7 +14,9 @@
             android:id="@+id/textInfo"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:text="@string/add_dialog_text" />
+            android:text="@string/add_dialog_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textAddressLabel"
@@ -23,6 +25,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/address"
             android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textInfo" />
 
         <com.google.android.material.textfield.TextInputEditText
@@ -30,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="65dp"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="?attr/colorPrimary"
             android:ellipsize="end"
             android:hint="@string/enter_your_address"
             android:imeOptions="actionDone"

@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu   xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:id="@+id/menu_items_group_1">
-        <item android:id="@+id/menu_favourite"
-              android:title="@string/favourites"
-              android:icon="@drawable/ic_favorite_border_white_24dp"
-              android:visible="false"
-              app:showAsAction="ifRoom" />
-        <item android:id="@+id/menu_unfavourite"
-              android:title="@string/unfavourite"
-              android:icon="@drawable/ic_favorite_white_24dp"
-              android:visible="false"
-              app:showAsAction="ifRoom" />
-        <item android:id="@+id/menu_edit"
-              android:title="@string/edit"
-              android:icon="@drawable/ic_edit_white_24dp"
-              android:visible="false"
-              app:showAsAction="never" />
-        <item android:id="@+id/menu_refresh"
-              android:orderInCategory="150"
-              android:title="@string/refresh"
-              android:icon="@drawable/ic_refresh_white_24dp"
-              android:enabled="false"
-              app:showAsAction="never" />
-        <item android:id="@+id/menu_settings"
-              android:orderInCategory="200"
-              android:title="@string/settings"
-              android:icon="@drawable/ic_settings_white_24dp"
-              app:showAsAction="never" />
+        <item
+            android:id="@+id/menu_favourite"
+            android:icon="@drawable/ic_favorite_border_24dp"
+            android:title="@string/favourites"
+            android:visible="false"
+            app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/menu_unfavourite"
+            android:icon="@drawable/ic_favorite_24dp"
+            android:title="@string/unfavourite"
+            android:visible="false"
+            app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/menu_edit"
+            android:icon="@drawable/ic_edit_24dp"
+            android:title="@string/edit"
+            android:visible="false"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/menu_refresh"
+            android:enabled="false"
+            android:icon="@drawable/ic_refresh_white_24dp"
+            android:orderInCategory="150"
+            android:title="@string/refresh"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/menu_currency"
+            android:title="@string/currency"
+            app:showAsAction="never" />
     </group>
 </menu>

@@ -1,57 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:id="@+id/dialogEdit"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content">
-<LinearLayout android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:padding="20dp">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialogEdit"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:constraint_referenced_ids="descriptionTextView, addressLabel, textWalletAddress, nickNameLabel, editTextWalletNickname"
+        app:flow_horizontalAlign="start"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-            android:text="@string/edit_dialog_text"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp" />
+        android:id="@+id/descriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:text="@string/edit_dialog_text" />
 
     <TextView
-            android:text="@string/address"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:textSize="12sp"
-            android:layout_marginTop="20dp" />
-    <TextView
-            android:text="@string/placeholder_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/textWalletAddress"/>
+        android:id="@+id/addressLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/address"
+        android:textSize="12sp" />
 
     <TextView
-            android:text="@string/nickname"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:textSize="12sp"
-            android:layout_marginTop="20dp" />
+        android:id="@+id/textWalletAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:paddingBottom="12dp"
+        tools:text="14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m" />
+
+    <TextView
+        android:id="@+id/nickNameLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/nickname"
+        android:textSize="12sp" />
 
     <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/editTextWalletNickname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/my_favourited_wallet"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:scrollHorizontally="true"
-            android:inputType="text"
-            android:backgroundTint="@color/colorPrimary"
-            android:textCursorDrawable="@null"
-            android:imeOptions="actionDone"
-    />
+        android:id="@+id/editTextWalletNickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorPrimary"
+        android:ellipsize="end"
+        android:hint="@string/my_favourited_wallet"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textCursorDrawable="@null" />
 
-
-</LinearLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

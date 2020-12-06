@@ -1,111 +1,122 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ImageSpan
-import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
+import com.google.zxing.integration.android.IntentIntegrator
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
-import com.jurajkusnier.bitcoinwalletbalance.di.ViewModelFactory
-import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
-import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialogInterface
-import dagger.android.support.DaggerFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.editdialog.EditDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_fragment.view.*
-import javax.inject.Inject
 
+@AndroidEntryPoint
+class MainFragment : Fragment(R.layout.main_fragment) {
 
-abstract class MainFragment : DaggerFragment(), EditDialogInterface {
+    private val viewModel: MainViewModel by viewModels({ requireActivity() })
+    private val actionsViewModel: ActionsViewModel by viewModels({ requireActivity() })
+    private lateinit var fabComponent: FabComponent
+    private lateinit var viewPagerComponent: ViewPagerComponent
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var rootView: View
-    private lateinit var listAdapter: MainListAdapter
-    protected lateinit var viewModel: MainViewModel
-
-    abstract fun getViewModelClass(): Class<out ViewModel>
-
-    abstract fun getEmptyText(): CharSequence
-
-    override fun showEditDialog(address: String, nickname: String) {
-        EditDialog.newInstance(EditDialog.Parameters(address, nickname)).show(fragmentManager!!, EditDialog.TAG)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as? AppCompatActivity)?.setSupportActionBar(view.toolbar)
+        fabComponent = FabComponent(view, this::openAddAddressDialog, this::openAddAddressCamera)
+        viewPagerComponent = ViewPagerComponent(view, this)
+        viewModel.action.observe(viewLifecycleOwner, {
+            if (it is Actions.OpenDetails) {
+                openDetails(it.address)
+            }
+        })
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.main_fragment, container, false)
-        rootView.emptyListText.text = getEmptyText()
-        rootView.textSpannableInfo.text = getSpannableInfo(rootView.context)
-        return rootView
-    }
-
-    protected fun showUndoSnackbar(undoText: String, action: () -> Unit) {
-        Snackbar.make(rootView, undoText, Snackbar.LENGTH_LONG).apply {
-            setAction(getString(R.string.undo)) { action() }
-            view.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.colorSnackbar, null))
-            show()
-        }
+    private fun openDetails(address: String) {
+        (activity as? MainActivity)?.openDetails(address)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        viewModel = ViewModelProvider(this, viewModelFactory).get(getViewModelClass()) as MainViewModel
-        listAdapter = MainListAdapter(requireContext(), viewModel, this)
-
-        viewModel.deletedAddress.observe(viewLifecycleOwner, Observer { deletedRecord ->
-            showUndoSnackbar(getString(R.string.address_deleted)) {
-                viewModel.recoverDeletedRecord(deletedRecord)
+        actionsViewModel.action.observe(viewLifecycleOwner, {
+            when (it) {
+                is ActionsViewModel.Actions.ItemDeleted -> showUndoSnackbar(getString(R.string.address_deleted)) {
+                    actionsViewModel.recoverItem(it.address)
+                }
+                is ActionsViewModel.Actions.ShowEditDialog -> {
+                    EditDialog.show(childFragmentManager, it.parameters)
+                }
+                is ActionsViewModel.Actions.ItemUnfavourited -> {
+                }
+                is ActionsViewModel.Actions.ItemFavourited -> {
+                }
             }
         })
+    }
 
-        viewModel.data.observe(viewLifecycleOwner, Observer<List<WalletRecordEntity>> dbObserver@{
-            if (it.isNullOrEmpty()) {
-                rootView.layoutEmptyList.visibility = View.VISIBLE
-            } else {
-                rootView.layoutEmptyList.visibility = View.GONE
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result?.contents != null) {
+
+                var bitcoinAddress = result.contents
+                val bitcoinAddressPrefix = getString(R.string.bitcoin_addr_prefix)
+
+                if (bitcoinAddress.startsWith(bitcoinAddressPrefix, true)) {
+                    bitcoinAddress = bitcoinAddress.substring(bitcoinAddressPrefix.length)
+                }
+
+                (activity as? MainActivity)?.openDetails(bitcoinAddress)
             }
-            listAdapter.submitList(it)
-        })
-
-        rootView.recyclerViewMain.apply {
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(false)
-            adapter = listAdapter
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    private fun getSpannableInfo(context: Context): SpannableString {
-        val text = SpannableString(getString(R.string.first_instruction))
-        val addIcon = ContextCompat.getDrawable(context, R.drawable.ic_add_white_24dp)
-                ?: return text
-        val favIcon = ContextCompat.getDrawable(context, R.drawable.ic_favorite_white_24dp)
-                ?: return text
+    private fun showUndoSnackbar(undoText: String, action: () -> Unit) {
+        view?.let {
+            Snackbar.make(it, undoText, Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.undo)) { action() }
+                .show()
+        }
+    }
 
-        addIcon.setBounds(0, 0, (addIcon.intrinsicWidth * 0.9f).toInt(), (addIcon.intrinsicHeight * 0.9f).toInt())
-        favIcon.setBounds(0, 0, (favIcon.intrinsicWidth * 0.9f).toInt(), (favIcon.intrinsicHeight * 0.9f).toInt())
-        val spanAdd = ImageSpan(addIcon, ImageSpan.ALIGN_BOTTOM)
-        val spanFav = ImageSpan(favIcon, ImageSpan.ALIGN_BOTTOM)
-        val pAdd = text.indexOf('+')
-        val pFav = text.indexOf('*')
-        text.setSpan(spanAdd, pAdd, pAdd + 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-        text.setSpan(spanFav, pFav, pFav + 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+    private fun openAddAddressDialog() {
+        AddAddressDialog.show(childFragmentManager)
+    }
 
-        return text
+    private fun openAddAddressCamera() {
+        IntentIntegrator.forSupportFragment(this)
+            .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+            .setPrompt(getString(R.string.scan_qr_code))
+            .setCameraId(0)
+            .setBeepEnabled(false)
+            .initiateScan()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_currency) {
+            CurrencyBottomSheetFragment.show(childFragmentManager)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {
-        const val TAG = "MainFragment"
+        private const val TAG = "MainFragment"
+        fun newInstance() = MainFragment()
     }
+
 }
