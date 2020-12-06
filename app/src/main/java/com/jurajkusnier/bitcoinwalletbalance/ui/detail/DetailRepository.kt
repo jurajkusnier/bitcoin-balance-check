@@ -1,16 +1,16 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
 import android.util.Log
-import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApiService
+import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApi
 import com.jurajkusnier.bitcoinwalletbalance.data.db.*
-import com.jurajkusnier.bitcoinwalletbalance.data.filesystem.FileCacheService
-import com.jurajkusnier.bitcoinwalletbalance.data.model.AllTransactions
+import com.jurajkusnier.bitcoinwalletbalance.cache.FileCacheService
+import com.jurajkusnier.bitcoinwalletbalance.data.api.AllTransactions
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class DetailRepository @Inject constructor(
-    private val blockchainApi: BlockchainApiService,
+    private val blockchainApi: BlockchainApi,
     private val databaseDao: AppDatabaseDao,
     private val fileCacheService: FileCacheService
 ) {

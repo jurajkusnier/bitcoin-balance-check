@@ -11,8 +11,8 @@ class MainRepository @Inject constructor(private val databaseDao: AppDatabaseDao
 
     suspend fun unfavouriteItem(address: String) = databaseDao.unfavouriteRecord(address)
 
-    suspend fun deleteItem(address: String) = databaseDao.removeRecordFromHistory(address)
+    suspend fun deleteItem(address: String) = databaseDao.deleteRecord(address)
 
-    suspend fun undeleteItem(address: String) = databaseDao.returnRecordToHistory(address)
+    suspend fun undeleteItem(address: String) = databaseDao.undeleteRecord(address)
 
 }

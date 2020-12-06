@@ -1,8 +1,8 @@
 package com.jurajkusnier.bitcoinwalletbalance.api
 
 import com.jurajkusnier.bitcoinwalletbalance.data.model.CurrencyCode
-import com.jurajkusnier.bitcoinwalletbalance.data.model.TickerDto
-import com.jurajkusnier.bitcoinwalletbalance.data.model.WalletDetailsDTO
+import com.jurajkusnier.bitcoinwalletbalance.data.api.TickerDto
+import com.jurajkusnier.bitcoinwalletbalance.data.api.WalletDetailsDTO
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -12,7 +12,7 @@ import retrofit2.http.Path
  *
  */
 
-interface BlockchainApiService {
+interface BlockchainApi {
 
     @GET("rawaddr/{walletID}")
     suspend fun getDetails(@Path("walletID") walletID: String): WalletDetailsDTO

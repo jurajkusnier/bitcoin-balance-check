@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jurajkusnier.bitcoinwalletbalance.R
-import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
+import com.jurajkusnier.bitcoinwalletbalance.data.api.OneTransaction
 import com.jurajkusnier.bitcoinwalletbalance.utils.CustomDate
 import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring

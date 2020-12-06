@@ -2,7 +2,7 @@ package com.jurajkusnier.bitcoinwalletbalance.data.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.jurajkusnier.bitcoinwalletbalance.data.model.OneTransaction
+import com.jurajkusnier.bitcoinwalletbalance.data.api.OneTransaction
 import kotlin.time.ExperimentalTime
 import kotlin.time.minutes
 

@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinwalletbalance.data.model
+package com.jurajkusnier.bitcoinwalletbalance.data.api
 
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecord
 

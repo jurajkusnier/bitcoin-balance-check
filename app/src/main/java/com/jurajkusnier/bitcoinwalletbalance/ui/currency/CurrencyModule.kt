@@ -3,7 +3,7 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.currency
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApiService
+import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -52,8 +52,8 @@ object CurrencyModule {
 
     @Provides
     @Singleton
-    fun provideBlockchainApiService(retrofit: Retrofit): BlockchainApiService =
-        retrofit.create(BlockchainApiService::class.java)
+    fun provideBlockchainApiService(retrofit: Retrofit): BlockchainApi =
+        retrofit.create(BlockchainApi::class.java)
 
     @Provides
     @Singleton

@@ -1,6 +1,6 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.currency
 
-import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApiService
+import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApi
 import com.jurajkusnier.bitcoinwalletbalance.data.model.*
 import com.jurajkusnier.bitcoinwalletbalance.utils.TimeConstants.Companion.FIFTEEN_MINUTES_IN_MS
 import com.jurajkusnier.bitcoinwalletbalance.utils.isOlderThan
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class ExchangeRatesRepository @Inject constructor(
     private val currencyService: CurrencyService,
-    private val blockchainApiService: BlockchainApiService,
+    private val blockchainApi: BlockchainApi,
     private val exchangeRatesCache: ExchangeRatesCache
 ) {
 
@@ -53,7 +53,7 @@ class ExchangeRatesRepository @Inject constructor(
         Dispatchers.IO
     ) {
         try {
-            val ticker = blockchainApiService.getTicker()
+            val ticker = blockchainApi.getTicker()
             val exchangeRate = RepositoryResponse(false, ticker.toExchangeRates(Date()))
             if (exchangeRate.value != null) {
                 exchangeRatesCache.setExchangeRates(exchangeRate.value)

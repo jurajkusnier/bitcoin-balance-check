@@ -52,9 +52,9 @@ interface AppDatabaseDao {
     suspend fun setNickName(address: String, nickname: String)
 
     @Query("UPDATE WalletRecord SET showInHistory = 0 WHERE address = :address")
-    suspend fun removeRecordFromHistory(address: String)
+    suspend fun deleteRecord(address: String)
 
     @Query("UPDATE WalletRecord SET showInHistory = 1 WHERE address = :address")
-    suspend fun returnRecordToHistory(address: String)
+    suspend fun undeleteRecord(address: String)
 
 }

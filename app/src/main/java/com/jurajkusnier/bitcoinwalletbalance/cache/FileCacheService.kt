@@ -1,8 +1,8 @@
-package com.jurajkusnier.bitcoinwalletbalance.data.filesystem
+package com.jurajkusnier.bitcoinwalletbalance.cache
 
 import android.content.Context
 import android.util.Log
-import com.jurajkusnier.bitcoinwalletbalance.data.model.AllTransactions
+import com.jurajkusnier.bitcoinwalletbalance.data.api.AllTransactions
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File

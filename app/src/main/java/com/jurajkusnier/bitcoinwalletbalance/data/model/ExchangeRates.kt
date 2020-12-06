@@ -1,5 +1,6 @@
 package com.jurajkusnier.bitcoinwalletbalance.data.model
 
+import com.jurajkusnier.bitcoinwalletbalance.data.api.TickerDto
 import java.util.*
 
 typealias CurrencyCode = String
