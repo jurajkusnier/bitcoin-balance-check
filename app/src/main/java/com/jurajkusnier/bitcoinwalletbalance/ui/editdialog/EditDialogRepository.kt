@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.edit
+package com.jurajkusnier.bitcoinwalletbalance.ui.editdialog
 
 import com.jurajkusnier.bitcoinwalletbalance.data.db.AppDatabaseDao
 import javax.inject.Inject

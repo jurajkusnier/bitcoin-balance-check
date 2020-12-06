@@ -1,6 +1,5 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu

@@ -1,12 +1,12 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.main
+package com.jurajkusnier.bitcoinwalletbalance.ui.mainlist
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.jurajkusnier.bitcoinwalletbalance.MainActivity
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
+import com.jurajkusnier.bitcoinwalletbalance.ui.main.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_list_fragment.view.*
 

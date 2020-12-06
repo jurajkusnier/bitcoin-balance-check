@@ -1,12 +1,12 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.edit
+package com.jurajkusnier.bitcoinwalletbalance.ui.editdialog
 
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jurajkusnier.bitcoinwalletbalance.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.edit_dialog_layout.view.*
@@ -23,10 +23,7 @@ class EditDialog : AppCompatDialogFragment() {
                 editTextWalletNickname.setText(getNickname())
             }
 
-        return AlertDialog.Builder(
-            requireContext(),
-            R.style.ThemeOverlay_MaterialComponents_Dialog_Alert
-        )
+        return MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.edit))
             .setView(view)
             .setNegativeButton(getString(R.string.close)) { _, _ -> }

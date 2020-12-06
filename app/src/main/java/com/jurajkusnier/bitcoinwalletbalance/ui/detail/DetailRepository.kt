@@ -1,6 +1,5 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
-import android.util.Log
 import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApi
 import com.jurajkusnier.bitcoinwalletbalance.data.db.*
 import com.jurajkusnier.bitcoinwalletbalance.cache.FileCacheService
@@ -18,10 +17,6 @@ class DetailRepository @Inject constructor(
     suspend fun getWalletDetailsFlow(address: String) = flow {
         databaseDao.updateWalletRecordAccessTime(address)
         databaseDao.getWalletRecordFlow(address).collect {
-            Log.d(
-                "=TEST=",
-                "getWalletDetailsFlow($address).address = ${it?.address} lastUpdate = ${it?.lastUpdate}"
-            )
             if (it != null) {
                 val transactions = fileCacheService.getTransactionsFromFile(address)?.transactions
                 emit(WalletRecordAction.ItemUpdated(it.toWalletRecord(transactions)))
@@ -53,14 +48,12 @@ class DetailRepository @Inject constructor(
     }
 
     private suspend fun getWalletDetailsFromApi(address: String): WalletRecord? = try {
-        Log.d("=TEST=", "getWalletDetailsFromApi($address)")
         blockchainApi.getDetails(address).toWalletRecord(address)
     } catch (exception: Exception) {
         null
     }
 
     private suspend fun insertNewWalletRecord(walletRecord: WalletRecord) {
-        Log.d("=TEST=", "insertNewWalletRecord(${walletRecord.address})")
         databaseDao.addWalletRecord(WalletRecordEntity.fromWalletRecord(walletRecord))
         fileCacheService.setTransactionsToFile(
             walletRecord.address,
@@ -69,10 +62,6 @@ class DetailRepository @Inject constructor(
     }
 
     private suspend fun updateWalletRecord(walletRecord: WalletRecord) {
-        Log.d(
-            "=TEST=",
-            "updateWalletRecord(${walletRecord.address}) latUpdate = ${walletRecord.lastUpdate}"
-        )
         databaseDao.updateWalletRecord(WalletRecordEntity.fromWalletRecord(walletRecord))
         fileCacheService.setTransactionsToFile(
             walletRecord.address,

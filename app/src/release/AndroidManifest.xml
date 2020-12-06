@@ -5,7 +5,7 @@
 
     <application>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation"
             tools:node="merge" />

@@ -4,7 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
-import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.editdialog.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.utils.SingleLiveEvent
 import kotlinx.coroutines.launch
 

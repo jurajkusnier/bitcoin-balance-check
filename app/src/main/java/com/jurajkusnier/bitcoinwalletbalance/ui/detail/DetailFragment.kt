@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -20,7 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
-import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.editdialog.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.ActionsViewModel
 import com.jurajkusnier.bitcoinwalletbalance.ui.qrdialog.QrDialog
 import com.jurajkusnier.bitcoinwalletbalance.utils.convertDpToPixel
@@ -38,13 +40,9 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
     private lateinit var errorComponent: ErrorComponent
     private lateinit var transactionsComponent: TransactionsComponent
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
         setupView(view)
         detailInfoComponent = DetailInfoComponent(view, getAddress())
         errorComponent = ErrorComponent(view, viewLifecycleOwner)
@@ -144,22 +142,12 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
     }
 
     private fun setupSwipeToRefresh(view: View) {
-        view.swiperefresh.apply {
-            //TODO: load position automatically from layout (imgDetailsBitcoin)
-            setProgressViewOffset(false, 0, requireContext().convertDpToPixel(58.5f))
-            setOnRefreshListener {
-                viewModel.refresh()
-            }
-        }
-    }
-
-
-    fun showEditDialog(address: String, nickname: String) {
-//        EditDialog.newInstance(EditDialog.Parameters(address, nickname)).show(fragmentManager!!, EditDialog.TAG)
+        view.swiperefresh.setOnRefreshListener { viewModel.refresh() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
         inflater.inflate(R.menu.detail_menu, menu)
     }
 
@@ -201,6 +189,10 @@ class DetailFragment : Fragment(R.layout.detail_fragment), AppBarLayout.OnOffset
             }
             R.id.menu_edit -> {
                 viewModel.showEditDialog()
+                true
+            }
+            R.id.menu_currency -> {
+                CurrencyBottomSheetFragment.show(childFragmentManager)
                 true
             }
             else -> super.onOptionsItemSelected(item)

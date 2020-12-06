@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.main;
+package com.jurajkusnier.bitcoinwalletbalance.ui.mainlist;
 
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity

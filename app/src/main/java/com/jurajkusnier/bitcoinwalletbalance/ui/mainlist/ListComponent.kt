@@ -1,9 +1,11 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.main
+package com.jurajkusnier.bitcoinwalletbalance.ui.mainlist
 
 import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jurajkusnier.bitcoinwalletbalance.data.db.WalletRecordEntity
+import com.jurajkusnier.bitcoinwalletbalance.ui.main.ListAdapterActions
+import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainListAdapter
 import kotlinx.android.synthetic.main.main_list_fragment.view.*
 
 class ListComponent(private val view: View, callback: ListAdapterActions) {

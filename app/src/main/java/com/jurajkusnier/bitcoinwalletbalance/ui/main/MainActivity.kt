@@ -1,6 +1,7 @@
-package com.jurajkusnier.bitcoinwalletbalance
+package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
+import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 

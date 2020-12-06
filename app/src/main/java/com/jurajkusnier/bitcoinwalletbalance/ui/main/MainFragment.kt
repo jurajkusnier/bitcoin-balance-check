@@ -2,7 +2,6 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -12,14 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.google.zxing.integration.android.IntentIntegrator
-import com.jurajkusnier.bitcoinwalletbalance.MainActivity
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.addadress.AddAddressDialog
 import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyBottomSheetFragment
-import com.jurajkusnier.bitcoinwalletbalance.ui.detail.DetailFragment
-import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.editdialog.EditDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.main_fragment.*
+import kotlinx.android.synthetic.main.main_fragment.view.*
 
 @AndroidEntryPoint
 class MainFragment : Fragment(R.layout.main_fragment) {
@@ -31,6 +28,8 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as? AppCompatActivity)?.setSupportActionBar(view.toolbar)
         fabComponent = FabComponent(view, this::openAddAddressDialog, this::openAddAddressCamera)
         viewPagerComponent = ViewPagerComponent(view, this)
         viewModel.action.observe(viewLifecycleOwner, {
@@ -46,8 +45,6 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as? AppCompatActivity)?.setSupportActionBar(toolbar)
-        setHasOptionsMenu(true)
         actionsViewModel.action.observe(viewLifecycleOwner, {
             when (it) {
                 is ActionsViewModel.Actions.ItemDeleted -> showUndoSnackbar(getString(R.string.address_deleted)) {
@@ -105,13 +102,14 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_fragment, menu)
         super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_currency) {
             CurrencyBottomSheetFragment.show(childFragmentManager)
+            return true
         }
         return super.onOptionsItemSelected(item)
     }

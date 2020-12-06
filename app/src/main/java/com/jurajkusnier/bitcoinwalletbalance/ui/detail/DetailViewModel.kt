@@ -1,6 +1,5 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.detail
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -10,7 +9,7 @@ import com.jurajkusnier.bitcoinwalletbalance.data.model.CurrencyCode
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRate
 import com.jurajkusnier.bitcoinwalletbalance.data.model.ExchangeRateWithCurrencyCode
 import com.jurajkusnier.bitcoinwalletbalance.ui.currency.ExchangeRatesRepository
-import com.jurajkusnier.bitcoinwalletbalance.ui.edit.EditDialog
+import com.jurajkusnier.bitcoinwalletbalance.ui.editdialog.EditDialog
 import com.jurajkusnier.bitcoinwalletbalance.utils.SingleLiveEvent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -33,7 +32,6 @@ class DetailViewModel @ViewModelInject constructor(
     )
 
     init {
-        Log.d(TAG, "address = $address")
         startDataFlow()
     }
 

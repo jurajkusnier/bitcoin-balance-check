@@ -2,8 +2,6 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.currency
 
 import com.jurajkusnier.bitcoinwalletbalance.api.BlockchainApi
 import com.jurajkusnier.bitcoinwalletbalance.data.model.*
-import com.jurajkusnier.bitcoinwalletbalance.utils.TimeConstants.Companion.FIFTEEN_MINUTES_IN_MS
-import com.jurajkusnier.bitcoinwalletbalance.utils.isOlderThan
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -34,8 +32,7 @@ class ExchangeRatesRepository @Inject constructor(
 
     fun getExchangeRates(): Flow<RepositoryResponse<ExchangeRates>> = flow {
         val cachedExchangeRates = exchangeRatesCache.getExchangeRates()
-        val lastUpdate = cachedExchangeRates?.lastUpdate ?: Date(0)
-        val isLoading = lastUpdate.isOlderThan(FIFTEEN_MINUTES_IN_MS)
+        val isLoading = cachedExchangeRates == null || cachedExchangeRates.isOld()
 
         emit(
             RepositoryResponse(

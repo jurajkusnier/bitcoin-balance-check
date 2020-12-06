@@ -2,7 +2,6 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
 import android.content.ClipboardManager
 import android.content.Context
-import com.jurajkusnier.bitcoinwalletbalance.ui.currency.CurrencyListItemGenerator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

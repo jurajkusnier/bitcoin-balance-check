@@ -4,7 +4,6 @@ import android.content.Context
 import com.jurajkusnier.bitcoinwalletbalance.R
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 import kotlin.math.roundToInt
 
 fun isBitcoinAddressValid(address:String):Boolean {

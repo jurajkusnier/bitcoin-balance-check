@@ -3,10 +3,10 @@ package com.jurajkusnier.bitcoinwalletbalance.ui.addadress
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jurajkusnier.bitcoinwalletbalance.R
 import com.jurajkusnier.bitcoinwalletbalance.ui.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,14 +32,13 @@ class AddAddressDialog : AppCompatDialogFragment() {
             }
         }
 
-        return AlertDialog.Builder(
-            requireContext(),
-            R.style.ThemeOverlay_MaterialComponents_Dialog_Alert
-        )
+        return MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.add_address))
             .setView(view)
-            .setNegativeButton(getString(R.string.close)) { _, _ -> }
-            .setPositiveButton(getString(R.string.add)) { _, _ ->
+            .setNegativeButton(resources.getString(R.string.close)) { _, _ ->
+                // Respond to negative button press
+            }
+            .setPositiveButton(resources.getString(R.string.add)) { _, _ ->
                 val bitcoinAddress = view?.editTextWalletAddress?.text.toString()
                 if (bitcoinAddress.isNotBlank()) {
                     dismiss()

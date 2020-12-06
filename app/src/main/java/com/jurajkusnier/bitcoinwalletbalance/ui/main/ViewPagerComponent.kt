@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.jurajkusnier.bitcoinwalletbalance.R
+import com.jurajkusnier.bitcoinwalletbalance.ui.mainlist.FavouriteFragment
+import com.jurajkusnier.bitcoinwalletbalance.ui.mainlist.HistoryFragment
 import kotlinx.android.synthetic.main.main_fragment.view.*
 
 class ViewPagerComponent(

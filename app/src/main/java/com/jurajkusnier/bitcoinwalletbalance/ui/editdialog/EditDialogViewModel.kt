@@ -1,4 +1,4 @@
-package com.jurajkusnier.bitcoinwalletbalance.ui.edit
+package com.jurajkusnier.bitcoinwalletbalance.ui.editdialog
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
