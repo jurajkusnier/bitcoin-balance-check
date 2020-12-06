@@ -8,7 +8,9 @@ import kotlinx.android.synthetic.main.main_list_fragment.view.*
 
 class ListComponent(private val view: View, callback: ListAdapterActions) {
 
-    private val listAdapter = MainListAdapter(callback)
+    private val listAdapter = MainListAdapter(callback) { position ->
+        view.recyclerViewMain.smoothScrollToPosition(position)
+    }
 
     init {
         setupRecyclerView(view)

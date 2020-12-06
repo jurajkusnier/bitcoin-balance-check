@@ -1,5 +1,6 @@
 package com.jurajkusnier.bitcoinwalletbalance.ui.main
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
@@ -12,7 +13,10 @@ import com.jurajkusnier.bitcoinwalletbalance.utils.inflate
 import com.jurajkusnier.bitcoinwalletbalance.utils.sathoshiToBTCstring
 import kotlinx.android.synthetic.main.main_recycler_item.view.*
 
-class MainListAdapter(private val callback: ListAdapterActions) :
+class MainListAdapter(
+    private val callback: ListAdapterActions,
+    private val scrollTo: (Int) -> Unit
+) :
     ListAdapter<WalletRecordEntity, MainListAdapter.ViewHolder>(ITEM_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,6 +26,20 @@ class MainListAdapter(private val callback: ListAdapterActions) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<WalletRecordEntity>,
+        currentList: MutableList<WalletRecordEntity>
+    ) {
+        if (previousList.size + 1 == currentList.size) {
+            previousList.forEachIndexed { index, item ->
+                if (currentList[index].address != item.address) {
+                    scrollTo(index)
+                    return
+                }
+            }
+        }
     }
 
     class ViewHolder(
