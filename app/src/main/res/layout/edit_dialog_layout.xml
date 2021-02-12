@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialogEdit"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    tools:ignore="MissingConstraints">
 
     <androidx.constraintlayout.helper.widget.Flow
         android:layout_width="match_parent"
@@ -37,9 +38,9 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
+        android:paddingBottom="12dp"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:paddingBottom="12dp"
         tools:text="14s299LGRmSX5dxtcuY4gqUgn2tW3nCz8m" />
 
     <TextView

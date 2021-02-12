@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    tools:context=".ui.detail.DetailFragment">
+    tools:context=".ui.detail.DetailFragment"
+    tools:ignore="MissingConstraints">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
@@ -60,8 +61,8 @@
                             android:id="@+id/imgDetailsBitcoin"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            app:layout_constraintStart_toStartOf="@id/flowLayout"
                             app:layout_constraintEnd_toEndOf="@id/flowLayout"
+                            app:layout_constraintStart_toStartOf="@id/flowLayout"
                             app:srcCompat="@drawable/bitcoin_logo_2" />
 
                         <TextView
@@ -70,10 +71,10 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="@string/default_zero_BTC"
-                            tools:text="0 BTC"
                             android:textColor="@color/white_a0"
                             android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="0 BTC" />
 
                         <TextView
                             android:id="@+id/textFinalBalanceMoney"
@@ -144,11 +145,11 @@
                             android:id="@+id/textInfo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            tools:text="Last Updated..."
                             android:textAlignment="center"
                             android:textColor="@color/white_a0"
                             android:textSize="15sp"
-                            android:textStyle="italic" />
+                            android:textStyle="italic"
+                            tools:text="Last Updated..." />
 
                         <View
                             android:id="@+id/view"
